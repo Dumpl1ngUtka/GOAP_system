@@ -1,0 +1,2 @@
+D:\Unity_projects\GOAP_system\obj\Debug\Assembly-CSharp.csproj.AssemblyReference.cache
+D:\Unity_projects\GOAP_system\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache

@@ -46,7 +46,21 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\6000.0.39f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.UIToolkit.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Items\Item.cs" />
+    <Compile Include="Assets\Scripts\EditorGOAP\CustomGraphWindow.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\IActionHolder.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Belief.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Agent\Agent.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\Action.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\ActionList\TakeItem.cs" />
+    <Compile Include="Assets\Scripts\EditorGOAP\Node.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\Condition.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\EditorGOAP\Connection.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Sensor\ISensor.cs" />
+    <Compile Include="Assets\Scripts\Items\DropItem.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\Effect.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Agent\BeliefsHolder.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.0.39f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
