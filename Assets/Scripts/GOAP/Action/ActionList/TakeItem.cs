@@ -2,13 +2,9 @@ namespace GOAP
 {
     public class TakeItem : Action
     {
-        protected override Condition[] Conditions { get; } = new Condition[] { };
-        
-        protected override Effect[] Effects { get; }
-        
-        public override void Do()
+        public override void Do(Agent agent)
         {
-            throw new System.NotImplementedException();
+            //agent.
         }
     }
 }

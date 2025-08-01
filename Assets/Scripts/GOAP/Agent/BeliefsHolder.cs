@@ -12,12 +12,17 @@ namespace GOAP
             _beliefs = belief;
         }
         
-        public Belief GetBelief(string beliefName)
+        public Belief GetBelief(BeliefsList beliefKey)
         {
-            foreach (var belief in _beliefs.Where(belief => belief.Name == beliefName))
+            foreach (var belief in _beliefs.Where(belief => belief.Key == beliefKey))
                 return belief;
 
-            return new Belief("");
+            return new Belief(BeliefsList.None);
+        }
+
+        public Belief[] GetAllBeliefs()
+        {
+            return _beliefs.ToArray();
         }
     }
 }

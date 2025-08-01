@@ -15,23 +15,23 @@ namespace GOAP
             Greater,
         }
         
-        private readonly string _beliefName;
+        private readonly BeliefsList _beliefKey;
         private readonly Type _operationType;
         private readonly int _value;
 
-        public Condition(string beliefName, Type operationType, int value)
+        public Condition(BeliefsList beliefKey, Type operationType, int value)
         {
-            _beliefName = beliefName;
+            _beliefKey = beliefKey;
             _operationType = operationType;
             _value = value;
         }
 
         public bool IsValid(Agent agent)
         { 
-            if (agent.TryGetBelief(_beliefName, out var belief))
+            if (agent.TryGetBelief(_beliefKey, out var belief))
                 return false;
 
-            var beliefCount = belief.Count;
+            var beliefCount = belief.Value;
 
             return _operationType switch
             {
