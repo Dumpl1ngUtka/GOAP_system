@@ -8,11 +8,11 @@ namespace GOAP.KnowledgeBase
     {
         private readonly Dictionary<string, object> _worldStateFacts = new();
         private readonly Dictionary<string, GameObject> _trackedObjects = new();
-        
+
         public void SetFact(string key, object value)
         {
             if (string.IsNullOrEmpty(key))
-                throw new ArgumentException("Key cannot be null or empty.", nameof(key));
+                throw new System.ArgumentException("Key cannot be null or empty.", nameof(key));
 
             _worldStateFacts[key] = value;
         }
@@ -37,7 +37,7 @@ namespace GOAP.KnowledgeBase
                     return true;
                 }
 
-                throw new InvalidCastException(
+                throw new System.InvalidCastException(
                     $"Fact with key '{key}' is of type {storedValue.GetType()}, not {typeof(T)}.");
             }
 
@@ -58,7 +58,7 @@ namespace GOAP.KnowledgeBase
         public void SetObject(string key, GameObject value)
         {
             if (string.IsNullOrEmpty(key))
-                throw new ArgumentException("Key cannot be null or empty.", nameof(key));
+                throw new System.ArgumentException("Key cannot be null or empty.", nameof(key));
 
             _trackedObjects[key] = value;
         }
@@ -77,7 +77,17 @@ namespace GOAP.KnowledgeBase
         {
             return _trackedObjects.TryGetValue(key, out value);
         }
-        
+
+        public IReadOnlyDictionary<string, object> GetAllFacts()
+        {
+            return new Dictionary<string, object>(_worldStateFacts);
+        }
+
+        public IReadOnlyDictionary<string, GameObject> GetAllObjects()
+        {
+            return new Dictionary<string, GameObject>(_trackedObjects);
+        }
+
         public void ClearTrackedObjects()
         {
             _trackedObjects.Clear();

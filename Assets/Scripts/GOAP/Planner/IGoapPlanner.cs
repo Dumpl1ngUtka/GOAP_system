@@ -9,7 +9,14 @@ namespace GOAP.Planner
         Queue<IGoapAction> Plan(
             IGoapKnowledge knowledge,
             IGoapGoal goal,
-            List<IGoapAction> availableActions
+            IEnumerable<IGoapAction> availableActions
+        );
+        
+        bool TryPlan(
+            IGoapKnowledge knowledge,
+            IGoapGoal goal,
+            IEnumerable<IGoapAction> availableActions,
+            out Queue<IGoapAction> plan
         );
     }
 }

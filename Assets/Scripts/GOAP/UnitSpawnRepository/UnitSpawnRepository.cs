@@ -7,7 +7,7 @@ namespace GOAP.UnitSpawnRepository
 {
     public class UnitSpawnRepository : MonoBehaviour
     {
-        [SerializeField] private Spawner _spawner;
+        [SerializeField] private TMP_spawner.Spawner _spawner;
         private AgentDataBase _dataBase;
 
         private void Start()

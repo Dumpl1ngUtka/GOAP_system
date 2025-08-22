@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GOAP.KnowledgeBase
@@ -13,5 +14,7 @@ namespace GOAP.KnowledgeBase
         void SetObject(string key, GameObject value);
         GameObject GetObject(string key);
         bool TryGetObject(string key, out GameObject value);
+        IReadOnlyDictionary<string, object> GetAllFacts();
+        IReadOnlyDictionary<string, GameObject> GetAllObjects();
     }
 }

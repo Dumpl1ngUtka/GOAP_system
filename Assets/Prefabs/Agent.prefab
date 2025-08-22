@@ -14,8 +14,9 @@ GameObject:
   - component: {fileID: 1732365803183152521}
   - component: {fileID: -1404065750981162874}
   - component: {fileID: 4128926970087191238}
+  - component: {fileID: 9207348636319901209}
   m_Layer: 0
-  m_Name: Unit
+  m_Name: Agent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -136,5 +137,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfdf3ca0383230644a2809ccaac39f52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeamID: 0
-  _unit: {fileID: -1404065750981162874}
+--- !u!114 &9207348636319901209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086522091631220665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb17f7a53e564fc7b2eec8bc0ede9236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
