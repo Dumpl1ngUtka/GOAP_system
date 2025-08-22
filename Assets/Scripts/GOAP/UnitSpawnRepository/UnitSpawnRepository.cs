@@ -1,4 +1,5 @@
 using System;
+using GOAP.Agent;
 using TMP_spawner;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace GOAP.UnitSpawnRepository
             _spawner.Spawned += OnSpawn;
         }
 
-        private void OnSpawn(Agent agent)
+        private void OnSpawn(GoapAgent goapAgent)
         {
             //_dataBase.Add;
         }

@@ -1,5 +1,6 @@
 using System;
 using GOAP;
+using GOAP.Agent;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Action = System.Action;
@@ -8,36 +9,38 @@ namespace TMP_spawner
 {
     public class Spawner : MonoBehaviour
     {
+        [FormerlySerializedAs("_enemyAgent")]
         [Header("Enemies")]
-        [SerializeField] private Agent _enemyAgent;
+        [SerializeField] private GoapAgent _enemyGoapAgent;
         [SerializeField] private Transform _enemySpawnPoint;
+        [FormerlySerializedAs("_playerAgent")]
         [Header("Player")]
-        [SerializeField] private Agent _playerAgent;
+        [SerializeField] private GoapAgent _playerGoapAgent;
         [SerializeField] private Transform _playerSpawnPoint;
 
         public bool SpawnEnemyUnit = false;
         public bool SpawnPlayerUnit = false;
 
-        public Action<Agent> Spawned;
+        public Action<GoapAgent> Spawned;
         
         private void OnValidate()
         {
             if (SpawnEnemyUnit)
             {
-                Spawn(_enemyAgent, _enemySpawnPoint);
+                Spawn(_enemyGoapAgent, _enemySpawnPoint);
                 SpawnEnemyUnit = false;
             }
 
             if (SpawnPlayerUnit)
             {
-                Spawn(_playerAgent, _playerSpawnPoint);
+                Spawn(_playerGoapAgent, _playerSpawnPoint);
                 SpawnPlayerUnit = false;
             }
         }
 
-        private void Spawn(Agent agent, Transform spawnPoint)
+        private void Spawn(GoapAgent goapAgent, Transform spawnPoint)
         {
-            var instantiate = Instantiate(agent, spawnPoint);
+            var instantiate = Instantiate(goapAgent, spawnPoint);
             Spawned?.Invoke(instantiate);
         }
     }

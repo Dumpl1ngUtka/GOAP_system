@@ -47,31 +47,32 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Items\Item.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\ActionList\MoveToAction.cs" />
     <Compile Include="Assets\Scripts\Unit\Stats\Stats.cs" />
     <Compile Include="Assets\Scripts\TMP_spawner\Spawner.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Agent\RoleType.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Agent\IGoapAgent.cs" />
     <Compile Include="Assets\Scripts\EditorGOAP\CustomGraphWindow.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Action\IActionHolder.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Agent\Agent.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Goal\Goal.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Action\Action.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Action\ActionList\TakeItem.cs" />
+    <Compile Include="Assets\Scripts\GOAP\KnowledgeBase\GoapKnowledgeBase.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Goal\GoapGoal.cs" />
+    <Compile Include="Assets\Scripts\GOAP\KnowledgeBase\IGoapKnowledge.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Goal\GoalList\SurviveGoal.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Sensor\IGoapSensor.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Sensor\BasicSensor.cs" />
     <Compile Include="Assets\Scripts\EditorGOAP\Node.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Planner\IGoapPlanner.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Agent\GoapAgent.cs" />
     <Compile Include="Assets\Scripts\GOAP\UnitSpawnRepository\UnitSpawnRepository.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Action\Condition.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\Unit\Unit.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Goal\IGoapGoal.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\IGoapAction.cs" />
     <Compile Include="Assets\Scripts\EditorGOAP\Connection.cs" />
+    <Compile Include="Assets\Scripts\Unit\IHealth.cs" />
     <Compile Include="Assets\Scripts\GOAP\Belief\BeliefsList.cs" />
     <Compile Include="Assets\Scripts\GOAP\UnitSpawnRepository\AgentDataBase.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Sensor\ISensor.cs" />
     <Compile Include="Assets\Scripts\GOAP\Belief\Belief.cs" />
     <Compile Include="Assets\Scripts\GOAP\UnitSpawnRepository\AgentData.cs" />
-    <Compile Include="Assets\Scripts\Items\DropItem.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Sensor\SensorList\StatsSensor.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Action\Effect.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Sensor\SensorList\EnemySensor.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Agent\BeliefsHolder.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\GoapAction.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\6000.0.39f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
