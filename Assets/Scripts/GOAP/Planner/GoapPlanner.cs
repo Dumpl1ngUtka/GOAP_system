@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GOAP.Action;
+using GOAP.Goal;
 using GOAP.KnowledgeBase;
 
 namespace GOAP.Planner
@@ -40,9 +42,9 @@ namespace GOAP.Planner
             var goalState = goal.GetDesiredState();
 
             var leaves = new List<Node>();
-            var startNode = new Node(null, 0, null, startState);
+            var startNode = new Node(null,  null, 0, startState);
 
-            var success = BuildGraph(startNode, leaves, actions, goalState);
+            var success = BuildGraph(startNode, leaves, actions, goalState.ToList());
 
             if (!success)
             {
@@ -55,37 +57,22 @@ namespace GOAP.Planner
             return plan.Count > 0;
         }
 
-        private Dictionary<string, object> GetCurrentState(IGoapKnowledge knowledge)
-        {
-            var state = new Dictionary<string, object>();
-            var facts = knowledge.GetAllFacts();
-    
-            foreach (var fact in facts)
-            {
-                state[fact.Key] = fact.Value;
-            }
+        private List<Fact> GetCurrentState(IGoapKnowledge knowledge) => 
+            knowledge.GetAllFacts().ToList();
 
-            return state;
-        }
-
-        private bool BuildGraph(
-            Node parent,
-            List<Node> leaves,
-            List<IGoapAction> actions,
-            Dictionary<string, object> goal
-        )
+        private bool BuildGraph(Node parent, List<Node> leaves, List<IGoapAction> actions, List<Fact> goal)
         {
             var foundPath = false;
 
             foreach (var action in actions)
             {
-                if (!IsActionUsable(action, parent.State))
+                if (!IsActionUsable(action, parent.WorldState))
                 {
                     continue;
                 }
 
-                var currentState = ApplyActionEffects(parent.State, action.Effects);
-                var node = new Node(parent, parent.RunningCost + action.Cost, action, currentState);
+                var currentState = ApplyActionEffects(parent.WorldState, action.Effects.ToList());
+                var node = new Node(parent,  action, parent.RunningCost + action.Cost, currentState);
 
                 if (IsGoalAchieved(goal, currentState))
                 {
@@ -102,55 +89,36 @@ namespace GOAP.Planner
             return foundPath;
         }
 
-        private bool IsActionUsable(IGoapAction action, Dictionary<string, object> state)
+        private bool IsActionUsable(IGoapAction action, List<Fact> state) => 
+            action.CheckProceduralPrecondition(state);
+
+        private List<Fact> ApplyActionEffects(List<Fact> currentState, List<ActionWithFact> effects)
         {
-            foreach (var precondition in action.Preconditions)
-            {
-                if (!state.ContainsKey(precondition.Key))
-                {
-                    return false;
-                }
-
-                if (!state[precondition.Key].Equals(precondition.Value))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private Dictionary<string, object> ApplyActionEffects(
-            Dictionary<string, object> currentState,
-            Dictionary<string, object> effects
-        )
-        {
-            var newState = new Dictionary<string, object>(currentState);
+            var newState = new List<Fact>(currentState);
         
-            foreach (var effect in effects)
+            foreach (var actionEffect in effects)
             {
-                newState[effect.Key] = effect.Value;
+                switch (actionEffect.Type)
+                {
+                    case ActionType.None:
+                        break;
+                    case ActionType.Remove:
+                        newState.Remove(actionEffect.Fact);
+                        break;
+                    case ActionType.Add:
+                        newState.Add(actionEffect.Fact);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
 
             return newState;
         }
 
-        private bool IsGoalAchieved(Dictionary<string, object> goal, Dictionary<string, object> state)
+        private bool IsGoalAchieved(List<Fact> goal, List<Fact> currentState)
         {
-            foreach (var condition in goal)
-            {
-                if (!state.ContainsKey(condition.Key))
-                {
-                    return false;
-                }
-
-                if (!state[condition.Key].Equals(condition.Value))
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return goal.All(currentState.Contains);
         }
 
         private Node FindCheapestNode(List<Node> leaves)

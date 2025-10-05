@@ -1,8 +1,13 @@
+using System;
+
 namespace Unit
 {
     public interface IHealth
     {
-        bool IsHealthLow { get; }
-        float CurrentHealth { get; }
+        ushort CurrentHealth { get; }
+        ushort MaxHealth { get; }
+        event Action Changed;
+        event Action Died;
+        void ApplyDamage(ushort damage);
     }
 }

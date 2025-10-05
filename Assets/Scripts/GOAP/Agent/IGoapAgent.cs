@@ -1,4 +1,5 @@
 using GOAP.Action;
+using GOAP.Goal;
 
 namespace GOAP
 {

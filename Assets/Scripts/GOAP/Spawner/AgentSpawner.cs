@@ -3,6 +3,8 @@ using GOAP.Agent;
 using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
+using Unit;
+using Unit.Mover;
 using UnityEngine;
 
 namespace GOAP.Spawner
@@ -63,11 +65,16 @@ namespace GOAP.Spawner
         private void InitializeAgentComponents(GameObject agent)
         {
             var goapAgent = agent.GetComponent<GoapAgent>();
-            var knowledge = agent.GetComponent<IGoapKnowledge>() ?? new GoapKnowledgeBase();
-            var sensor = agent.GetComponent<IGoapSensor>();
+            var rigidBody = agent.GetComponent<Rigidbody>();
+            var mover = agent.GetComponent<AgentMover>();
+            var knowledge = new GoapKnowledgeBase();
             var planner = new GoapPlanner();
+            var health = new AgentHealth(100);
+            
+            var healthSensor = new HealthSensor(knowledge, health);
+            var enemySensor = new EnemySensor(knowledge, rigidBody, LayerMask.GetMask("Default"));
 
-            goapAgent?.Initialize(knowledge, planner, sensor);
+            goapAgent?.Initialize(knowledge, planner, mover,healthSensor , enemySensor);
         }
     }
 }

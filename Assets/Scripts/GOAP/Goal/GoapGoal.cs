@@ -6,9 +6,8 @@ namespace GOAP.Goal
     public abstract class GoapGoal : IGoapGoal
     {
         public abstract string Name { get; }
-        public abstract float Priority { get; }
     
-        private Dictionary<string, object> _desiredState = new Dictionary<string, object>();
+        private Dictionary<FactTag, object> _desiredState = new();
 
         protected GoapGoal()
         {
@@ -17,18 +16,17 @@ namespace GOAP.Goal
 
         protected abstract void InitializeDesiredState();
 
+        public abstract float GetPriority(IGoapKnowledge knowledge);
+
         public abstract bool IsValid(IGoapKnowledge knowledge);
 
         public virtual void OnGoalActivated() { }
 
         public virtual void OnGoalDeactivated() { }
 
-        public Dictionary<string, object> GetDesiredState()
-        {
-            return new Dictionary<string, object>(_desiredState);
-        }
+        public IEnumerable<Fact> GetDesiredState() => null;
 
-        protected void AddDesiredEffect(string key, object value)
+        protected void AddDesiredEffect(FactTag key, object value)
         {
             _desiredState[key] = value;
         }

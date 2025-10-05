@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using GOAP.KnowledgeBase;
+using NUnit.Framework;
+using Unit.Mover;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,76 +9,38 @@ namespace GOAP.Action
 {
     public class MoveToAction : GoapAction
     {
+        private IAgentMover _agentMover;
+        private Vector3 _targetPosition;
+        private float _stoppingDistance = 0.5f;
+        private readonly Transform _target;
+        
         public override string Name => "MoveToAction";
         public override float Cost => 1.0f;
 
-        private NavMeshAgent _agent;
-        private Vector3 _targetPosition;
-        private float _stoppingDistance = 0.5f;
+        public override IEnumerable<Fact> Preconditions => null;
 
-        public MoveToAction(NavMeshAgent agent)
+        public override IEnumerable<ActionWithFact> Effects => 
+            new[] { ActionType.Add, new Fact(FactTag.Nearby, _target) };
+
+        public MoveToAction(IAgentMover agentMover, IWorldObjectForFact target)
         {
-            _agent = agent;
-            AddPrecondition("hasTarget", true);
-            AddEffect("isAtPosition", true);
+            _agentMover = agentMover;
+            _target = target.GetWorldTransform();
         }
 
         public override void OnEnter()
         {
-            base.OnEnter();
-            if (_agent != null)
-            {
-                _agent.isStopped = false;
-            }
+            _agentMover.SetTargetPosition(_target.position);
         }
 
         public override bool Perform()
         {
-            if (_agent == null || !_agent.isActiveAndEnabled) return false;
-
-            if (_agent.pathPending) return true;
-
-            if (_agent.remainingDistance <= _agent.stoppingDistance + _stoppingDistance)
-            {
-                if (!_agent.hasPath || _agent.velocity.sqrMagnitude == 0f)
-                {
-                    IsDone = true;
-                    return false;
-                }
-            }
-
-            return true;
+            return _agentMover.IsMoving;
         }
 
         public override void OnExit()
         {
-            base.OnExit();
-            if (_agent != null)
-            {
-                _agent.isStopped = true;
-            }
-        }
-
-        public override bool CheckProceduralPrecondition(IGoapKnowledge knowledge)
-        {
-            if (!base.CheckProceduralPrecondition(knowledge))
-                return false;
-
-            if (knowledge.TryGetObject("moveTarget", out var target) && target != null)
-            {
-                _targetPosition = target.transform.position;
-                _agent.SetDestination(_targetPosition);
-                return true;
-            }
-
-            if (knowledge.TryGetFact<Vector3>("movePosition", out var position))
-            {
-                _targetPosition = position;
-                _agent.SetDestination(_targetPosition);
-                return true;
-            }
-
-            return false;
+            _agentMover.Stop();
         }
     }
 }

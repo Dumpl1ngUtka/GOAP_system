@@ -1,8 +1,13 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using GOAP.Action;
+using GOAP.Goal;
 using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
+using Unit.Mover;
 using UnityEngine;
 
 namespace GOAP.Agent
@@ -10,10 +15,12 @@ namespace GOAP.Agent
     public class GoapAgent : MonoBehaviour, IGoapAgent
     {
         private const float ReplanInterval = 0.5f;
+        private const float UpdateInterval = 2f;
         
         private IGoapKnowledge _knowledge;
         private IGoapPlanner _planner;
-        private IGoapSensor _sensor;
+        private IAgentMover _mover;
+        private IGoapSensor[] _sensors;
     
         private List<IGoapGoal> _goals = new List<IGoapGoal>();
         private List<IGoapAction> _availableActions = new List<IGoapAction>();
@@ -21,22 +28,26 @@ namespace GOAP.Agent
         private Queue<IGoapAction> _currentPlan;
         private IGoapAction _currentAction;
         private IGoapGoal _currentGoal;
-    
-        private float _replanTimer;
+        private CancellationTokenSource _cancellationTokenSource;
 
-        public void Initialize(IGoapKnowledge knowledge, IGoapPlanner planner, IGoapSensor sensor)
+        private float _replanTimer;
+        
+        public IAgentMover Mover => _mover;
+
+        public void Initialize(IGoapKnowledge knowledge, IGoapPlanner planner, IAgentMover mover, params IGoapSensor[] sensors)
         {
             _knowledge = knowledge;
             _planner = planner;
-            _sensor = sensor;
+            _sensors = sensors;
+            _mover = mover;
+            _cancellationTokenSource = new CancellationTokenSource();
+            StartPeriodicUpdate();
         }
 
         private void Update()
         {
             if (_knowledge == null || _planner == null) return;
-
-            _sensor.UpdateKnowledge();
-        
+            
             _replanTimer += Time.deltaTime;
             if (_replanTimer >= ReplanInterval)
             {
@@ -54,9 +65,9 @@ namespace GOAP.Agent
 
             foreach (var goal in _goals)
             {
-                if (goal.IsValid(_knowledge) && goal.Priority > highestPriority)
+                if (goal.IsValid(_knowledge) && goal.GetPriority(_knowledge) > highestPriority)
                 {
-                    highestPriority = goal.Priority;
+                    highestPriority = goal.GetPriority(_knowledge);
                     bestGoal = goal;
                 }
             }
@@ -85,7 +96,7 @@ namespace GOAP.Agent
                 return;
             }
 
-            if (!_currentAction.CheckProceduralPrecondition(_knowledge))
+            if (!_currentAction.CheckProceduralPrecondition(_knowledge.GetAllFacts().ToList()))
             {
                 AbortCurrentPlan();
                 return;
@@ -111,10 +122,8 @@ namespace GOAP.Agent
 
         public void AddGoal(IGoapGoal goal)
         {
-            if (!_goals.Contains(goal))
-            {
+            if (!_goals.Contains(goal)) 
                 _goals.Add(goal);
-            }
         }
 
         public void RemoveGoal(string goalName)
@@ -123,11 +132,8 @@ namespace GOAP.Agent
         }
 
         public void AddAction(IGoapAction action)
-        {
-            if (!_availableActions.Contains(action))
-            {
-                _availableActions.Add(action);
-            }
+        { 
+            _availableActions.Add(action);
         }
 
         public void Replan()
@@ -163,6 +169,40 @@ namespace GOAP.Agent
         {
             AbortCurrentPlan();
             _currentGoal?.OnGoalDeactivated();
+            StopPeriodicUpdate();
+        }
+        
+        private void StartPeriodicUpdate()
+        {
+            StartPeriodicUpdateAsync().Forget();
+        }
+        
+        private void StopPeriodicUpdate()
+        {
+            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = new CancellationTokenSource();
+        }
+        
+        private async UniTaskVoid StartPeriodicUpdateAsync()
+        {
+            var token = _cancellationTokenSource.Token;
+            _knowledge.RemoveAllFacts();
+            
+            try
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    foreach (var sensor in _sensors)
+                        foreach (var fact in sensor.GetFacts())
+                            _knowledge.SetFact(fact);
+                    
+                    await UniTask.WaitForSeconds(UpdateInterval, cancellationToken: token);
+                }
+            }
+            catch (System.OperationCanceledException)
+            {
+            }
         }
     }
 }

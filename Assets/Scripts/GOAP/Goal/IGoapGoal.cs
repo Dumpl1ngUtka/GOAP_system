@@ -1,14 +1,15 @@
+using System.Collections.Generic;
 using GOAP.KnowledgeBase;
 
-namespace GOAP
+namespace GOAP.Goal
 {
     public interface IGoapGoal
     {
         string Name { get; }
-        float Priority { get; }
+        float GetPriority(IGoapKnowledge knowledge);
         bool IsValid(IGoapKnowledge knowledge);
         void OnGoalActivated();
         void OnGoalDeactivated();
-        System.Collections.Generic.Dictionary<string, object> GetDesiredState();
+        IEnumerable<Fact> GetDesiredState();
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GOAP.Action;
+using GOAP.Goal;
 using GOAP.KnowledgeBase;
 
 namespace GOAP.Planner
@@ -9,7 +10,7 @@ namespace GOAP.Planner
         Queue<IGoapAction> Plan(
             IGoapKnowledge knowledge,
             IGoapGoal goal,
-            IEnumerable<IGoapAction> availableActions
+            IEnumerable<IGoapAction> availableActions   
         );
         
         bool TryPlan(

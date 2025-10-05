@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using GOAP.Action;
+using GOAP.KnowledgeBase;
 
 namespace GOAP.Planner
 {
@@ -8,21 +10,14 @@ namespace GOAP.Planner
         public Node Parent { get; }
         public float RunningCost { get; }
         public IGoapAction Action { get; }
-        public Dictionary<string, object> State { get; }
-        public Dictionary<string, object> Effects { get; }
+        public List<Fact> WorldState { get; }
 
-        public Node(
-            Node parent,
-            float runningCost,
-            IGoapAction action,
-            Dictionary<string, object> state
-        )
+        public Node(Node parent, IGoapAction action, float runningCost, List<Fact> currentWorldState)
         {
             Parent = parent;
             RunningCost = runningCost;
             Action = action;
-            State = new Dictionary<string, object>(state);
-            Effects = action?.Effects ?? new Dictionary<string, object>();
+            WorldState = currentWorldState;
         }
     }
 }

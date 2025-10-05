@@ -7,7 +7,6 @@ namespace GOAP.Goal.GoalList
     public class SurviveGoal : GoapGoal
     {
         public override string Name => "SurviveGoal";
-        public override float Priority { get; }
 
         private readonly IHealth _health;
 
@@ -18,17 +17,18 @@ namespace GOAP.Goal.GoalList
 
         protected override void InitializeDesiredState()
         {
-            AddDesiredEffect("isHealthLow", false);
-            AddDesiredEffect("isSafe", true);
+            AddDesiredEffect(FactTag.IsLowHealth, false);
+            AddDesiredEffect(FactTag.IsInDangerous, true);
+        }
+
+        public override float GetPriority(IGoapKnowledge knowledge)
+        {
+            throw new System.NotImplementedException();
         }
 
         public override bool IsValid(IGoapKnowledge knowledge)
         {
-            if (_health == null) return false;
-        
-            return _health.IsHealthLow && 
-                   knowledge.TryGetFact<bool>("isUnderAttack", out bool underAttack) && 
-                   underAttack;
+            return knowledge.ContainsFact(FactTag.IsLowHealth);
         }
 
         public override void OnGoalActivated()

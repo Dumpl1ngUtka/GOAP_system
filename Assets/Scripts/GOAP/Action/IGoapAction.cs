@@ -8,14 +8,33 @@ namespace GOAP.Action
         string Name { get; }
         float Cost { get; }
         bool IsDone { get; }
-
-        Dictionary<string, object> Preconditions { get; }
-        Dictionary<string, object> Effects { get; }
+        bool IsFailed { get; }
+        IEnumerable<Fact> Preconditions { get; }
+        IEnumerable<ActionWithFact> Effects { get; }
 
         void OnEnter();
         bool Perform();
         void OnExit();
-        bool CheckProceduralPrecondition(IGoapKnowledge knowledge);
+        bool CheckProceduralPrecondition(IEnumerable<Fact> facts);
         void ResetAction();
+    }
+
+    public struct ActionWithFact
+    {
+        public readonly ActionType Type;
+        public readonly Fact Fact;
+
+        public ActionWithFact(ActionType type, Fact fact)
+        {
+            Type = type;
+            Fact = fact;
+        }
+    }
+
+    public enum ActionType
+    {
+        None,
+        Remove,
+        Add,
     }
 }
