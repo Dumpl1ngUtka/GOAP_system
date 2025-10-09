@@ -9,13 +9,12 @@ namespace GOAP.Action
         float Cost { get; }
         bool IsDone { get; }
         bool IsFailed { get; }
-        IEnumerable<Fact> Preconditions { get; }
-        IEnumerable<ActionWithFact> Effects { get; }
-
         void OnEnter();
         bool Perform();
         void OnExit();
         bool CheckProceduralPrecondition(IEnumerable<Fact> facts);
+        IEnumerable<ActionWithFact> GetEffects();
+        IEnumerable<Fact> GetPreconditions();
         void ResetAction();
     }
 

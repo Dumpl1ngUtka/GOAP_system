@@ -71,7 +71,7 @@ namespace GOAP.Planner
                     continue;
                 }
 
-                var currentState = ApplyActionEffects(parent.WorldState, action.Effects.ToList());
+                var currentState = ApplyActionEffects(parent.WorldState, action.GetEffects().ToList());
                 var node = new Node(parent,  action, parent.RunningCost + action.Cost, currentState);
 
                 if (IsGoalAchieved(goal, currentState))
