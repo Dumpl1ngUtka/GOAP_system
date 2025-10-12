@@ -11,14 +11,16 @@ namespace GOAP.Spawner
 {
     public class AgentSpawner : IAgentSpawner
     {
+        Transform[] _partolPoints;
         private readonly IAgentFactory _agentFactory;
         private readonly List<GameObject> _spawnedAgents = new List<GameObject>();
 
         public IReadOnlyList<GameObject> SpawnedAgents => _spawnedAgents;
 
-        public AgentSpawner(IAgentFactory agentFactory)
+        public AgentSpawner(IAgentFactory agentFactory, Transform[] patrolPoints)
         {
             _agentFactory = agentFactory;
+            _partolPoints = patrolPoints;
         }
 
         public GameObject SpawnAgent(Vector3 position, Quaternion rotation)
@@ -70,11 +72,12 @@ namespace GOAP.Spawner
             var knowledge = new GoapKnowledgeBase();
             var planner = new GoapPlanner();
             var health = new AgentHealth(100);
+            var planerContainer = new PlanContainer();
             
             var healthSensor = new HealthSensor(knowledge, health);
             var enemySensor = new EnemySensor(knowledge, rigidBody, LayerMask.GetMask("Default"));
 
-            goapAgent?.Initialize(knowledge, planner, mover,healthSensor , enemySensor);
+            goapAgent?.Initialize(knowledge, planner, mover, planerContainer, health,_partolPoints, healthSensor, enemySensor);
         }
     }
 }

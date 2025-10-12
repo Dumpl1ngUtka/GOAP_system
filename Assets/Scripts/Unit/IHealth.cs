@@ -9,5 +9,6 @@ namespace Unit
         event Action Changed;
         event Action Died;
         void ApplyDamage(ushort damage);
+        void ApplyHealing(ushort healing);
     }
 }

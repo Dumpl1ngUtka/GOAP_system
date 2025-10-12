@@ -1,39 +1,29 @@
 using System.Collections.Generic;
+using GOAP.Action;
 using GOAP.KnowledgeBase;
+using GOAP.Planner;
 
 namespace GOAP.Goal
 {
     public abstract class GoapGoal : IGoapGoal
     {
+        protected IPlanContainer PlanContainer;
         public abstract string Name { get; }
-    
-        private Dictionary<FactTag, object> _desiredState = new();
 
-        protected GoapGoal()
+        public IGoapGoal Init(IPlanContainer planContainer)
         {
-            InitializeDesiredState();
+            PlanContainer = planContainer;
+            return this;
         }
-
-        protected abstract void InitializeDesiredState();
 
         public abstract float GetPriority(IGoapKnowledge knowledge);
 
         public abstract bool IsValid(IGoapKnowledge knowledge);
 
-        public virtual void OnGoalActivated() { }
+        public abstract void OnGoalActivated();
 
-        public virtual void OnGoalDeactivated() { }
+        public abstract void OnGoalDeactivated();
 
-        public IEnumerable<Fact> GetDesiredState() => null;
-
-        protected void AddDesiredEffect(FactTag key, object value)
-        {
-            _desiredState[key] = value;
-        }
-
-        protected void ClearDesiredState()
-        {
-            _desiredState.Clear();
-        }
+        public abstract IEnumerable<FactWithCondition> GetDesiredState();
     }
 }

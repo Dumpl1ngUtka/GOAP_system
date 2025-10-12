@@ -5,6 +5,7 @@ namespace GOAP.KnowledgeBase
         IsLowHealth,
         IsInDangerous,
         IsEnemyAround,
+        IsPatrolling,
         Nearby,
     }
 }

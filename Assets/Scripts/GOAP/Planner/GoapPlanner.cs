@@ -4,6 +4,7 @@ using System.Linq;
 using GOAP.Action;
 using GOAP.Goal;
 using GOAP.KnowledgeBase;
+using UnityEngine;
 
 namespace GOAP.Planner
 {
@@ -60,23 +61,31 @@ namespace GOAP.Planner
         private List<Fact> GetCurrentState(IGoapKnowledge knowledge) => 
             knowledge.GetAllFacts().ToList();
 
-        private bool BuildGraph(Node parent, List<Node> leaves, List<IGoapAction> actions, List<Fact> goal)
+        private bool BuildGraph(Node parent, List<Node> leaves, List<IGoapAction> actions, List<FactWithCondition> goal)
         {
             var foundPath = false;
 
             foreach (var action in actions)
             {
+                Debug.Log("Check action for plan: " + action + " with current plan ");
+                foreach (var node1 in leaves)
+                {
+                    Debug.Log(node1);
+                }
                 if (!IsActionUsable(action, parent.WorldState))
                 {
+                    Debug.Log("cant be usable");
                     continue;
                 }
 
+
                 var currentState = ApplyActionEffects(parent.WorldState, action.GetEffects().ToList());
                 var node = new Node(parent,  action, parent.RunningCost + action.Cost, currentState);
+                leaves.Add(node);
 
                 if (IsGoalAchieved(goal, currentState))
                 {
-                    leaves.Add(node);
+                    Debug.Log("Achieved goal");
                     foundPath = true;
                 }
                 else
@@ -92,7 +101,7 @@ namespace GOAP.Planner
         private bool IsActionUsable(IGoapAction action, List<Fact> state) => 
             action.CheckProceduralPrecondition(state);
 
-        private List<Fact> ApplyActionEffects(List<Fact> currentState, List<ActionWithFact> effects)
+        private List<Fact> ApplyActionEffects(List<Fact> currentState, List<FactWithCondition> effects)
         {
             var newState = new List<Fact>(currentState);
         
@@ -100,12 +109,12 @@ namespace GOAP.Planner
             {
                 switch (actionEffect.Type)
                 {
-                    case ActionType.None:
+                    case FactCondition.None:
                         break;
-                    case ActionType.Remove:
+                    case FactCondition.Exclude:
                         newState.Remove(actionEffect.Fact);
                         break;
-                    case ActionType.Add:
+                    case FactCondition.Include:
                         newState.Add(actionEffect.Fact);
                         break;
                     default:
@@ -116,9 +125,23 @@ namespace GOAP.Planner
             return newState;
         }
 
-        private bool IsGoalAchieved(List<Fact> goal, List<Fact> currentState)
+        private bool IsGoalAchieved(List<FactWithCondition> goal, List<Fact> currentState)
         {
-            return goal.All(currentState.Contains);
+            foreach (var fact in goal)
+            {
+                switch (fact.Type)
+                {
+                    case FactCondition.Include when currentState.Contains(fact.Fact):
+                    case FactCondition.Exclude when !currentState.Contains(fact.Fact):
+                        continue;
+                    case FactCondition.None:
+                        Debug.LogError("Fact condition not set");
+                        return false;
+                    default:
+                        return false;
+                }
+            }
+            return true;
         }
 
         private Node FindCheapestNode(List<Node> leaves)

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using GOAP.Action;
 using GOAP.KnowledgeBase;
 
 namespace GOAP.Goal.GoalList
@@ -5,18 +7,18 @@ namespace GOAP.Goal.GoalList
     public class EmptyGoal : GoapGoal
     {
         public override string Name => "EmptyGoal";
-        protected override void InitializeDesiredState()
+        
+        public override float GetPriority(IGoapKnowledge knowledge) => 0.01f;
+
+        public override bool IsValid(IGoapKnowledge knowledge) => true;
+        public override void OnGoalActivated()
         {
         }
 
-        public override float GetPriority(IGoapKnowledge knowledge)
+        public override void OnGoalDeactivated()
         {
-            return 0.01f;
         }
 
-        public override bool IsValid(IGoapKnowledge knowledge)
-        {
-            return true;
-        }
+        public override IEnumerable<FactWithCondition> GetDesiredState() => new List<FactWithCondition>();
     }
 }

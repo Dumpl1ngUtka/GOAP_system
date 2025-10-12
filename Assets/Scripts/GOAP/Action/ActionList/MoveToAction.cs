@@ -23,9 +23,9 @@ namespace GOAP.Action
                 IsFailed = true;
         }
 
-        public override bool Perform()
+        public override void Perform()
         {
-            return _agentMover.IsMoving;
+            
         }
 
         public override void OnExit()
@@ -33,12 +33,12 @@ namespace GOAP.Action
             _agentMover.Stop();
         }
 
-        public override IEnumerable<ActionWithFact> GetEffects() =>
+        public override IEnumerable<FactWithCondition> GetEffects() =>
             new[]
             {
-                new ActionWithFact(ActionType.Add,new Fact(FactTag.Nearby, PlanContainer.GetTarget())),
+                new FactWithCondition(FactCondition.Include,new Fact(FactTag.Nearby, PlanContainer.GetTarget())),
             };
 
-        public override IEnumerable<Fact> GetPreconditions() => null;
+        public override IEnumerable<Fact> GetPreconditions() => new List<Fact>();
     }
 }

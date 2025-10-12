@@ -13,20 +13,23 @@ namespace GOAP.Action
         public abstract string Name { get; }
         public abstract float Cost { get; }
         public bool IsDone { get; protected set; }
-        
         public bool IsFailed { get; protected set;}
 
         public abstract void OnEnter();
-        public abstract bool Perform();
+        public abstract void Perform();
         public abstract void OnExit();
 
-        public void Init(IPlanContainer planContainer)
+        public IGoapAction Init(IPlanContainer planContainer)
         {
             PlanContainer = planContainer;
+            return this;
         }
 
         public bool CheckProceduralPrecondition(IEnumerable<Fact> facts)
         {
+            if (GetPreconditions() == null)
+                return true;
+                    
             foreach (var precondition in GetPreconditions())
             {
                 var isFactContained = facts.Any(fact => fact.Tag == precondition.Tag);
@@ -37,7 +40,7 @@ namespace GOAP.Action
             return true;
         }
 
-        public abstract IEnumerable<ActionWithFact> GetEffects();
+        public abstract IEnumerable<FactWithCondition> GetEffects();
 
         public abstract IEnumerable<Fact> GetPreconditions();
         

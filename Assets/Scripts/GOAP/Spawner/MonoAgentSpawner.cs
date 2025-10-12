@@ -6,6 +6,7 @@ namespace GOAP.Spawner
 {
     public class MonoAgentSpawner : MonoBehaviour, IAgentSpawner
     {
+        [SerializeField] private Transform[] _partolPoints;
         [SerializeField] private GameObject _agentPrefab;
         [SerializeField] private Transform _container;
 
@@ -16,7 +17,7 @@ namespace GOAP.Spawner
         private void Awake()
         {
             IAgentFactory factory = new GoapAgentFactory(_agentPrefab, _container);
-            _agentSpawner = new AgentSpawner(factory);
+            _agentSpawner = new AgentSpawner(factory, _partolPoints);
         }
 
         public GameObject SpawnAgent(Vector3 position, Quaternion rotation)

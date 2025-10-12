@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using GOAP.Action;
 using GOAP.KnowledgeBase;
 using Unit;
-using UnityEngine;
 
 namespace GOAP.Goal.GoalList
 {
@@ -15,16 +16,7 @@ namespace GOAP.Goal.GoalList
             _health = health;
         }
 
-        protected override void InitializeDesiredState()
-        {
-            AddDesiredEffect(FactTag.IsLowHealth, false);
-            AddDesiredEffect(FactTag.IsInDangerous, true);
-        }
-
-        public override float GetPriority(IGoapKnowledge knowledge)
-        {
-            throw new System.NotImplementedException();
-        }
+        public override float GetPriority(IGoapKnowledge knowledge) => 10f;
 
         public override bool IsValid(IGoapKnowledge knowledge)
         {
@@ -39,6 +31,14 @@ namespace GOAP.Goal.GoalList
         public override void OnGoalDeactivated()
         {
             //Debug.Log("SurviveGoal deactivated: No longer in danger.");
+        }
+
+        public override IEnumerable<FactWithCondition> GetDesiredState()
+        {
+            return new[]
+            {
+                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.IsLowHealth, PlanContainer.GetTarget())),
+            };
         }
     }
 }

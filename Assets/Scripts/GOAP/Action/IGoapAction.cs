@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GOAP.KnowledgeBase;
+using GOAP.Planner;
 
 namespace GOAP.Action
 {
@@ -9,31 +10,32 @@ namespace GOAP.Action
         float Cost { get; }
         bool IsDone { get; }
         bool IsFailed { get; }
+        IGoapAction Init(IPlanContainer planContainer);
         void OnEnter();
-        bool Perform();
+        void Perform();
         void OnExit();
         bool CheckProceduralPrecondition(IEnumerable<Fact> facts);
-        IEnumerable<ActionWithFact> GetEffects();
+        IEnumerable<FactWithCondition> GetEffects();
         IEnumerable<Fact> GetPreconditions();
         void ResetAction();
     }
 
-    public struct ActionWithFact
+    public struct FactWithCondition
     {
-        public readonly ActionType Type;
+        public readonly FactCondition Type;
         public readonly Fact Fact;
 
-        public ActionWithFact(ActionType type, Fact fact)
+        public FactWithCondition(FactCondition type, Fact fact)
         {
             Type = type;
             Fact = fact;
         }
     }
 
-    public enum ActionType
+    public enum FactCondition
     {
         None,
-        Remove,
-        Add,
+        Exclude,
+        Include,
     }
 }

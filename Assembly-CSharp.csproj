@@ -58,6 +58,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark02.cs" />
     <Compile Include="Assets\Scripts\GOAP\Agent\IGoapAgent.cs" />
     <Compile Include="Assets\Scripts\GOAP\Spawner\AgentSpawner.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Goal\GoalList\PatrolGoal.cs" />
     <Compile Include="Assets\Scripts\GOAP\Planner\Node.cs" />
     <Compile Include="Assets\Scripts\Unit\Mover\AgentMover.cs" />
     <Compile Include="Assets\Scripts\EditorGOAP\CustomGraphWindow.cs" />
@@ -78,10 +79,12 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\Scripts\Unit\Mover\IAgentMover.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\ActionList\IdleAction.cs" />
     <Compile Include="Assets\Scripts\EditorGOAP\Node.cs" />
     <Compile Include="Assets\Scripts\GOAP\Goal\GoalList\EmptyGoal.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextInfoDebugTool.cs" />
     <Compile Include="Assets\Scripts\GOAP\Planner\IGoapPlanner.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\ActionList\PatrolAction.cs" />
     <Compile Include="Assets\Scripts\GOAP\Agent\GoapAgent.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeA.cs" />
     <Compile Include="Assets\Scripts\GOAP\Sensor\SensorList\HealthSensor.cs" />
@@ -98,7 +101,9 @@
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\ActionList\HealAction.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Planner\PlanContainer.cs" />
     <Compile Include="Assets\Scripts\Unit\Unit.cs" />
     <Compile Include="Assets\Scripts\Items\IDroppable.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />

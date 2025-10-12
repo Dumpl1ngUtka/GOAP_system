@@ -29,5 +29,13 @@ namespace Unit
             }
             Changed?.Invoke();
         }
+
+        public void ApplyHealing(ushort healing)
+        {
+            _currentHealth += healing;
+            if (_currentHealth > MaxHealth) 
+                _currentHealth = MaxHealth;
+            Changed?.Invoke();
+        }
     }
 }

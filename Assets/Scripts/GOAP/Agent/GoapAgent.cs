@@ -4,9 +4,11 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using GOAP.Action;
 using GOAP.Goal;
+using GOAP.Goal.GoalList;
 using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
+using Unit;
 using Unit.Mover;
 using UnityEngine;
 
@@ -20,28 +22,48 @@ namespace GOAP.Agent
         private IGoapKnowledge _knowledge;
         private IGoapPlanner _planner;
         private IAgentMover _mover;
+        private IHealth _health;
         private IGoapSensor[] _sensors;
-    
+
         private List<IGoapGoal> _goals = new List<IGoapGoal>();
         private List<IGoapAction> _availableActions = new List<IGoapAction>();
     
-        private Queue<IGoapAction> _currentPlan;
         private IGoapAction _currentAction;
         private IGoapGoal _currentGoal;
+        private IPlanContainer _planContainer;
         private CancellationTokenSource _cancellationTokenSource;
 
         private float _replanTimer;
         
         public IAgentMover Mover => _mover;
 
-        public void Initialize(IGoapKnowledge knowledge, IGoapPlanner planner, IAgentMover mover, params IGoapSensor[] sensors)
+        public void Initialize(IGoapKnowledge knowledge, 
+            IGoapPlanner planner, 
+            IAgentMover mover, 
+            IPlanContainer planContainer,
+            IHealth health,
+            Transform[] patrolPoints,
+            params IGoapSensor[] sensors)
         {
             _knowledge = knowledge;
             _planner = planner;
             _sensors = sensors;
             _mover = mover;
+            _health = health;
+            _planContainer = planContainer;
             _cancellationTokenSource = new CancellationTokenSource();
+            
+            AddGoal(new EmptyGoal().Init(planContainer));
+            AddGoal(new SurviveGoal(health).Init(planContainer));
+            AddGoal(new PatrolGoal().Init(planContainer));
+            
+            AddAction(new IdleAction().Init(planContainer));
+            AddAction(new MoveToAction().Init(planContainer));
+            AddAction(new HealAction(health).Init(planContainer));
+            AddAction(new PatrolAction(patrolPoints).Init(planContainer));
+            
             StartPeriodicUpdate();
+            Debug.Log("Agent init");
         }
 
         private void Update()
@@ -52,18 +74,44 @@ namespace GOAP.Agent
             if (_replanTimer >= ReplanInterval)
             {
                 _replanTimer = 0f;
-                EvaluateGoals();
+                Replan();
             }
 
             ExecuteCurrentPlan();
         }
 
-        private void EvaluateGoals()
+        private void Replan()
+        {
+            var goals = _goals.ToList();
+            while (goals.Count > 0)
+            {
+                var bestGoal = GetBestGoal(goals);
+                Debug.Log("New best gaol: " + bestGoal.Name);
+                if (TryCreatePlanForGoal(bestGoal, out var plan))
+                {
+                    if (bestGoal != _currentGoal)
+                    {
+                        Debug.Log("Applied");
+                        AbortCurrentPlan();
+                        _planContainer.SetPlan(plan);
+                        SwitchGoal(bestGoal);
+                    }
+                    return;
+                }
+                else
+                {
+                    Debug.Log("Deny");
+                    goals.Remove(bestGoal);
+                }
+            }
+        }
+
+        private IGoapGoal GetBestGoal(List<IGoapGoal> goals)
         {
             IGoapGoal bestGoal = null;
-            float highestPriority = float.MinValue;
+            var highestPriority = float.MinValue;
 
-            foreach (var goal in _goals)
+            foreach (var goal in goals)
             {
                 if (goal.IsValid(_knowledge) && goal.GetPriority(_knowledge) > highestPriority)
                 {
@@ -72,10 +120,7 @@ namespace GOAP.Agent
                 }
             }
 
-            if (bestGoal != _currentGoal)
-            {
-                SwitchGoal(bestGoal);
-            }
+            return bestGoal;
         }
 
         private void SwitchGoal(IGoapGoal newGoal)
@@ -83,12 +128,12 @@ namespace GOAP.Agent
             _currentGoal?.OnGoalDeactivated();
             _currentGoal = newGoal;
             _currentGoal?.OnGoalActivated();
-            Replan();
+            Debug.Log("New Goal: " + _currentGoal);
         }
 
         private void ExecuteCurrentPlan()
         {
-            if (_currentPlan == null || _currentAction == null) return;
+            if (_currentAction == null) return;
 
             if (_currentAction.IsDone)
             {
@@ -110,14 +155,13 @@ namespace GOAP.Agent
             _currentAction.OnExit();
             _currentAction = null;
 
-            if (_currentPlan.Count == 0)
+            if (!_planContainer.IsPlanValid())
             {
-                _currentPlan = null;
+                _planContainer.ResetPlan();
                 return;
             }
 
-            _currentAction = _currentPlan.Dequeue();
-            _currentAction.OnEnter();
+            SetNewCurrentAction();
         }
 
         public void AddGoal(IGoapGoal goal)
@@ -136,33 +180,34 @@ namespace GOAP.Agent
             _availableActions.Add(action);
         }
 
-        public void Replan()
+        private bool TryCreatePlanForGoal(IGoapGoal goal, out Queue<IGoapAction> plan)
         {
-            AbortCurrentPlan();
-
-            if (_currentGoal == null || !_currentGoal.IsValid(_knowledge))
+            plan = new Queue<IGoapAction>();
+            
+            if (goal == null || !goal.IsValid(_knowledge))
             {
-                return;
+                Debug.Log("Because goal is invalid");
+                return false;
             }
 
-            _currentPlan = _planner.Plan(_knowledge, _currentGoal, _availableActions);
-
-            if (_currentPlan != null && _currentPlan.Count > 0)
+            plan = _planner.Plan(_knowledge, goal, _availableActions);
+            if (plan.Count == 0)
             {
-                _currentAction = _currentPlan.Dequeue();
-                _currentAction.OnEnter();
+                Debug.Log("Because plan is empty");
+                return false;
             }
+
+            return true;
         }
 
-        public void AbortCurrentPlan()
+        private void AbortCurrentPlan()
         {
             if (_currentAction != null)
             {
                 _currentAction.OnExit();
                 _currentAction = null;
             }
-
-            _currentPlan = null;
+            _planContainer.ResetPlan();
         }
 
         private void OnDestroy()
@@ -203,6 +248,12 @@ namespace GOAP.Agent
             catch (System.OperationCanceledException)
             {
             }
+        }
+
+        private void SetNewCurrentAction()
+        {
+            _currentAction = _planContainer.Dequeue();
+            _currentAction.OnEnter();
         }
     }
 }
