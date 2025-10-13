@@ -13,9 +13,10 @@ namespace GOAP.Action
         public override string Name => "Patrol";
         public override float Cost => 1f;
 
-        public PatrolAction(Transform[] points)
+        public PatrolAction(Transform[] points, IAgentMover agentMover)
         {
             _patrolPoints = points;
+            _agentMover = agentMover;
         }
         
         public override void OnEnter()
@@ -34,6 +35,7 @@ namespace GOAP.Action
 
         public override void OnExit()
         {
+            _agentMover.Stop();
         }
 
         public override IEnumerable<FactWithCondition> GetEffects()
@@ -48,7 +50,10 @@ namespace GOAP.Action
 
         private Transform GetNextPatrolPoint()
         {
-            return _patrolPoints[_currentPatrolPointIndex++];
+            _currentPatrolPointIndex += 1;
+            if (_currentPatrolPointIndex >= _patrolPoints.Length)
+                _currentPatrolPointIndex = 0;
+            return _patrolPoints[_currentPatrolPointIndex];
         }
     }
 }

@@ -20,7 +20,7 @@ namespace GOAP.Sensor
         public override IEnumerable<Fact> GetFacts()
         {
             var facts = new List<Fact>();
-            var health = _health.CurrentHealth * 1f / _health.CurrentHealth;
+            var health = _health.CurrentHealth * 1f / _health.MaxHealth;
             
             if (health < HealthThreshold) 
                 facts.Add(new Fact(FactTag.IsLowHealth));

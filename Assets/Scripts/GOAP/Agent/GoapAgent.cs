@@ -8,16 +8,19 @@ using GOAP.Goal.GoalList;
 using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
+using OwnSystems.DamageSystem;
 using Unit;
 using Unit.Mover;
 using UnityEngine;
 
 namespace GOAP.Agent
 {
-    public class GoapAgent : MonoBehaviour, IGoapAgent
+    public class GoapAgent : MonoBehaviour, IGoapAgent, IDamageable
     {
-        private const float ReplanInterval = 0.5f;
-        private const float UpdateInterval = 2f;
+        private const float ReplanInterval = 2f;
+        private const float UpdateKnowledgeInterval = 2f;
+        
+        [SerializeField] private AgentUI _ui;
         
         private IGoapKnowledge _knowledge;
         private IGoapPlanner _planner;
@@ -34,6 +37,7 @@ namespace GOAP.Agent
         private CancellationTokenSource _cancellationTokenSource;
 
         private float _replanTimer;
+        private float _updateKnowledgeTimer;
         
         public IAgentMover Mover => _mover;
 
@@ -52,6 +56,8 @@ namespace GOAP.Agent
             _health = health;
             _planContainer = planContainer;
             _cancellationTokenSource = new CancellationTokenSource();
+
+            _health.Changed += () => _ui.HealthChanged(_health.CurrentHealth, _health.MaxHealth);
             
             AddGoal(new EmptyGoal().Init(planContainer));
             AddGoal(new SurviveGoal(health).Init(planContainer));
@@ -60,21 +66,29 @@ namespace GOAP.Agent
             AddAction(new IdleAction().Init(planContainer));
             AddAction(new MoveToAction().Init(planContainer));
             AddAction(new HealAction(health).Init(planContainer));
-            AddAction(new PatrolAction(patrolPoints).Init(planContainer));
+            AddAction(new PatrolAction(patrolPoints, mover).Init(planContainer));
             
-            StartPeriodicUpdate();
+            PeriodicKnowledgeUpdate();
             Debug.Log("Agent init");
         }
 
         private void Update()
         {
             if (_knowledge == null || _planner == null) return;
-            
+
             _replanTimer += Time.deltaTime;
+            _updateKnowledgeTimer += Time.deltaTime;
+            
             if (_replanTimer >= ReplanInterval)
             {
                 _replanTimer = 0f;
                 Replan();
+            }
+
+            if (_updateKnowledgeTimer >= UpdateKnowledgeInterval)
+            {
+                _updateKnowledgeTimer = 0f;
+                PeriodicKnowledgeUpdate();
             }
 
             ExecuteCurrentPlan();
@@ -128,6 +142,7 @@ namespace GOAP.Agent
             _currentGoal?.OnGoalDeactivated();
             _currentGoal = newGoal;
             _currentGoal?.OnGoalActivated();
+            SetNewCurrentAction();
             Debug.Log("New Goal: " + _currentGoal);
         }
 
@@ -214,39 +229,24 @@ namespace GOAP.Agent
         {
             AbortCurrentPlan();
             _currentGoal?.OnGoalDeactivated();
-            StopPeriodicUpdate();
         }
         
-        private void StartPeriodicUpdate()
+        private void PeriodicKnowledgeUpdate()
         {
-            StartPeriodicUpdateAsync().Forget();
-        }
-        
-        private void StopPeriodicUpdate()
-        {
-            _cancellationTokenSource?.Cancel();
-            _cancellationTokenSource?.Dispose();
-            _cancellationTokenSource = new CancellationTokenSource();
-        }
-        
-        private async UniTaskVoid StartPeriodicUpdateAsync()
-        {
-            var token = _cancellationTokenSource.Token;
             _knowledge.RemoveAllFacts();
+            Debug.Log("Starting periodic update");
             
-            try
+            foreach (var sensor in _sensors)
+                foreach (var fact in sensor.GetFacts())
+                    _knowledge.SetFact(fact);
+            
+            if (_knowledge.GetAllFacts().Count() != 0)
             {
-                while (!token.IsCancellationRequested)
+                Debug.Log("Sensors: ");
+                foreach (var fact in  _knowledge.GetAllFacts())
                 {
-                    foreach (var sensor in _sensors)
-                        foreach (var fact in sensor.GetFacts())
-                            _knowledge.SetFact(fact);
-                    
-                    await UniTask.WaitForSeconds(UpdateInterval, cancellationToken: token);
+                    Debug.Log(fact.Tag);
                 }
-            }
-            catch (System.OperationCanceledException)
-            {
             }
         }
 
@@ -254,6 +254,12 @@ namespace GOAP.Agent
         {
             _currentAction = _planContainer.Dequeue();
             _currentAction.OnEnter();
+        }
+
+        public void ApplyDamage(float damage)
+        {
+            var uDamage = (ushort)damage;
+            _health.ApplyDamage(uDamage);
         }
     }
 }

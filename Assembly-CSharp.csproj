@@ -63,14 +63,17 @@
     <Compile Include="Assets\Scripts\Unit\Mover\AgentMover.cs" />
     <Compile Include="Assets\Scripts\EditorGOAP\CustomGraphWindow.cs" />
     <Compile Include="Assets\Scripts\GOAP\KnowledgeBase\GoapKnowledgeBase.cs" />
+    <Compile Include="Assets\Scripts\TEST\TakeHit.cs" />
     <Compile Include="Assets\Scripts\GOAP\Goal\GoapGoal.cs" />
     <Compile Include="Assets\Scripts\GOAP\KnowledgeBase\IGoapKnowledge.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Agent\AgentUI.cs" />
     <Compile Include="Assets\Scripts\GOAP\Spawner\GoapAgentFactory.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\Scripts\GOAP\Goal\GoalList\SurviveGoal.cs" />
+    <Compile Include="Assets\Scripts\OwnSystems\DamageSystem\IDamageable.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_B.cs" />
@@ -101,6 +104,7 @@
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshSpawner.cs" />
+    <Compile Include="Assets\Scripts\UI\InGameUI\Bar\Bar.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\ActionList\HealAction.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\Scripts\GOAP\Planner\PlanContainer.cs" />
@@ -127,6 +131,7 @@
     <Compile Include="Assets\Scripts\GOAP\UnitSpawnRepository\AgentData.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Scripts\GOAP\Sensor\SensorList\EnemySensor.cs" />
+    <Compile Include="Assets\Scripts\UI\InGameUI\Bar\IUIBar.cs" />
     <Compile Include="Assets\Scripts\GOAP\Planner\IPlanContainer.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\GoapAction.cs" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />

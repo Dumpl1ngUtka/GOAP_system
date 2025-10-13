@@ -27,7 +27,6 @@ namespace GOAP.Action
 
         public override void Perform()
         {
-            Debug.Log("Healing");
             if (_timer >= HealTime)
             {
                 _agent.ApplyHealing(20);

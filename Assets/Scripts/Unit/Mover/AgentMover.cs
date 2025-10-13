@@ -10,7 +10,7 @@ namespace Unit.Mover
         [SerializeField] private float _moveSpeed = 5f;
         [SerializeField] private float _accelerationFactor = 50f;
         [SerializeField] private float _maxVelocity = 10f;
-        [SerializeField] private float _stoppingDistance = 0.1f;
+        [SerializeField] private float _stoppingDistance = 0.5f;
         [SerializeField] private float _rotationSpeed = 180f;
         [SerializeField] private float _angularAccelerationFactor = 50f;
         [SerializeField] private float _maxAngularVelocity = 360f;
@@ -45,6 +45,7 @@ namespace Unit.Mover
 
         public void SetTargetPosition(Vector3 targetPosition)
         {
+            Debug.Log("SetTargetPosition: " + targetPosition);
             _targetPosition = targetPosition;
             _hasTargetPosition = true;
         }
@@ -79,9 +80,10 @@ namespace Unit.Mover
         {
             if (!_hasTargetPosition) return;
 
-            Vector3 currentPosition = _rigidbody.position;
-            Vector3 displacement = _targetPosition - currentPosition;
-            float distance = displacement.magnitude;
+            var currentPosition = _rigidbody.position;
+            var displacement = _targetPosition - currentPosition;
+            displacement.y = 0;
+            var distance = displacement.magnitude;
 
             if (distance <= _stoppingDistance)
             {
@@ -90,10 +92,9 @@ namespace Unit.Mover
                 return;
             }
 
-            Vector3 desiredVelocity = displacement.normalized * _moveSpeed;
-
-            Vector3 velocityError = desiredVelocity - _rigidbody.linearVelocity;
-            Vector3 force = velocityError * _accelerationFactor;
+            var desiredVelocity = displacement.normalized * _moveSpeed;
+            var velocityError = desiredVelocity - _rigidbody.linearVelocity;
+            var force = velocityError * _accelerationFactor;
 
             _rigidbody.AddForce(force, ForceMode.Acceleration);
 
