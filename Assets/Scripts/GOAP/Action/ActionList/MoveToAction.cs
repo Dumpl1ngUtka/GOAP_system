@@ -10,22 +10,35 @@ namespace GOAP.Action
         private IAgentMover _agentMover;
         private Vector3 _targetPosition;
         private float _stoppingDistance = 0.5f;
-        private Transform _target;
         
         public override string Name => "MoveToAction";
         public override float Cost => 1.0f;
+
+        public MoveToAction(IAgentMover agentMover)
+        {
+            _agentMover = agentMover;
+        }
         
         public override void OnEnter()
         {
-            if (TryGetTargetTransform(out _target))
-                _agentMover.SetTargetPosition(_target.position);
+            base.OnEnter();
+            if (Target != null)
+            {
+                var worldObjectForFact = (IWorldObjectForFact)Target;
+                _agentMover.SetTargetPosition(worldObjectForFact.GetWorldTransform().position);
+            }
             else
+            {
+                Debug.Log("TARGET IS NULL");
                 IsFailed = true;
+            }
         }
 
         public override void Perform()
         {
-            
+            Debug.Log("Moving!");
+            if (!_agentMover.IsMoving)
+                IsDone = true;
         }
 
         public override void OnExit()
@@ -36,9 +49,18 @@ namespace GOAP.Action
         public override IEnumerable<FactWithCondition> GetEffects() =>
             new[]
             {
-                new FactWithCondition(FactCondition.Include,new Fact(FactTag.Nearby, PlanContainer.GetTarget())),
+                new FactWithCondition(FactCondition.Include, new Fact(FactTag.Nearby, Target)),
+                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.Around, Target)),
             };
 
-        public override IEnumerable<Fact> GetPreconditions() => new List<Fact>();
+        public override IEnumerable<Fact> GetPreconditions()
+        {
+            return new[]
+            {
+                new Fact(FactTag.Around, Target),
+            };
+        }
+
+        public override IGoapAction Clone() => new MoveToAction(_agentMover);
     }
 }

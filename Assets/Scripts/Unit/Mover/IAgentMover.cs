@@ -1,3 +1,4 @@
+using GOAP.KnowledgeBase;
 using UnityEngine;
 
 namespace Unit.Mover

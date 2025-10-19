@@ -10,6 +10,7 @@ namespace GOAP.Action
         public override float Cost => 0.1f;
         public override void OnEnter()
         {
+            base.OnEnter();
         }
 
         public override void Perform()
@@ -24,6 +25,6 @@ namespace GOAP.Action
         public override IEnumerable<FactWithCondition> GetEffects() => new List<FactWithCondition>();
         
         public override IEnumerable<Fact> GetPreconditions() => new List<Fact>();
-
+        public override IGoapAction Clone() => new IdleAction();
     }
 }

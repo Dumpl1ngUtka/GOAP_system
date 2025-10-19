@@ -7,8 +7,13 @@ namespace GOAP.Goal
 {
     public abstract class GoapGoal : IGoapGoal
     {
+        private IObjectForFact _target;
+        
         protected IPlanContainer PlanContainer;
+        
         public abstract string Name { get; }
+
+        public abstract IObjectForFact GetTarget();
 
         public IGoapGoal Init(IPlanContainer planContainer)
         {

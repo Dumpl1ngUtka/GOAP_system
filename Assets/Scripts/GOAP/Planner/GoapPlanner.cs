@@ -12,13 +12,17 @@ namespace GOAP.Planner
     {
         private class FactComparer : IEqualityComparer<Fact>
         {
-            public bool Equals(Fact x, Fact y)
+            public bool Equals(Fact fact1, Fact fact2)
             {
-                if (ReferenceEquals(x, y)) return true;
-                if (x is null || y is null) return false;
-                if (x.Tag != y.Tag) return false;
-                if (x.Object == null) return y.Object == null;
-                return x.Object.Equals(y.Object);
+                if (ReferenceEquals(fact1, fact2)) 
+                    return true;
+                if (fact1 is null || fact2 is null) 
+                    return false;
+                if (fact1.Tag != fact2.Tag) 
+                    return false;
+                if (fact1.Object == null) 
+                    return fact2.Object == null;
+                return fact1.Object.Equals(fact2.Object);
             }
 
             public int GetHashCode(Fact obj)
@@ -45,24 +49,32 @@ namespace GOAP.Planner
             {
                 foreach (var cond in desiredConditions)
                 {
-                    if (cond.Type == FactCondition.None)
+                    var isNeedToBeInclude = cond.Type == FactCondition.Include;
+                    var has = false;
+                    foreach (var fact in Facts)
                     {
-                        continue;
+                        if (fact.Tag != cond.Fact.Tag)
+                            continue;
+
+                        var factHasAllTags = true;
+                        foreach (var factObjectTag in cond.Fact.ObjectTags)
+                        {
+                            if (!fact.ObjectTags.Contains(factObjectTag))
+                            {
+                                factHasAllTags = false; 
+                                break;
+                            }
+                        }
+
+                        if (factHasAllTags)
+                        {
+                            has = true;
+                            break;
+                        }
                     }
-
-                    bool has = Facts.Contains(cond.Fact);
-
-                    if (cond.Type == FactCondition.Include && !has)
-                    {
+                    if ((has && isNeedToBeInclude || !has && !isNeedToBeInclude) == false)
                         return false;
-                    }
-
-                    if (cond.Type == FactCondition.Exclude && has)
-                    {
-                        return false;
-                    }
                 }
-
                 return true;
             }
 
@@ -88,24 +100,32 @@ namespace GOAP.Planner
             {
                 foreach (var pre in action.GetPreconditions())
                 {
-                    if (!Facts.Contains(pre))
+                    foreach (var fact in Facts)
                     {
-                        return false;
+
+                        if (fact.Tag == pre.Tag)
+                        {
+                            var factHasAllTags = true;
+                            foreach (var preFactTag in pre.ObjectTags)
+                            {
+                                if (!fact.ObjectTags.Contains(preFactTag))
+                                {
+                                    factHasAllTags = false;
+                                    break;
+                                }
+                            }
+                            if (factHasAllTags)
+                                return true;
+                        }
                     }
+                    return false;
                 }
 
                 return action.CheckProceduralPrecondition(Facts);
             }
 
-            public override bool Equals(object obj)
-            {
-                if (!(obj is WorldState other))
-                {
-                    return false;
-                }
-
-                return Facts.SetEquals(other.Facts);
-            }
+            public override bool Equals(object obj) => 
+                obj is WorldState other && Facts.SetEquals(other.Facts);
 
             public override int GetHashCode()
             {
@@ -226,16 +246,8 @@ namespace GOAP.Planner
                         continue;
                     }
 
-                    bool has = state.Facts.Contains(cond.Fact);
-                    if (cond.Type == FactCondition.Include && !has)
-                    {
+                    if (knowledge.CheckFactWithCondition(cond))
                         unsatisfied++;
-                    }
-
-                    if (cond.Type == FactCondition.Exclude && has)
-                    {
-                        unsatisfied++;
-                    }
                 }
 
                 return unsatisfied * minCost;
@@ -273,7 +285,7 @@ namespace GOAP.Planner
                     {
                         continue;
                     }
-
+                    
                     var newState = current.State.ApplyAction(action);
                     var tentativeG = current.G + action.Cost;
 
@@ -285,6 +297,11 @@ namespace GOAP.Planner
                     gScore[newState] = tentativeG;
                     var h = Heuristic(newState);
                     cameFrom[newState] = (current.State, action);
+                    Debug.Log("CurrentPlan for goal: " + goal.Name);
+                    foreach (var a in cameFrom.Values)
+                    {
+                        Debug.Log("----" + a.action.Name);
+                    }
                     var newNode = new Node { State = newState, G = tentativeG, H = h };
                     openSet.Enqueue(newNode, tentativeG + h);
                 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GOAP.Action;
 using UnityEngine;
 
 namespace GOAP.KnowledgeBase
@@ -12,8 +13,8 @@ namespace GOAP.KnowledgeBase
         public void SetFact(Fact fact) =>
             _facts.Add(fact);
 
-        public Fact GetFact(FactTag key) =>
-            _facts.First(fact => fact.Tag == key);
+        public IEnumerable<Fact> GetFactsByTag(FactTag key) => 
+            _facts.Where(fact => fact.Tag == key);
 
         public IEnumerable<Fact> GetAllFacts() => 
             _facts;
@@ -28,7 +29,41 @@ namespace GOAP.KnowledgeBase
         public bool ContainsFact(FactTag key) => 
             _facts.FirstOrDefault(fact => fact.Tag == key) != null;
 
-        public void RemoveAllFacts() =>
+        public bool ContainsFactWithObjectTag(FactTag factTag, ObjectForFactTag tag) => 
+            _facts.Any(fact => fact.Tag == factTag && fact.Object.GetTags().Contains(tag));
+
+        public IEnumerable<Fact> GetFactsWithObjectTag(FactTag factTag, ObjectForFactTag key) => 
+            _facts.Where(fact => fact.Tag == factTag && fact.Object.GetTags().Contains(key));
+
+        public void RemoveAllFacts() => 
             _facts.Clear();
+
+        public bool CheckFactWithCondition(FactWithCondition factWithCondition)
+        {
+            var isNeedToBeInclude = factWithCondition.Type == FactCondition.Include;
+            var has = false;
+            foreach (var fact in _facts)
+            {
+                if (fact.Tag != factWithCondition.Fact.Tag)
+                    continue;
+
+                var factHasAllTags = true;
+                foreach (var factObjectTag in factWithCondition.Fact.ObjectTags)
+                {
+                    if (!fact.ObjectTags.Contains(factObjectTag))
+                    {
+                        factHasAllTags = false; 
+                        break;
+                    }
+                }
+
+                if (factHasAllTags)
+                {
+                    has = true;
+                    break;
+                }
+            }
+            return has && isNeedToBeInclude || !has && !isNeedToBeInclude;
+        }
     }
 }

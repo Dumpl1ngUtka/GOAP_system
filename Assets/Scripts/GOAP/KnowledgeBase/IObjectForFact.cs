@@ -19,5 +19,6 @@ namespace GOAP.KnowledgeBase
         RangeWeapon,
         MeleeWeapon,
         DroppableItem,
+        Enemy,
     }
 }

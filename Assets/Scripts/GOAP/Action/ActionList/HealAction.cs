@@ -9,7 +9,7 @@ namespace GOAP.Action
     {
         private const float HealTime = 2f;
 
-        private IHealth _agent;
+        private IHealth _health;
         private float _timer;
 
         public override string Name => "Heal";
@@ -17,11 +17,12 @@ namespace GOAP.Action
 
         public HealAction(IHealth health)
         {
-            _agent = health;
+            _health = health;
         }
 
         public override void OnEnter()
         {
+            base.OnEnter();
             _timer = 0;
         }
 
@@ -29,7 +30,7 @@ namespace GOAP.Action
         {
             if (_timer >= HealTime)
             {
-                _agent.ApplyHealing(20);
+                _health.ApplyHealing(20);
                 _timer = 0;
             }
             else
@@ -48,6 +49,12 @@ namespace GOAP.Action
                 new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.IsLowHealth)),
             };
 
-        public override IEnumerable<Fact> GetPreconditions() => new List<Fact>();
+        public override IEnumerable<Fact> GetPreconditions() => 
+            new[]
+            {
+                new Fact(FactTag.IsLowHealth),
+            };
+
+        public override IGoapAction Clone() => new HealAction(_health);
     }
 }

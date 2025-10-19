@@ -14,8 +14,14 @@ namespace GOAP.Action
         public abstract float Cost { get; }
         public bool IsDone { get; protected set; }
         public bool IsFailed { get; protected set;}
+        
+        public IObjectForFact Target { get; set; }
 
-        public abstract void OnEnter();
+        public virtual void OnEnter()
+        {
+            IsDone = false;
+            IsFailed = false;
+        }
         public abstract void Perform();
         public abstract void OnExit();
 
@@ -27,13 +33,34 @@ namespace GOAP.Action
 
         public bool CheckProceduralPrecondition(IEnumerable<Fact> facts)
         {
-            if (GetPreconditions() == null)
+            if (!GetPreconditions().Any())
                 return true;
-                    
+            
             foreach (var precondition in GetPreconditions())
             {
-                var isFactContained = facts.Any(fact => fact.Tag == precondition.Tag);
-                if (!isFactContained)
+                var isPreconditionContains = false;
+                foreach (var fact in facts)
+                {
+                    if (fact.Tag == precondition.Tag)
+                    {
+                        var isRightFact = true;
+                        foreach (var preconditionObjectTag in precondition.ObjectTags)
+                        {
+                            if (!fact.ObjectTags.Contains(preconditionObjectTag))
+                            {
+                                isRightFact = false;
+                                break;
+                            }
+                        }
+
+                        if (isRightFact)
+                        {
+                            isPreconditionContains = true;
+                            break;
+                        }
+                    }
+                }
+                if (!isPreconditionContains)
                     return false;
             }
 
@@ -43,7 +70,14 @@ namespace GOAP.Action
         public abstract IEnumerable<FactWithCondition> GetEffects();
 
         public abstract IEnumerable<Fact> GetPreconditions();
-        
+        public abstract IGoapAction Clone();
+        public IGoapAction WithTarget(IObjectForFact target)
+        {
+            Target = target;
+            Debug.Log("Set "+ target + " for " + Name);
+            return this;
+        }
+
         public virtual void ResetAction()
         {
         }

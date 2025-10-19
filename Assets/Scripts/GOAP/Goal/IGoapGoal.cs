@@ -8,6 +8,7 @@ namespace GOAP.Goal
     public interface IGoapGoal
     {
         string Name { get; }
+        IObjectForFact GetTarget();
         IGoapGoal Init(IPlanContainer planContainer);
         float GetPriority(IGoapKnowledge knowledge);
         bool IsValid(IGoapKnowledge knowledge);

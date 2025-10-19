@@ -15,7 +15,7 @@ using UnityEngine;
 
 namespace GOAP.Agent
 {
-    public class GoapAgent : MonoBehaviour, IGoapAgent, IDamageable
+    public class GoapAgent : MonoBehaviour, IGoapAgent, IDamageable, IObjectForFact
     {
         private const float ReplanInterval = 2f;
         private const float UpdateKnowledgeInterval = 2f;
@@ -26,6 +26,7 @@ namespace GOAP.Agent
         private IGoapPlanner _planner;
         private IAgentMover _mover;
         private IHealth _health;
+        private EnemyInfoHolder _enemyInfoHolder;
         private IGoapSensor[] _sensors;
 
         private List<IGoapGoal> _goals = new List<IGoapGoal>();
@@ -46,6 +47,7 @@ namespace GOAP.Agent
             IAgentMover mover, 
             IPlanContainer planContainer,
             IHealth health,
+            EnemyInfoHolder enemyInfoHolder,
             Transform[] patrolPoints,
             params IGoapSensor[] sensors)
         {
@@ -55,6 +57,7 @@ namespace GOAP.Agent
             _mover = mover;
             _health = health;
             _planContainer = planContainer;
+            _enemyInfoHolder = enemyInfoHolder;
             _cancellationTokenSource = new CancellationTokenSource();
 
             _health.Changed += () => _ui.HealthChanged(_health.CurrentHealth, _health.MaxHealth);
@@ -62,11 +65,13 @@ namespace GOAP.Agent
             AddGoal(new EmptyGoal().Init(planContainer));
             AddGoal(new SurviveGoal(health).Init(planContainer));
             AddGoal(new PatrolGoal().Init(planContainer));
+            AddGoal(new EliminateGoal(_enemyInfoHolder).Init(planContainer));
             
             AddAction(new IdleAction().Init(planContainer));
-            AddAction(new MoveToAction().Init(planContainer));
+            AddAction(new MoveToAction(mover).Init(planContainer));
             AddAction(new HealAction(health).Init(planContainer));
             AddAction(new PatrolAction(patrolPoints, mover).Init(planContainer));
+            AddAction(new AttackAction().Init(planContainer));
             
             PeriodicKnowledgeUpdate();
             Debug.Log("Agent init");
@@ -100,23 +105,19 @@ namespace GOAP.Agent
             while (goals.Count > 0)
             {
                 var bestGoal = GetBestGoal(goals);
-                Debug.Log("New best gaol: " + bestGoal.Name);
-                if (TryCreatePlanForGoal(bestGoal, out var plan))
+                if (bestGoal == _currentGoal)
                 {
-                    if (bestGoal != _currentGoal)
-                    {
-                        Debug.Log("Applied");
-                        AbortCurrentPlan();
-                        _planContainer.SetPlan(plan);
-                        SwitchGoal(bestGoal);
-                    }
                     return;
                 }
-                else
+                if (TryCreatePlanForGoal(bestGoal, out var plan))
                 {
-                    Debug.Log("Deny");
-                    goals.Remove(bestGoal);
+                    AbortCurrentPlan();
+                    _planContainer.SetPlan(plan);
+                    SwitchGoal(bestGoal);
+                    return;
                 }
+
+                goals.Remove(bestGoal);
             }
         }
 
@@ -148,16 +149,30 @@ namespace GOAP.Agent
 
         private void ExecuteCurrentPlan()
         {
-            if (_currentAction == null) return;
+            if (_currentAction == null)
+            {
+                Debug.Log("Current action is null");
+                AbortCurrentPlan();
+                return;
+            }
 
             if (_currentAction.IsDone)
             {
+                Debug.Log("Current action is Done");
                 HandleActionCompletion();
                 return;
             }
 
-            if (!_currentAction.CheckProceduralPrecondition(_knowledge.GetAllFacts().ToList()))
+            if (_currentAction.IsFailed)
             {
+                Debug.Log("Current action is failed");
+                AbortCurrentPlan();
+                return;
+            }
+
+            if (!_currentAction.CheckProceduralPrecondition(_knowledge.GetAllFacts()))
+            {
+                Debug.Log("Current action is not procedural precondition");
                 AbortCurrentPlan();
                 return;
             }
@@ -200,15 +215,12 @@ namespace GOAP.Agent
             plan = new Queue<IGoapAction>();
             
             if (goal == null || !goal.IsValid(_knowledge))
-            {
-                Debug.Log("Because goal is invalid");
                 return false;
-            }
 
             plan = _planner.Plan(_knowledge, goal, _availableActions);
-            if (plan.Count == 0)
+            if (plan == null || plan.Count == 0)
             {
-                Debug.Log("Because plan is empty");
+                Debug.Log("Not a plan for goal: " + goal.Name); 
                 return false;
             }
 
@@ -222,6 +234,8 @@ namespace GOAP.Agent
                 _currentAction.OnExit();
                 _currentAction = null;
             }
+            _currentGoal?.OnGoalDeactivated();
+            _currentGoal = null;
             _planContainer.ResetPlan();
         }
 
@@ -234,7 +248,6 @@ namespace GOAP.Agent
         private void PeriodicKnowledgeUpdate()
         {
             _knowledge.RemoveAllFacts();
-            Debug.Log("Starting periodic update");
             
             foreach (var sensor in _sensors)
                 foreach (var fact in sensor.GetFacts())
@@ -245,7 +258,8 @@ namespace GOAP.Agent
                 Debug.Log("Sensors: ");
                 foreach (var fact in  _knowledge.GetAllFacts())
                 {
-                    Debug.Log(fact.Tag);
+                    var s = fact.ObjectTags.Aggregate("", (current, objectTag) => current + (objectTag + " "));
+                    Debug.Log(fact.Tag + " - tag with " + fact.ObjectTags.Count() + " count " + s );
                 }
             }
         }
@@ -254,12 +268,21 @@ namespace GOAP.Agent
         {
             _currentAction = _planContainer.Dequeue();
             _currentAction.OnEnter();
+            Debug.Log("New current action = " + _currentAction);
         }
 
         public void ApplyDamage(float damage)
         {
             var uDamage = (ushort)damage;
             _health.ApplyDamage(uDamage);
+        }
+
+        public IEnumerable<ObjectForFactTag> GetTags()
+        {
+            return new List<ObjectForFactTag>
+            {
+                ObjectForFactTag.Enemy
+            };
         }
     }
 }

@@ -1,7 +1,7 @@
 using GOAP.Action;
 using GOAP.Goal;
 
-namespace GOAP
+namespace GOAP.Agent
 {
     public interface IGoapAgent
     {

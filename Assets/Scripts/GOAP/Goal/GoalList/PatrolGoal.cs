@@ -7,6 +7,7 @@ namespace GOAP.Goal.GoalList
     public class PatrolGoal : GoapGoal
     {
         public override string Name => "PatrolGoal";
+        public override IObjectForFact GetTarget() => null;
 
         public override float GetPriority(IGoapKnowledge knowledge) => 1f;
 

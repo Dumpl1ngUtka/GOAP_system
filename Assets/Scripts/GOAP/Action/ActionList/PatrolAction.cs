@@ -21,6 +21,7 @@ namespace GOAP.Action
         
         public override void OnEnter()
         {
+            base.OnEnter();
             if (_patrolPoints == null || _patrolPoints.Length == 0)
                 IsFailed = true;
             
@@ -47,6 +48,10 @@ namespace GOAP.Action
         }
 
         public override IEnumerable<Fact> GetPreconditions() => new List<Fact>();
+        public override IGoapAction Clone()
+        {
+            return new PatrolAction(_patrolPoints, _agentMover);
+        }
 
         private Transform GetNextPatrolPoint()
         {

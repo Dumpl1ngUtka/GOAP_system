@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Goal\GoalList\EliminateGoal.cs" />
     <Compile Include="Assets\Scripts\GOAP\Spawner\IAgentSpawner.cs" />
     <Compile Include="Assets\Scripts\Items\Item.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\ActionList\MoveToAction.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_ExampleScript_01.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMPro_InstructionOverlay.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexShakeB.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Sensor\SensorList\OutsideSensor.cs" />
     <Compile Include="Assets\Scripts\GOAP\Agent\AgentUI.cs" />
     <Compile Include="Assets\Scripts\GOAP\Spawner\GoapAgentFactory.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
@@ -80,6 +82,7 @@
     <Compile Include="Assets\Scripts\GOAP\Sensor\IGoapSensor.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\SkewTextExample.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\WarpTextExample.cs" />
+    <Compile Include="Assets\Scripts\TEST\Enemy.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\Scripts\Unit\Mover\IAgentMover.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\ActionList\IdleAction.cs" />
@@ -114,6 +117,7 @@
     <Compile Include="Assets\Scripts\GOAP\Sensor\GoapSensor.cs" />
     <Compile Include="Assets\Scripts\GOAP\Goal\IGoapGoal.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\IGoapAction.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\ActionList\AttackAction.cs" />
     <Compile Include="Assets\Scripts\EditorGOAP\Connection.cs" />
     <Compile Include="Assets\Scripts\GOAP\KnowledgeBase\IObjectForFact.cs" />
     <Compile Include="Assets\Scripts\Unit\IHealth.cs" />
@@ -130,7 +134,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\Scripts\GOAP\UnitSpawnRepository\AgentData.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Sensor\SensorList\EnemySensor.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Planner\CustomGoapPlanner.cs" />
     <Compile Include="Assets\Scripts\UI\InGameUI\Bar\IUIBar.cs" />
     <Compile Include="Assets\Scripts\GOAP\Planner\IPlanContainer.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\GoapAction.cs" />

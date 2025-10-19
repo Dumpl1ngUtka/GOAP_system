@@ -10,6 +10,7 @@ namespace GOAP.Action
         float Cost { get; }
         bool IsDone { get; }
         bool IsFailed { get; }
+        IObjectForFact Target { get; set; }
         IGoapAction Init(IPlanContainer planContainer);
         void OnEnter();
         void Perform();
@@ -17,6 +18,8 @@ namespace GOAP.Action
         bool CheckProceduralPrecondition(IEnumerable<Fact> facts);
         IEnumerable<FactWithCondition> GetEffects();
         IEnumerable<Fact> GetPreconditions();
+        IGoapAction Clone();
+        IGoapAction WithTarget(IObjectForFact target);
         void ResetAction();
     }
 

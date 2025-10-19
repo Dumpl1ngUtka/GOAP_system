@@ -7,5 +7,6 @@ namespace GOAP.KnowledgeBase
         IsEnemyAround,
         IsPatrolling,
         Nearby,
+        Around,
     }
 }

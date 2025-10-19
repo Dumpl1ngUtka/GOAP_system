@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GOAP.Agent;
+using GOAP.Goal.GoalList;
 using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
@@ -70,14 +71,15 @@ namespace GOAP.Spawner
             var rigidBody = agent.GetComponent<Rigidbody>();
             var mover = agent.GetComponent<AgentMover>();
             var knowledge = new GoapKnowledgeBase();
-            var planner = new GoapPlanner();
+            var planner = new CustomGoapPlanner();
             var health = new AgentHealth(100);
+            var enemyInfoHolder = new EnemyInfoHolder();
             var planerContainer = new PlanContainer();
             
             var healthSensor = new HealthSensor(knowledge, health);
-            var enemySensor = new EnemySensor(knowledge, rigidBody, LayerMask.GetMask("Default"));
+            var enemySensor = new OutsideSensor(knowledge, rigidBody, LayerMask.GetMask("Default"), enemyInfoHolder);
 
-            goapAgent?.Initialize(knowledge, planner, mover, planerContainer, health,_partolPoints, healthSensor, enemySensor);
+            goapAgent?.Initialize(knowledge, planner, mover, planerContainer, health, enemyInfoHolder,_partolPoints, healthSensor, enemySensor);
         }
     }
 }

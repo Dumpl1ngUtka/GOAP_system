@@ -1,3 +1,4 @@
+using GOAP.KnowledgeBase;
 using UnityEngine.Serialization;
 
 namespace Unit.Mover
@@ -10,7 +11,7 @@ namespace Unit.Mover
         [SerializeField] private float _moveSpeed = 5f;
         [SerializeField] private float _accelerationFactor = 50f;
         [SerializeField] private float _maxVelocity = 10f;
-        [SerializeField] private float _stoppingDistance = 0.5f;
+        [SerializeField] private float _stoppingDistance = 1f;
         [SerializeField] private float _rotationSpeed = 180f;
         [SerializeField] private float _angularAccelerationFactor = 50f;
         [SerializeField] private float _maxAngularVelocity = 360f;
@@ -45,7 +46,6 @@ namespace Unit.Mover
 
         public void SetTargetPosition(Vector3 targetPosition)
         {
-            Debug.Log("SetTargetPosition: " + targetPosition);
             _targetPosition = targetPosition;
             _hasTargetPosition = true;
         }

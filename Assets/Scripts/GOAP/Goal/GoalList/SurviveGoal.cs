@@ -8,6 +8,7 @@ namespace GOAP.Goal.GoalList
     public class SurviveGoal : GoapGoal
     {
         public override string Name => "SurviveGoal";
+        public override IObjectForFact GetTarget() => null;
 
         private readonly IHealth _health;
 
