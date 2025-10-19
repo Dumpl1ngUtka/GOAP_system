@@ -53,7 +53,6 @@ namespace GOAP.Sensor
                     FactTag.Nearby : FactTag.Around;
                     
                 facts.Add(new Fact(factTag, factObj));
-                //Debug.Log("Fact from sensor: " + factTag + " : " + factObj + " with pos: " + _rigidbody.position + " and enemy pos: " + agent.transform.position);
             }
             return facts;
         }

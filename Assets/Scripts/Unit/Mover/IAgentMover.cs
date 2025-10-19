@@ -5,6 +5,7 @@ namespace Unit.Mover
 {
     public interface IAgentMover
     {
+        Transform GetSelfTransform();
         void SetTargetPosition(Vector3 targetPosition);
         
         void SetTargetRotation(Quaternion targetRotation);

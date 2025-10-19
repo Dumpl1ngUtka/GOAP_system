@@ -44,6 +44,11 @@ namespace Unit.Mover
             }
         }
 
+        public Transform GetSelfTransform()
+        {
+            return transform;
+        }
+
         public void SetTargetPosition(Vector3 targetPosition)
         {
             _targetPosition = targetPosition;

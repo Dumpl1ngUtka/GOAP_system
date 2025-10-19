@@ -133,8 +133,10 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\Scripts\GOAP\UnitSpawnRepository\AgentData.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Action\ActionList\RunAwayAction.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Scripts\GOAP\Planner\CustomGoapPlanner.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Goal\GoalList\EnemyInfoHolder.cs" />
     <Compile Include="Assets\Scripts\UI\InGameUI\Bar\IUIBar.cs" />
     <Compile Include="Assets\Scripts\GOAP\Planner\IPlanContainer.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\GoapAction.cs" />

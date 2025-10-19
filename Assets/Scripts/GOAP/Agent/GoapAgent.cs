@@ -9,6 +9,7 @@ using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
 using OwnSystems.DamageSystem;
+using TMPro;
 using Unit;
 using Unit.Mover;
 using UnityEngine;
@@ -63,7 +64,7 @@ namespace GOAP.Agent
             _health.Changed += () => _ui.HealthChanged(_health.CurrentHealth, _health.MaxHealth);
             
             AddGoal(new EmptyGoal().Init(planContainer));
-            AddGoal(new SurviveGoal(health).Init(planContainer));
+            AddGoal(new SurviveGoal(_enemyInfoHolder).Init(planContainer));
             AddGoal(new PatrolGoal().Init(planContainer));
             AddGoal(new EliminateGoal(_enemyInfoHolder).Init(planContainer));
             
@@ -72,6 +73,7 @@ namespace GOAP.Agent
             AddAction(new HealAction(health).Init(planContainer));
             AddAction(new PatrolAction(patrolPoints, mover).Init(planContainer));
             AddAction(new AttackAction().Init(planContainer));
+            AddAction(new RunAwayAction(mover).Init(planContainer));
             
             PeriodicKnowledgeUpdate();
             Debug.Log("Agent init");
@@ -151,7 +153,6 @@ namespace GOAP.Agent
         {
             if (_currentAction == null)
             {
-                Debug.Log("Current action is null");
                 AbortCurrentPlan();
                 return;
             }
@@ -281,7 +282,7 @@ namespace GOAP.Agent
         {
             return new List<ObjectForFactTag>
             {
-                ObjectForFactTag.Enemy
+                //ObjectForFactTag.Enemy
             };
         }
     }

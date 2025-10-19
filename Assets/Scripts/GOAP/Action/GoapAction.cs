@@ -81,23 +81,5 @@ namespace GOAP.Action
         public virtual void ResetAction()
         {
         }
-        
-        protected bool TryGetTargetTransform(out Transform target)
-        {
-            var targetInContainer = PlanContainer.GetTarget();
-            if (targetInContainer is IWorldObjectForFact worldObject)
-            {
-                target = worldObject.GetWorldTransform();
-                return true;
-            }
-            target = null;
-            return false;
-        }
-        
-        protected bool TryGetTarget(out IObjectForFact target)
-        {
-            target = PlanContainer.GetTarget();
-            return target != null;
-        }
     }
 }

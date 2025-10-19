@@ -3,8 +3,6 @@ using GOAP.Action;
 using GOAP.Agent;
 using GOAP.KnowledgeBase;
 using GOAP.Planner;
-using TEST;
-using UnityEngine;
 
 namespace GOAP.Goal.GoalList
 {
@@ -51,31 +49,6 @@ namespace GOAP.Goal.GoalList
                     ObjectForFactTag.Enemy
                 }))
             };
-        }
-    }
-
-    public class EnemyInfoHolder
-    {
-        private List<Enemy> _agents = new List<Enemy>();
-        
-        public void AddEnemy(Enemy agent)
-        {
-            _agents.Add(agent);
-        }
-
-        public List<Enemy> GetAllEnemies()
-        {
-            return _agents;
-        }
-
-        public Enemy GetNearestEnemy()
-        {
-            return _agents[Random.Range(0, _agents.Count)]; //TODO change
-        }
-
-        public void Clear()
-        {
-            _agents.Clear();
         }
     }
 }

@@ -1,23 +1,32 @@
 using System.Collections.Generic;
 using GOAP.Action;
 using GOAP.KnowledgeBase;
+using GOAP.Sensor;
 using Unit;
 
 namespace GOAP.Goal.GoalList
 {
     public class SurviveGoal : GoapGoal
     {
+        private const float PriorityPerEnemy = 5;
+        private EnemyInfoHolder _enemyInfoHolder;
+        
         public override string Name => "SurviveGoal";
-        public override IObjectForFact GetTarget() => null;
+        public override IObjectForFact GetTarget() => _enemyInfoHolder.GetNearestEnemy(); 
 
-        private readonly IHealth _health;
 
-        public SurviveGoal(IHealth health)
+        public SurviveGoal(EnemyInfoHolder enemyInfoHolder)
         {
-            _health = health;
+            _enemyInfoHolder = enemyInfoHolder;
         }
 
-        public override float GetPriority(IGoapKnowledge knowledge) => 10f;
+        public override float GetPriority(IGoapKnowledge knowledge)
+        {
+            var priority = _enemyInfoHolder.GetEnemiesCount() * PriorityPerEnemy;
+            if (knowledge.ContainsFact(FactTag.IsLowHealth))
+                priority *= 3;
+            return priority;
+        }
 
         public override bool IsValid(IGoapKnowledge knowledge)
         {
@@ -38,7 +47,7 @@ namespace GOAP.Goal.GoalList
         {
             return new[]
             {
-                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.IsLowHealth, PlanContainer.GetTarget())),
+                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.IsInDangerous)),
             };
         }
     }

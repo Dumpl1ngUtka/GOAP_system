@@ -9,7 +9,6 @@ namespace GOAP.Action
     {
         private IAgentMover _agentMover;
         private Vector3 _targetPosition;
-        private float _stoppingDistance = 0.5f;
         
         public override string Name => "MoveToAction";
         public override float Cost => 1.0f;
