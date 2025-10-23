@@ -20,5 +20,6 @@ namespace GOAP.KnowledgeBase
         MeleeWeapon,
         DroppableItem,
         Enemy,
+        Ally,
     }
 }

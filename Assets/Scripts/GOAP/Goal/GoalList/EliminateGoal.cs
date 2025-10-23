@@ -3,20 +3,22 @@ using GOAP.Action;
 using GOAP.Agent;
 using GOAP.KnowledgeBase;
 using GOAP.Planner;
+using TEST;
+using UnityEngine;
 
 namespace GOAP.Goal.GoalList
 {
     public class EliminateGoal : GoapGoal
     {
-        private EnemyInfoHolder _enemyInfoHolder;
+        private AgentsInfoHolder<Enemy> _enemyInfoHolder;
         public override string Name => "EliminateGoal";
 
-        public EliminateGoal(EnemyInfoHolder enemyInfoHolder)
+        public EliminateGoal(AgentsInfoHolder<Enemy> enemyInfoHolder)
         {
             _enemyInfoHolder = enemyInfoHolder;
         }
         
-        public override IObjectForFact GetTarget() => _enemyInfoHolder.GetNearestEnemy();
+        public override IObjectForFact GetTarget() => _enemyInfoHolder.GetNearestAgent(Vector3.zero);
 
         public override float GetPriority(IGoapKnowledge knowledge) => 2f;
 
@@ -40,14 +42,13 @@ namespace GOAP.Goal.GoalList
         {
             return new[]
             {
-                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.Nearby, new List<ObjectForFactTag>()
-                {
-                    ObjectForFactTag.Enemy
-                })),
-                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.Around, new List<ObjectForFactTag>()
-                {
-                    ObjectForFactTag.Enemy
-                }))
+                new FactWithCondition(
+                    FactCondition.Exclude, 
+                    new Fact(FactTag.Nearby).WithAdditionObjectForFactTags(ObjectForFactTag.Enemy)),
+                
+                new FactWithCondition(
+                    FactCondition.Exclude,
+                    new Fact(FactTag.Around).WithAdditionObjectForFactTags(ObjectForFactTag.Enemy))
             };
         }
     }

@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using GOAP.Agent;
+using GOAP.Goal;
 using GOAP.Goal.GoalList;
 using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
+using TEST;
 using Unit;
 using Unit.Mover;
 using UnityEngine;
@@ -73,13 +75,14 @@ namespace GOAP.Spawner
             var knowledge = new GoapKnowledgeBase();
             var planner = new CustomGoapPlanner();
             var health = new AgentHealth(100);
-            var enemyInfoHolder = new EnemyInfoHolder();
+            var enemyInfoHolder = new AgentsInfoHolder<Enemy>();
+            var alliesInfoHolder = new AgentsInfoHolder<GoapAgent>();
             var planerContainer = new PlanContainer();
             
             var healthSensor = new HealthSensor(knowledge, health);
-            var enemySensor = new OutsideSensor(knowledge, rigidBody, LayerMask.GetMask("Default"), enemyInfoHolder);
+            var enemySensor = new OutsideSensor(knowledge, rigidBody, LayerMask.GetMask("Default"), enemyInfoHolder, alliesInfoHolder);
 
-            goapAgent?.Initialize(knowledge, planner, mover, planerContainer, health, enemyInfoHolder,_partolPoints, healthSensor, enemySensor);
+            goapAgent?.Initialize(knowledge, planner, mover, planerContainer, health, enemyInfoHolder,alliesInfoHolder, _partolPoints, healthSensor, enemySensor);
         }
     }
 }

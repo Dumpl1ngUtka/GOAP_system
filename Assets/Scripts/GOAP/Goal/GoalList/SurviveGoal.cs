@@ -2,27 +2,28 @@ using System.Collections.Generic;
 using GOAP.Action;
 using GOAP.KnowledgeBase;
 using GOAP.Sensor;
+using TEST;
 using Unit;
+using UnityEngine;
 
 namespace GOAP.Goal.GoalList
 {
     public class SurviveGoal : GoapGoal
     {
         private const float PriorityPerEnemy = 5;
-        private EnemyInfoHolder _enemyInfoHolder;
+        private AgentsInfoHolder<Enemy> _enemyInfoHolder;
         
         public override string Name => "SurviveGoal";
-        public override IObjectForFact GetTarget() => _enemyInfoHolder.GetNearestEnemy(); 
-
-
-        public SurviveGoal(EnemyInfoHolder enemyInfoHolder)
+        public override IObjectForFact GetTarget() => _enemyInfoHolder.GetNearestAgent(Vector3.zero); 
+        
+        public SurviveGoal(AgentsInfoHolder<Enemy> enemyInfoHolder)
         {
             _enemyInfoHolder = enemyInfoHolder;
         }
 
         public override float GetPriority(IGoapKnowledge knowledge)
         {
-            var priority = _enemyInfoHolder.GetEnemiesCount() * PriorityPerEnemy;
+            var priority = _enemyInfoHolder.GetAgentsCount() * PriorityPerEnemy;
             if (knowledge.ContainsFact(FactTag.IsLowHealth))
                 priority *= 3;
             return priority;

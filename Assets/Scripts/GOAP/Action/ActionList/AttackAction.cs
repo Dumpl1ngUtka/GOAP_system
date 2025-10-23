@@ -48,7 +48,7 @@ namespace GOAP.Action
         {
             return new[]
             {
-                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.Nearby, ObjectForFactTag.Enemy)),
+                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.Nearby).WithAdditionObjectForFactTags(ObjectForFactTag.Enemy)),
             };
         }
 
@@ -56,7 +56,7 @@ namespace GOAP.Action
         {
             return new[]
             {
-                new Fact(FactTag.Nearby, ObjectForFactTag.Enemy)
+                new Fact(FactTag.Nearby).WithAdditionObjectForFactTags(ObjectForFactTag.Enemy)
             };
         }
 

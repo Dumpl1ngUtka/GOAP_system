@@ -8,30 +8,25 @@ namespace GOAP.KnowledgeBase
     {
         public readonly FactTag Tag;
         public readonly IObjectForFact Object;
-        public readonly IEnumerable<ObjectForFactTag> ObjectTags;
+        public readonly List<ObjectForFactTag> ObjectTags;
 
         public Fact(FactTag tag, IObjectForFact obj = null)
         {
             Tag = tag;
             Object = obj;
-            ObjectTags = obj == null? Array.Empty<ObjectForFactTag>() : obj.GetTags();
+            ObjectTags = obj == null? new List<ObjectForFactTag>() : obj.GetTags().ToList();
         }
         
-        public Fact(FactTag tag, IEnumerable<ObjectForFactTag> objFacts)
+        public Fact WithAdditionObjectForFactTags(params ObjectForFactTag[] facts)
         {
-            Tag = tag;
-            Object = null;
-            ObjectTags = objFacts;
+            ObjectTags.AddRange(facts);
+            return this;
         }
         
-        public Fact(FactTag tag, ObjectForFactTag objFact)
+        public Fact WithAdditionObjectForFactTags(IEnumerable<ObjectForFactTag> facts)
         {
-            Tag = tag;
-            Object = null;
-            ObjectTags = new List<ObjectForFactTag>
-            {
-                objFact
-            };
+            ObjectTags.AddRange(facts);
+            return this;
         }
     }
 }

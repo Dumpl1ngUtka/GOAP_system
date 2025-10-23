@@ -9,6 +9,7 @@ using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
 using OwnSystems.DamageSystem;
+using TEST;
 using TMPro;
 using Unit;
 using Unit.Mover;
@@ -27,7 +28,8 @@ namespace GOAP.Agent
         private IGoapPlanner _planner;
         private IAgentMover _mover;
         private IHealth _health;
-        private EnemyInfoHolder _enemyInfoHolder;
+        private AgentsInfoHolder<Enemy> _enemyInfoHolder;
+        private AgentsInfoHolder<GoapAgent> _alliesInfoHolder;
         private IGoapSensor[] _sensors;
 
         private List<IGoapGoal> _goals = new List<IGoapGoal>();
@@ -42,13 +44,16 @@ namespace GOAP.Agent
         private float _updateKnowledgeTimer;
         
         public IAgentMover Mover => _mover;
+        public Transform GetTransform => transform;
 
-        public void Initialize(IGoapKnowledge knowledge, 
+        public void Initialize(
+            IGoapKnowledge knowledge, 
             IGoapPlanner planner, 
             IAgentMover mover, 
             IPlanContainer planContainer,
             IHealth health,
-            EnemyInfoHolder enemyInfoHolder,
+            AgentsInfoHolder<Enemy> enemyInfoHolder,
+            AgentsInfoHolder<GoapAgent> alliesInfoHolder,
             Transform[] patrolPoints,
             params IGoapSensor[] sensors)
         {
@@ -59,6 +64,7 @@ namespace GOAP.Agent
             _health = health;
             _planContainer = planContainer;
             _enemyInfoHolder = enemyInfoHolder;
+            _alliesInfoHolder = alliesInfoHolder;
             _cancellationTokenSource = new CancellationTokenSource();
 
             _health.Changed += () => _ui.HealthChanged(_health.CurrentHealth, _health.MaxHealth);
@@ -194,6 +200,7 @@ namespace GOAP.Agent
 
             SetNewCurrentAction();
         }
+
 
         public void AddGoal(IGoapGoal goal)
         {

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using GOAP.Agent;
+using GOAP.Goal;
 using GOAP.Goal.GoalList;
 using GOAP.KnowledgeBase;
 using TEST;
@@ -15,13 +16,20 @@ namespace GOAP.Sensor
         private Rigidbody _rigidbody;
         private LayerMask _layerMask;
         private Collider _selfCollider;
-        private EnemyInfoHolder _enemyInfoHolder;
+        private AgentsInfoHolder<Enemy> _enemyInfoHolder;
+        private AgentsInfoHolder<GoapAgent> _alliesInfoHolder;
         
-        public OutsideSensor(IGoapKnowledge knowledge, Rigidbody rigidbody, LayerMask layerMask, EnemyInfoHolder infoHolder) : base(knowledge)
+        public OutsideSensor(
+            IGoapKnowledge knowledge, 
+            Rigidbody rigidbody, 
+            LayerMask layerMask, 
+            AgentsInfoHolder<Enemy> enemyInfoHolder,
+            AgentsInfoHolder<GoapAgent> alliesInfoHolder) : base(knowledge)
         {
             _rigidbody = rigidbody;
             _layerMask = layerMask;
-            _enemyInfoHolder = infoHolder;
+            _enemyInfoHolder = enemyInfoHolder;
+            _alliesInfoHolder = alliesInfoHolder;
             _selfCollider = rigidbody.GetComponent<Collider>();
         }
 
@@ -36,26 +44,33 @@ namespace GOAP.Sensor
                 if (collider == _selfCollider)
                     continue;
                 
+                var additionTags = new List<ObjectForFactTag>();
                 IObjectForFact factObj = null;
-                if (collider.TryGetComponent<GoapAgent>(out var agent)) 
+                
+                if (collider.TryGetComponent<GoapAgent>(out var agent))
+                {
+                    _alliesInfoHolder.AddAgent(agent);
+                    additionTags.Add(ObjectForFactTag.Ally);
                     factObj = agent;
+                } 
 
                 if (collider.TryGetComponent<Enemy>(out var enemy))
                 {
+                    _enemyInfoHolder.AddAgent(enemy);
+                    additionTags.Add(ObjectForFactTag.Enemy);
                     factObj = enemy;
-                    _enemyInfoHolder.AddEnemy(enemy);
                 }
 
                 if (factObj == null)
                     continue;
-                
-                var factTag = Vector3.Distance(_rigidbody.position, collider.transform.position) <= _nearRadius?
-                    FactTag.Nearby : FactTag.Around;
-                    
-                facts.Add(new Fact(factTag, factObj));
+
+                var distanceTag = GetDistanceTag(_rigidbody.position, collider.transform.position);
+                facts.Add(new Fact(distanceTag, factObj).WithAdditionObjectForFactTags(additionTags));
             }
             return facts;
         }
-        
+
+        private FactTag GetDistanceTag(Vector3 pos1, Vector3 pos2) => 
+            Vector3.Distance(pos1, pos2) <= _nearRadius? FactTag.Nearby : FactTag.Around;
     }
 }

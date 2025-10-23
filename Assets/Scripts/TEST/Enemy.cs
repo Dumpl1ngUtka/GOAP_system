@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using GOAP.Action;
+using GOAP.Agent;
+using GOAP.Goal;
 using GOAP.KnowledgeBase;
 using OwnSystems.DamageSystem;
 using UI.InGameUI.Bar;
@@ -7,7 +10,7 @@ using UnityEngine;
 
 namespace TEST
 {
-    public class Enemy : MonoBehaviour, IWorldObjectForFact, IDamageable
+    public class Enemy : MonoBehaviour, IGoapAgent, IWorldObjectForFact, IDamageable
     {
         [SerializeField] private float _health = 100f;
         [SerializeField] private Bar _bar;
@@ -32,6 +35,20 @@ namespace TEST
             _bar.UpdateValue(_currentHealth, _health);
             if (_currentHealth <= 0f)
                 Destroy(gameObject);
+        }
+
+        public Transform GetTransform => transform;
+        
+        public void AddGoal(IGoapGoal goal)
+        {
+        }
+
+        public void RemoveGoal(string goalName)
+        {
+        }
+
+        public void AddAction(IGoapAction action)
+        {
         }
     }
 }

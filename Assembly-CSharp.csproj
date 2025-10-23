@@ -117,6 +117,7 @@
     <Compile Include="Assets\Scripts\GOAP\Sensor\GoapSensor.cs" />
     <Compile Include="Assets\Scripts\GOAP\Goal\IGoapGoal.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\IGoapAction.cs" />
+    <Compile Include="Assets\Scripts\GOAP\Goal\AgentsInfoHolder.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\ActionList\AttackAction.cs" />
     <Compile Include="Assets\Scripts\EditorGOAP\Connection.cs" />
     <Compile Include="Assets\Scripts\GOAP\KnowledgeBase\IObjectForFact.cs" />
@@ -136,7 +137,6 @@
     <Compile Include="Assets\Scripts\GOAP\Action\ActionList\RunAwayAction.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TextMeshProFloatingText.cs" />
     <Compile Include="Assets\Scripts\GOAP\Planner\CustomGoapPlanner.cs" />
-    <Compile Include="Assets\Scripts\GOAP\Goal\GoalList\EnemyInfoHolder.cs" />
     <Compile Include="Assets\Scripts\UI\InGameUI\Bar\IUIBar.cs" />
     <Compile Include="Assets\Scripts\GOAP\Planner\IPlanContainer.cs" />
     <Compile Include="Assets\Scripts\GOAP\Action\GoapAction.cs" />
