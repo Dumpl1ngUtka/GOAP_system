@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{cbc81a9f-9314-75d5-7930-e2845bcdb098}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleFolderIcon", "SimpleFolderIcon.csproj", "{bf58f56b-395e-1867-bdf1-b00d65ac131e}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -14,6 +16,8 @@ Global
 		{3200c88d-c9d8-cb4a-f31f-d3adc748d987}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{cbc81a9f-9314-75d5-7930-e2845bcdb098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{cbc81a9f-9314-75d5-7930-e2845bcdb098}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{bf58f56b-395e-1867-bdf1-b00d65ac131e}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{bf58f56b-395e-1867-bdf1-b00d65ac131e}.Debug|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
