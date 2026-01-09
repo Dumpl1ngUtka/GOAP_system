@@ -15,8 +15,11 @@ namespace GOAP.Goal.GoalList
         private AgentsInfoHolder<GoapAgent> _enemyInfoHolder;
         
         public override string Name => "SurviveGoal";
-        public override IObjectForFact GetTarget() => _enemyInfoHolder.GetNearestAgent(Vector3.zero); 
-        
+        public override IObjectForFact GetTarget()
+        {
+            return _enemyInfoHolder.GetNearestAgent(Vector3.zero);
+        }
+
         public SurviveGoal(AgentsInfoHolder<GoapAgent> enemyInfoHolder)
         {
             _enemyInfoHolder = enemyInfoHolder;
@@ -24,6 +27,8 @@ namespace GOAP.Goal.GoalList
 
         public override float GetPriority(IGoapKnowledge knowledge)
         {
+
+            return 5;
             var priority = _enemyInfoHolder.GetAgentsCount() * PriorityPerEnemy;
             if (knowledge.ContainsFact(FactTag.IsLowHealth))
                 priority *= 3;
@@ -49,7 +54,7 @@ namespace GOAP.Goal.GoalList
         {
             return new[]
             {
-                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.IsInDangerous)),
+                new FactWithCondition(FactCondition.Exclude, new Fact(FactTag.IsLowHealth)),
             };
         }
     }

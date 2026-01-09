@@ -20,12 +20,10 @@ namespace GOAP.Goal.GoalList
         
         public override IObjectForFact GetTarget() => _enemyInfoHolder.GetNearestAgent(Vector3.zero);
 
-        public override float GetPriority(IGoapKnowledge knowledge) => 2f;
+        public override float GetPriority(IGoapKnowledge knowledge) => 7f;
 
         public override bool IsValid(IGoapKnowledge knowledge)
         {
-            Debug.Log(knowledge.ContainsFactWithObjectTag(FactTag.Nearby, ObjectForFactTag.Enemy) ||
-                      knowledge.ContainsFactWithObjectTag(FactTag.Around, ObjectForFactTag.Enemy));
             return knowledge.ContainsFactWithObjectTag(FactTag.Nearby, ObjectForFactTag.Enemy) ||
                    knowledge.ContainsFactWithObjectTag(FactTag.Around, ObjectForFactTag.Enemy);
         }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using GOAP.Agent;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace GOAP.Goal
                     nearestAgent = agent;
                 }
             }
-            return _agents.Count == 0 ? default(T) : _agents[Random.Range(0, _agents.Count)];
+            return _agents.Where(agent => agent != null).Count() == 0 ? default(T) : _agents[Random.Range(0, _agents.Count)];
             
             return nearestAgent;
         }

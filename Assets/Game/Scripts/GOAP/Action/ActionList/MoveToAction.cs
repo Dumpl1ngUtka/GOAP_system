@@ -35,7 +35,6 @@ namespace GOAP.Action
 
         public override void Perform()
         {
-            Debug.Log("Moving!");
             if (!_agentMover.IsMoving)
                 IsDone = true;
         }

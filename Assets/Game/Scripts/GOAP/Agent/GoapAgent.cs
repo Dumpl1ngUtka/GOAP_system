@@ -65,6 +65,7 @@ namespace GOAP.Agent
             _alliesInfoHolder = alliesInfoHolder;
 
             _health.Changed += () => _ui.HealthChanged(_health.CurrentHealth, _health.MaxHealth);
+            _health.Died += () => Die();
 
             AddGoal(new EmptyGoal().Init(planContainer));
             AddGoal(new SurviveGoal(_enemyInfoHolder).Init(planContainer));
@@ -80,6 +81,11 @@ namespace GOAP.Agent
 
             PeriodicKnowledgeUpdate();
             Debug.Log("Agent init");
+        }
+
+        private void Die()
+        {
+            gameObject.SetActive(false);
         }
 
         private void Update()

@@ -443,7 +443,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &304804656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -456,9 +456,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e82e0045ff03054c8dc771c1282f294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _health: 100
-  _bar: {fileID: 502504337}
-  _currentHealth: 0
 --- !u!65 &304804657
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -883,17 +880,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 2061374021480567581, guid: 3613bc33659479643ad176d7f58dbdfa, type: 3}
   m_PrefabInstance: {fileID: 502504334}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &502504337 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8274522621867246307, guid: 3613bc33659479643ad176d7f58dbdfa, type: 3}
-  m_PrefabInstance: {fileID: 502504334}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53d22f38ce8caf54cbd1e16953e5167c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &515128352
 GameObject:
   m_ObjectHideFlags: 0

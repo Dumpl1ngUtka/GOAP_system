@@ -1,1 +1,18 @@
+# Автоматически определять текстовые файлы и преобразовывать их
 * text=auto
+
+# Явно указать, что файлы скриптов и сцен должны обрабатываться определенным образом
+*.cs text diff=csharp
+*.cginc text
+*.shader text
+
+# Unity файлы, которые должны оставаться бинарными (не менять переносы строк)
+*.mat binary
+*.anim binary
+*.unity binary
+*.prefab binary
+*.physicsMaterial2D binary
+*.physicsMaterial binary
+*.asset binary
+*.meta binary
+*.controller binary

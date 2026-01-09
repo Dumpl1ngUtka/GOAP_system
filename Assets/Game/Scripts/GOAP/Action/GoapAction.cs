@@ -74,7 +74,7 @@ namespace GOAP.Action
         public IGoapAction WithTarget(IObjectForFact target)
         {
             Target = target;
-            Debug.Log("Set "+ target + " for " + Name);
+            //Debug.Log("Set "+ target + " for " + Name);
             return this;
         }
 

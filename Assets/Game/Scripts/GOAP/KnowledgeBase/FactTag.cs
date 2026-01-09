@@ -8,5 +8,6 @@ namespace GOAP.KnowledgeBase
         IsPatrolling,
         Nearby,
         Around,
+        Has
     }
 }
