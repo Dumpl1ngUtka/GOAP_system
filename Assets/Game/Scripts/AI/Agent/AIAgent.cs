@@ -7,7 +7,10 @@ using AI.Goal;
 using AI.Knowledge;
 using AI.Planner;
 using AI.Sensors;
+using Unit;
+using Unit.Config;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace AI.Agent
 {
@@ -17,6 +20,8 @@ namespace AI.Agent
         [SerializeField] private string _currentGoalName;
         [SerializeField] private string _currentActionName;
 
+        
+        [SerializeField] private NavMeshAgent _agent;
         private AIPlanner _planner;
         private List<ActionBase> _availableActions = new List<ActionBase>();
         private List<GoalBase> _availableGoals = new List<GoalBase>();
@@ -28,12 +33,13 @@ namespace AI.Agent
 
         private SensorHolder _sensorHolder;
 
-        private void Constructor(
-            Unit.Unit unit
+        public void Constructor(
+            UnitBaseConfig unitConfig,
+            IHealth health
             )
         {
             _sensorHolder = new SensorHolder(
-                new HealthSensor(unit.Health)
+                new HealthSensor(health)
                 );
             
             _planner = new AIPlanner();
@@ -41,8 +47,8 @@ namespace AI.Agent
 
             _availableActions = new List<ActionBase>()
             {
-                new AttackAction(),
-                new MoveToAction()
+                new AttackAction(transform, 1, 1, 10), //TODO from unit or else 
+                new MoveToAction(transform, _agent)
             };
             _availableGoals = GetComponents<GoalBase>().ToList();
         }

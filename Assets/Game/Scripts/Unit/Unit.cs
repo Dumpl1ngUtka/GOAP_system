@@ -1,15 +1,23 @@
+using System;
+using AI.Agent;
+using Unit.Config;
 using UnityEngine;
 
 namespace Unit
 {
     public class Unit : MonoBehaviour
-    {
-        public Stats.Stats Stats { get; private set; }  = new Stats.Stats(100);
-        public IHealth Health { get; set; }
+    { 
+        [SerializeField] private UnitBaseConfig _unitConfig;
+        [SerializeField] private AIAgent _aiAgent;
+        
+        private Parameters _parameters;
+        private IHealth _health;
 
-        public void Init()
+        private void Init(ParametersConfig parametersConfig)
         {
-            
+            _parameters = new Parameters(parametersConfig);
+            _health = new AgentHealth(_unitConfig, _parameters);
+            _aiAgent.Constructor(_unitConfig, _health);
         }
     }
 }

@@ -1,30 +1,30 @@
 using System;
+using Unit.Config;
 
 namespace Unit
 {
     public class AgentHealth : IHealth
     {
-        private ushort _currentHealth;
-        private ushort _maxHealth;
-        public ushort CurrentHealth => _currentHealth;
-        
-        public ushort MaxHealth => _maxHealth;
-        
         public event Action Changed;
         public event Action Died;
+        
+        public int CurrentHealth { get; private set; }
+        public int MaxHealth { get; }
 
-        public AgentHealth(ushort maxHealth)
+        public AgentHealth(
+            UnitBaseConfig unitConfig,
+            Parameters parameters)
         {
-            _maxHealth = maxHealth;
-            _currentHealth = _maxHealth;
+            MaxHealth = unitConfig.HealthPerVitality * parameters.Vitality;
+            CurrentHealth = MaxHealth;
         }
 
         public void ApplyDamage(ushort damage)
         {
-            _currentHealth -= damage;
-            if (_currentHealth <= 0)
+            CurrentHealth -= damage;
+            if (CurrentHealth <= 0)
             {
-                _currentHealth = 0;
+                CurrentHealth = 0;
                 Died?.Invoke();
             }
             Changed?.Invoke();
@@ -32,9 +32,9 @@ namespace Unit
 
         public void ApplyHealing(ushort healing)
         {
-            _currentHealth += healing;
-            if (_currentHealth > MaxHealth) 
-                _currentHealth = MaxHealth;
+            CurrentHealth += healing;
+            if (CurrentHealth > MaxHealth) 
+                CurrentHealth = MaxHealth;
             Changed?.Invoke();
         }
     }

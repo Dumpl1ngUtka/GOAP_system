@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AI.Base;
@@ -7,6 +8,8 @@ namespace AI.Knowledge
 {
     public class AIKnowledge : IKnowledge, IComponentAI
     {
+        public event Action Changed;
+        
         private List<Fact> _facts = new();
 
         private readonly SensorHolder _sensorHolder;
@@ -25,7 +28,8 @@ namespace AI.Knowledge
         {
             _sensorHolder.FactsChanged -= OnSensorsChanged;
         }
-        
+
+
         public IEnumerable<Fact> GetAllFacts()
         {
             return _facts;
@@ -90,12 +94,16 @@ namespace AI.Knowledge
             return facts;
         }
         
-        public void RemoveAllFacts() => 
+        public void RemoveAllFacts()
+        {
             _facts.Clear();
-        
+            Changed?.Invoke();
+        }
+
         private void OnSensorsChanged()
         {
             _facts = _sensorHolder.GetFactsFromAllSensors().ToList();
+            Changed?.Invoke();
         }
     }
 }

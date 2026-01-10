@@ -64,7 +64,7 @@ namespace GOAP.Agent
             _enemyInfoHolder = enemyInfoHolder;
             _alliesInfoHolder = alliesInfoHolder;
 
-            _health.Changed += () => _ui.HealthChanged(_health.CurrentHealth, _health.MaxHealth);
+            //_health.Changed += () => _ui.HealthChanged(_health.CurrentHealth, _health.MaxHealth);
             _health.Died += () => Die();
 
             AddGoal(new EmptyGoal().Init(planContainer));
