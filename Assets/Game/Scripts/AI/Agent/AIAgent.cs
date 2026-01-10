@@ -9,6 +9,7 @@ using AI.Planner;
 using AI.Sensors;
 using Units;
 using Units.Config;
+using Units.Mover;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -19,9 +20,9 @@ namespace AI.Agent
         [Header("Debug")]
         [SerializeField] private string _currentGoalName;
         [SerializeField] private string _currentActionName;
-
         
-        [SerializeField] private NavMeshAgent _agent;
+        [SerializeField] private AgentMover _agentMover;
+        
         private AIPlanner _planner;
         private List<ActionBase> _availableActions = new List<ActionBase>();
         private List<GoalBase> _availableGoals = new List<GoalBase>();
@@ -48,7 +49,7 @@ namespace AI.Agent
             _availableActions = new List<ActionBase>()
             {
                 new AttackAction(transform, 1, 1, 10), //TODO from unit or else 
-                new MoveToAction(transform, _agent)
+                new MoveToAction(transform, _agentMover)
             };
             _availableGoals = GetComponents<GoalBase>().ToList();
         }

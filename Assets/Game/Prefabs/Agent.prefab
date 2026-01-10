@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1589783853428638284}
   - component: {fileID: 1732365803183152521}
   - component: {fileID: -1404065750981162874}
-  - component: {fileID: 4128926970087191238}
+  - component: {fileID: 1675800695717909037}
   - component: {fileID: 3842442357470618231}
   - component: {fileID: 6832220280558760364}
   - component: {fileID: -7755039885070737424}
@@ -156,7 +156,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 896f3b878df24e43a21257d81f703759, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4128926970087191238
+  _unitConfig: {fileID: 0}
+  _aiAgent: {fileID: 0}
+--- !u!114 &1675800695717909037
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -165,10 +167,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1086522091631220665}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfdf3ca0383230644a2809ccaac39f52, type: 3}
+  m_Script: {fileID: 11500000, guid: ef378a1e4f524a4e9b50541f5e4b84d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ui: {fileID: 6832220280558760364}
+  _currentGoalName: TEST
+  _currentActionName: testAction
+  _agent: {fileID: 0}
 --- !u!114 &3842442357470618231
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,7 +220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damage: 10
   _take: 0
-  _damageableAgent: {fileID: 4128926970087191238}
+  _damageableAgent: {fileID: 0}
 --- !u!1 &4385860528244337661
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using AI.Goal;
 using AI.Knowledge;
+using Units.Mover;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,14 +8,13 @@ namespace AI.Actions.Implementation
 {
     public class MoveToAction : ActionBase
     {
-        private NavMeshAgent _agent;
-        private const float StoppingDistance = 1.5f;
-
+        private readonly AgentMover _mover;
+        
         public MoveToAction(
             Transform transform, 
-            NavMeshAgent agent) : base(transform)
+            AgentMover mover) : base(transform)
         {
-            _agent = agent;
+            _mover = mover;
             ActionName = "Move To";
             Cost = 1.0f;
         }
@@ -37,31 +37,18 @@ namespace AI.Actions.Implementation
         {
             if (Target is IWorldObjectForAI worldObject)
             {
-                _agent.isStopped = false;
-                _agent.SetDestination(worldObject.GetWorldTransform().position);
+                _mover.SetTargetPosition(worldObject.GetWorldTransform().position);
             }
         }
 
         public override bool Perform(float deltaTime)
         {
-            if (_agent.pathPending) return false;
-
-            if (_agent.remainingDistance <= StoppingDistance)
-            {
-                return true; 
-            }
-
-            if (Target is IWorldObjectForAI worldObject)
-            {
-                _agent.SetDestination(worldObject.GetWorldTransform().position);
-            }
-
-            return false;
+            return _mover.IsMoving;
         }
 
         public override void OnStop()
         {
-            _agent.isStopped = true;
+            _mover.Stop();
         }
     }
 }

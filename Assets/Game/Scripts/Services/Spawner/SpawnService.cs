@@ -1,13 +1,8 @@
-using GOAP.Agent;
-using GOAP.Goal;
-using GOAP.KnowledgeBase;
-using GOAP.Planner;
-using GOAP.Sensor;
 using Items;
 using Units.Config;
 using UnityEngine;
 
-namespace GOAP.Spawner
+namespace Services.Spawner
 {
     public class SpawnService : MonoBehaviour
     {

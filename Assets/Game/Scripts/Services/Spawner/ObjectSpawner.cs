@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace GOAP.Spawner
+namespace Services.Spawner
 {
     public class ObjectSpawner<T> : ISpawner<T> where T : Component
     {

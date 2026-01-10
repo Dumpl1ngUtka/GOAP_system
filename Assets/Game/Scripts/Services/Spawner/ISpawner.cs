@@ -1,7 +1,6 @@
-using GOAP.Agent;
 using UnityEngine;
 
-namespace GOAP.Spawner
+namespace Services.Spawner
 {
     public interface ISpawner<T> where T : Component
     {
