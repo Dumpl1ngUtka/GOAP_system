@@ -1,7 +1,7 @@
 using System;
-using Unit.Config;
+using Units.Config;
 
-namespace Unit
+namespace Units
 {
     public class AgentHealth : IHealth
     {

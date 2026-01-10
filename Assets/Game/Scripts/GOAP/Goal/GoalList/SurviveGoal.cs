@@ -4,7 +4,6 @@ using GOAP.Agent;
 using GOAP.KnowledgeBase;
 using GOAP.Sensor;
 using TEST;
-using Unit;
 using UnityEngine;
 
 namespace GOAP.Goal.GoalList

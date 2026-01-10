@@ -7,8 +7,8 @@ using AI.Goal;
 using AI.Knowledge;
 using AI.Planner;
 using AI.Sensors;
-using Unit;
-using Unit.Config;
+using Units;
+using Units.Config;
 using UnityEngine;
 using UnityEngine.AI;
 

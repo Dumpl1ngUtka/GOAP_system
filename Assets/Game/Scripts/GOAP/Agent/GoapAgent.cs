@@ -7,8 +7,8 @@ using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
 using OwnSystems.DamageSystem;
-using Unit;
-using Unit.Mover;
+using Units;
+using Units.Mover;
 using UnityEngine;
 
 namespace GOAP.Agent

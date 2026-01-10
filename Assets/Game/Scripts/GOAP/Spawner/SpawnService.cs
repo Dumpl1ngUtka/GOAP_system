@@ -4,43 +4,40 @@ using GOAP.KnowledgeBase;
 using GOAP.Planner;
 using GOAP.Sensor;
 using Items;
-using Unit;
-using Unit.Mover;
+using Units.Config;
 using UnityEngine;
 
 namespace GOAP.Spawner
 {
     public class SpawnService : MonoBehaviour
     {
-        private Unit.Unit _unit;
-        private DroppedItem _droppedItem;
-        private ISpawner<GoapAgent> _agentSpawner;
-        private ISpawner<DroppedItem> _itemSpawner;
-        
-        public void Init(GoapAgent agentPrefab, DroppedItem itemPrefab, ISpawner<GoapAgent> agentSpawner, ISpawner<DroppedItem> itemSpawner)
+        private readonly Units.Unit _unitPrefab;
+        private readonly DroppedItem _droppedItemPrefab;
+        private readonly ISpawner<Units.Unit> _unitSpawner;
+        private readonly ISpawner<DroppedItem> _itemSpawner;
+
+        public SpawnService(
+            Units.Unit unitPrefab, 
+            DroppedItem itemPrefab, 
+            ISpawner<Units.Unit> unitSpawner, 
+            ISpawner<DroppedItem> itemSpawner)
         {
-            //_unit = agentPrefab;
-            _droppedItem = itemPrefab;
-            _agentSpawner = agentSpawner;   
+            _unitPrefab = unitPrefab;
+            _droppedItemPrefab = itemPrefab;
+            _unitSpawner = unitSpawner;   
             _itemSpawner = itemSpawner;
         }
 
-        public void SpawnAgent(int teamID, Vector3 position, Quaternion rotation)
+        public void SpawnAgent(UnitConfig config, Vector3 position, Quaternion rotation)
         {
-            //var agent = _agentSpawner.Spawn(_unit, position, rotation);
-                        
-            
+            Units.Unit unit = _unitSpawner.Spawn(_unitPrefab, position, rotation);
+            unit.Init(config);
         }
         
         public void SpawnItem(Item item, Vector3 position, Quaternion rotation)
         {
-            var droppedItem = _itemSpawner.Spawn(_droppedItem, position, rotation);
+            DroppedItem droppedItem = _itemSpawner.Spawn(_droppedItemPrefab, position, rotation);
             droppedItem.Init(item);
-        }
-
-        public void TMP_SpawnAgent(int teamID)
-        {
-            SpawnAgent(teamID, Vector3.zero, Quaternion.identity);
         }
     }
 }

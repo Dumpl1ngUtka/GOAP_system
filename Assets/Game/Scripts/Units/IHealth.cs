@@ -1,6 +1,6 @@
 using System;
 
-namespace Unit
+namespace Units
 {
     public interface IHealth
     {

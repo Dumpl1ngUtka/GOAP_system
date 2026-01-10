@@ -1,10 +1,7 @@
-using GOAP.KnowledgeBase;
-using UnityEngine.Serialization;
+using UnityEngine;
 
-namespace Unit.Mover
+namespace Units.Mover
 {
-    using UnityEngine;
-
     [RequireComponent(typeof(Rigidbody))]
     public class AgentMover : MonoBehaviour, IAgentMover
     {

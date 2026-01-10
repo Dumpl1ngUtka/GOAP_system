@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AI.Knowledge;
-using Unit;
+using Units;
 
 namespace AI.Sensors
 {

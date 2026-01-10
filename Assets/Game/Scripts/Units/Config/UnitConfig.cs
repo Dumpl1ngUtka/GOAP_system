@@ -1,12 +1,12 @@
 using UnityEngine;
 
-namespace Unit.Config
+namespace Units.Config
 {
     [CreateAssetMenu(
         fileName = "ParametersConfig",
         menuName = "Unit/Configs/ParametersConfig"
     )]
-    public class ParametersConfig : ScriptableObject
+    public class UnitConfig : ScriptableObject
     {
         [field: SerializeField] public ushort Vitality { get; private set; }
         [field: SerializeField] public ushort Dexterity { get; private set; }

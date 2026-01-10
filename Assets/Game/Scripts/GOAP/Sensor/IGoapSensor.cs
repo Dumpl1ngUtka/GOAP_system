@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using GOAP.Action;
 using GOAP.KnowledgeBase;
-using Unit;
 
 namespace GOAP.Sensor
 {

@@ -1,7 +1,6 @@
-using GOAP.KnowledgeBase;
 using UnityEngine;
 
-namespace Unit.Mover
+namespace Units.Mover
 {
     public interface IAgentMover
     {

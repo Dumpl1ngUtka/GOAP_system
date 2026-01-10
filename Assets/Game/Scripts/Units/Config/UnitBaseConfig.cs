@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Unit.Config
+namespace Units.Config
 {
     [CreateAssetMenu(
         fileName = "UnitBaseConfig",

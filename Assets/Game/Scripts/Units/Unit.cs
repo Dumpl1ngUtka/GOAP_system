@@ -1,9 +1,8 @@
-using System;
 using AI.Agent;
-using Unit.Config;
+using Units.Config;
 using UnityEngine;
 
-namespace Unit
+namespace Units
 {
     public class Unit : MonoBehaviour
     { 
@@ -13,9 +12,9 @@ namespace Unit
         private Parameters _parameters;
         private IHealth _health;
 
-        private void Init(ParametersConfig parametersConfig)
+        public void Init(UnitConfig unitConfig)
         {
-            _parameters = new Parameters(parametersConfig);
+            _parameters = new Parameters(unitConfig);
             _health = new AgentHealth(_unitConfig, _parameters);
             _aiAgent.Constructor(_unitConfig, _health);
         }
