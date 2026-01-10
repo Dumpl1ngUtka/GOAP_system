@@ -1,0 +1,18 @@
+{
+    "name": "UIBase",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c72f09f6f091d488db32c4a8164b12ae",
+        "GUID:6c961b0c9f84cee47b805976092d9d7d",
+        "GUID:08e817cd400c2fd4ca682c1fa1673768"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

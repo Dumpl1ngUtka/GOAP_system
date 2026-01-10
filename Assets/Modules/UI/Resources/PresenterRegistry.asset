@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90aa5f0cebf34857ba24fb6627af2894, type: 3}
+  m_Name: PresenterRegistry
+  m_EditorClassIdentifier: 
+  _entries:
+  - InterfaceTypeName: Presenters.Interfaces.NewJelly.INewJellyPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.NewJelly.NewJellyPresenter,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.Confirm.IConfirmPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.Confirm.PrestigeConfirmPresenter,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.JellyInfoWindow.IJellyInfoPresenter,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.JellyInfo.JellyInfoPresenter,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.Settings.ISettingsPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.Settings.SettingsPresenter,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.Ads.IAdsPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.Ads.AdsPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.Prestige.IPrestigePresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.Prestige.PrestigePresenter,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.Tutorial.ITutorialPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.Tutorial.BuyTutorialPresenter,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.Shop.IShopPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.Shop.ShopPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.Confirm.IConfirmPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.Confirm.RestoreConfirmPresenter,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.Claim.IClaimPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.Claim.ClaimPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: Presenters.Interfaces.GameLoop.IGameLoopPresenter, Assembly-CSharp,
+      Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+    ImplementationTypeName: Presenters.Implementations.GameLoop.GameLoopPresenter,
+      Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+  - InterfaceTypeName: ITestPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+    ImplementationTypeName: TestPresenter, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null

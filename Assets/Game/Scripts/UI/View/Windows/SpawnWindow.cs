@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace UI.View.Windows
 {
-    public class SpawnWindow : MonoBehaviour
+    public class SpawnWindow : WindowBase
     {
         [SerializeField] private Button _greenSpawnButton;
         [SerializeField] private Button _redSpawnButton;
