@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 292e4ab0bcec452496a33163d1b9d7cc, type: 3}
+  m_Name: GameConfig
+  m_EditorClassIdentifier: 
+  _startPlayerData:
+    lastSaveTime: 0
+    SoftMoney: 0
+    HardMoney: 0
+    Skips: 0
+    InactivePrestige: 0
+    ActivePrestige: 0
+    PrestigeLevel: 0
+    ClaimLevel: 0
+    CurrentClaimValue: 0
+    SoftSellCount: 0
+    PrestigeSellCount: 0
+    SellJellyCount: 0
+    IsPrestigeConverted: 0
+    UpgradedContainer: 0
+    BoughtJelly: 0
+    SoldJelly: 0
+    ContainerSizeLevel: 0
+    JellyInContainerIds: 
+    UnlockedJelliesWithLevels: []
+    UnlockedSecondOrderJellies: 
+  _startSettingsData:
+    MusicMute: 0
+    SoundMute: 0
+    MusicVolume: 0
+    SoundVolume: 0
+    LanguageIndex: 0
+    LanguageWasModified: 0
+  <AudioConfig>k__BackingField: {fileID: 0}
+  <SettingsConfig>k__BackingField: {fileID: 0}

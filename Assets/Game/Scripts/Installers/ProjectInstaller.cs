@@ -1,4 +1,10 @@
+using Config;
 using Items;
+using Services.Audio;
+using Services.SaveLoad.Data;
+using Services.SaveLoad.Interfaces;
+using Services.SaveLoad.Repositories;
+using Services.SaveLoad.Services;
 using Services.Spawner;
 using Units;
 using UnityEngine;
@@ -11,10 +17,14 @@ namespace Installers
         [Header("Spawner")]
         [SerializeField] private Unit _unitPrefab;
         [SerializeField] private DroppedItem _itemPrefab;
+        [Header("Configs")]
+        [SerializeField] private GameConfig _gameConfig;
         
         public override void InstallBindings()
         {
+            BindAudio();
             BindSpawnService();
+            BindSaveLoad();
         }
 
         private void BindSpawnService()
@@ -26,6 +36,38 @@ namespace Installers
                 .Bind<SpawnService>()
                 .AsSingle()
                 .WithArguments(unitSpawner, itemsSpawner, _itemPrefab, _unitPrefab);      
+        }
+        
+        private void BindSaveLoad()
+        {
+            BindJsonSaveLoad();
+        }
+        
+        private void BindJsonSaveLoad()
+        {
+            Container
+                .Bind<ISaveLoadRepository<PlayerData>>()
+                .To<JsonSaveLoadRepository<PlayerData>>()
+                .AsSingle()
+                .WithArguments("playerSave.json");
+            
+            Container
+                .Bind<ISaveLoadRepository<SettingsData>>()
+                .To<JsonSaveLoadRepository<SettingsData>>()
+                .AsSingle()
+                .WithArguments("settingsSave.json");
+
+            Container
+                .Bind<SaveLoadService>()
+                .AsSingle();
+        }
+        
+        private void BindAudio()
+        {
+            Container
+                .Bind<AudioService>()
+                .AsSingle()
+                .WithArguments(_gameConfig.AudioConfig);
         }
     }
 }
