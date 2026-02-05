@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: UIConfig
   m_EditorClassIdentifier: 
   <UiRoot>k__BackingField: {fileID: 0}
-  _popupDatas: []
+  _popupDatas:
+  - Id: SettingsPopup
+    Prefab: {fileID: 9078668424165085427, guid: 21218de6a367486449fec59863421582, type: 3}
   _widgetDatas: []
   _windowDatas: []

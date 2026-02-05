@@ -15,30 +15,10 @@ MonoBehaviour:
   _startPlayerData:
     lastSaveTime: 0
     SoftMoney: 0
-    HardMoney: 0
-    Skips: 0
-    InactivePrestige: 0
-    ActivePrestige: 0
-    PrestigeLevel: 0
-    ClaimLevel: 0
-    CurrentClaimValue: 0
-    SoftSellCount: 0
-    PrestigeSellCount: 0
-    SellJellyCount: 0
-    IsPrestigeConverted: 0
-    UpgradedContainer: 0
-    BoughtJelly: 0
-    SoldJelly: 0
-    ContainerSizeLevel: 0
-    JellyInContainerIds: 
-    UnlockedJelliesWithLevels: []
-    UnlockedSecondOrderJellies: 
   _startSettingsData:
     MusicMute: 0
     SoundMute: 0
     MusicVolume: 0
     SoundVolume: 0
-    LanguageIndex: 0
-    LanguageWasModified: 0
-  <AudioConfig>k__BackingField: {fileID: 0}
-  <SettingsConfig>k__BackingField: {fileID: 0}
+  <AudioConfig>k__BackingField: {fileID: 11400000, guid: ee46060762ec34a4983d661dd4d43683, type: 2}
+  <SettingsConfig>k__BackingField: {fileID: 11400000, guid: a2b12f0eb099bb144832d6b0b2442bbf, type: 2}

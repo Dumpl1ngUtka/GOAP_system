@@ -12,4 +12,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc4daa33edb64698b995718667a3d80c, type: 3}
   m_Name: SettingsConfig
   m_EditorClassIdentifier: 
-  <Languages>k__BackingField: []
