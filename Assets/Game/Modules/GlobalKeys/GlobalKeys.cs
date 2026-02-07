@@ -27,8 +27,7 @@ public static class GlobalKeys
     public class WorldObject
     {
         public const string Enemy = nameof(Enemy);
-        public const string EnemyTower = nameof(EnemyTower);
-        public const string OwnTower = nameof(OwnTower);
+        public const string Ally = nameof(Ally);
     }
     
     public class UI

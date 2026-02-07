@@ -7,15 +7,15 @@ namespace AI.Knowledge
 {
     public class Fact
     {
-        public readonly IObjectForAI Object;
         public readonly string ConditionTag;
-        public readonly string ObjectTag;
+        public readonly string[] ObjectTags;
 
-        public Fact(string conditionTag, string objectTag, IObjectForAI aiObject = null)
+        public Fact(
+            string conditionTag, 
+            params string[] objectTags)
         {
             ConditionTag = conditionTag;
-            ObjectTag = objectTag;
-            Object = aiObject;
+            ObjectTags = objectTags;
         }
     }
 }

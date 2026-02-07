@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using AI.Actions;
 using AI.Actions.Implementation;
+using AI.Configs;
 using AI.Goal;
+using AI.Goal.Implementation;
 using AI.Knowledge;
 using AI.Planner;
 using AI.Sensors;
@@ -17,10 +19,7 @@ namespace AI.Agent
 {
     public class AIAgent : MonoBehaviour
     {
-        [Header("Debug")]
-        [SerializeField] private string _currentGoalName;
-        [SerializeField] private string _currentActionName;
-        
+        [SerializeField] private AIConfig _config;
         [SerializeField] private AgentMover _agentMover;
         
         private AIPlanner _planner;
@@ -35,12 +34,14 @@ namespace AI.Agent
         private SensorHolder _sensorHolder;
 
         public void Constructor(
+            string teamKey,
             UnitBaseConfig unitConfig,
             IHealth health
             )
         {
             _sensorHolder = new SensorHolder(
-                new HealthSensor(health)
+                new HealthSensor(health),
+                new VisualSensor(transform, teamKey, _config)
                 );
             
             _planner = new AIPlanner();
@@ -51,7 +52,11 @@ namespace AI.Agent
                 new AttackAction(transform, 1, 1, 10), //TODO from unit or else 
                 new MoveToAction(transform, _agentMover)
             };
-            _availableGoals = GetComponents<GoalBase>().ToList();
+            
+            _availableGoals = new List<GoalBase>()
+            {
+                new IdleGoal()
+            };
         }
 
         private void OnEnable()
@@ -72,7 +77,7 @@ namespace AI.Agent
 
                 if (isComplete)
                 {
-                    Debug.Log($"<color=green>Action completed: {_currentAction.ActionName}</color>");
+                    Debug.Log($"<color=green>Action completed: {nameof(_currentAction)}</color>");
                     _currentAction.OnStop();
                     
                     _currentAction = null;
@@ -86,11 +91,10 @@ namespace AI.Agent
             if (_actionPlan != null && _actionPlan.Count > 0)
             {
                 _currentAction = _actionPlan.Dequeue();
-                _currentActionName = _currentAction.ActionName;
                 
                 if (_currentAction.IsValid()) 
                 {
-                    Debug.Log($"Starting action: {_currentAction.ActionName}");
+                    Debug.Log($"Starting action: {nameof(_currentAction)}");
                     _currentAction.OnStart();
                     return;
                 }
@@ -115,35 +119,16 @@ namespace AI.Agent
 
         private void CalculateNewGoalAndPlan()
         {
-            GoalBase bestGoal = null;
-            float highestPriority = -1;
-
-            foreach (var goal in _availableGoals)
-            {
-                if (goal.ValidateAndCalculatePriority(_knowledgeBase.GetAllFacts()))
-                {
-                    if (goal.Priority > highestPriority)
-                    {
-                        highestPriority = goal.Priority;
-                        bestGoal = goal;
-                    }
-                }
-            }
-
-            if (bestGoal == null || highestPriority <= 0)
-            {
-                _currentGoalName = "Idle";
-                _currentActionName = "None";
+            GoalBase bestGoal = GetBestGoal();
+            if (bestGoal == null) 
                 return;
-            }
 
             if (_currentGoal != bestGoal || _actionPlan == null)
             {
                 _currentGoal = bestGoal;
-                _currentGoalName = _currentGoal.Name;
                 _currentGoal.OnGoalActivated();
 
-                Debug.Log($"Planning for goal: {_currentGoal.Name} (Priority: {_currentGoal.Priority})");
+                Debug.Log($"Planning for goal: {nameof(_currentGoal)} (Priority: {_currentGoal.GetPriority(_knowledgeBase.GetAllFacts())})");
 
                 Queue<ActionBase> plan = 
                     _planner.Plan(this, _availableActions, _knowledgeBase.GetAllFacts(), _currentGoal);
@@ -155,11 +140,29 @@ namespace AI.Agent
                 }
                 else
                 {
-                    Debug.LogWarning($"<color=red>No plan found for goal: {_currentGoal.Name}</color>");
+                    Debug.LogWarning($"<color=red>No plan found for goal: {nameof(_currentGoal)}</color>");
                     _currentGoal.OnGoalDeactivated();
                     _currentGoal = null;
                 }
             }
+        }
+
+        private GoalBase GetBestGoal()
+        {
+            GoalBase bestGoal = null;
+            float highestPriority = -1;
+            
+            foreach (GoalBase goal in _availableGoals)
+            {
+                float priority = goal.GetPriority(_knowledgeBase.GetAllFacts());
+                if (priority > highestPriority)
+                {
+                    highestPriority = priority;
+                    bestGoal = goal;
+                }
+            }
+            
+            return bestGoal;
         }
     }
 }

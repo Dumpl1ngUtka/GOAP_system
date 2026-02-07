@@ -98,7 +98,7 @@ namespace AI.Planner
             {
                 bool factExists = worldState.Any(f => 
                     f.ConditionTag == cond.ConditionTag &&
-                    f.ObjectTag == cond.ObjectTag &&
+                    f.ObjectTags == cond.ObjectTag &&
                     (cond.SpecificObject == null || f.Object == cond.SpecificObject)
                 );
                 

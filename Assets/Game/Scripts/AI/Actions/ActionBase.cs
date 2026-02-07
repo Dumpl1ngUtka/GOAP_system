@@ -7,7 +7,6 @@ namespace AI.Actions
 {
     public abstract class ActionBase
     {
-        public string ActionName;
         public float Cost = 1.0f;
         
         protected readonly Transform Transform;

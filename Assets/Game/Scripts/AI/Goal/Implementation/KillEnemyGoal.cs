@@ -1,44 +1,40 @@
 using System.Collections.Generic;
 using System.Linq;
 using AI.Knowledge;
+using AI.Sensors;
 
 namespace AI.Goal.Implementation
 {
     public class KillEnemyGoal : GoalBase
     {
-        private IObjectForAI _currentTarget;
+        private readonly IObjectForAI _currentTarget;
+        private readonly VisualSensor _visualSensor; 
 
-        public KillEnemyGoal()
+        public KillEnemyGoal(
+            IObjectForAI currentTarget,
+            VisualSensor visualSensor)
         {
-            Name = "Kill Enemy";
+            _currentTarget = currentTarget;
+            _visualSensor = visualSensor;
         }
 
-        public override bool ValidateAndCalculatePriority(IEnumerable<Fact> knowledgeBase)
+        public override IEnumerable<GoalCondition> GetDesiredState()
         {
-            _desiredState.Clear();
-            _currentTarget = null;
-            
-            Fact enemyFact = knowledgeBase.FirstOrDefault(f => 
-                f.ConditionTag == GlobalKeys.ConditionTag.Nearby && 
-                f.ObjectTag ==  GlobalKeys.WorldObject.Enemy);
-
-            if (enemyFact == null)
+            return new[]
             {
-                Priority = 0;
-                return false; 
-            }
-            
-            _currentTarget = enemyFact.Object;
-            
-            _desiredState.Add(new GoalCondition(
-                GlobalKeys.ConditionTag.Nearby, 
-                GlobalKeys.WorldObject.Enemy, 
-                mustExist: false,
-                specificObject: _currentTarget
-            ));
+                new GoalCondition(
+                    GlobalKeys.ConditionTag.Nearby,
+                    GlobalKeys.WorldObject.Enemy,
+                    mustExist: false,
+                    specificObject: _currentTarget)
+            };
+        }
 
-            Priority = 100; 
-            return true;
+        public override float GetPriority(IEnumerable<Fact> knowledgeBase)
+        {
+            if (_visualSensor == null)
+                return 0;
+            return 100;
         }
     }
 }

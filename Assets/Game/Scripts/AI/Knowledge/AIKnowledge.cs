@@ -50,7 +50,7 @@ namespace AI.Knowledge
                 bool factHasAllTags = true;
                 foreach (string objectTag in enumerable)
                 {
-                    if (!fact.ObjectTag.Contains(objectTag))
+                    if (!fact.ObjectTags.Contains(objectTag))
                     {
                         factHasAllTags = false; 
                         break;
@@ -81,7 +81,7 @@ namespace AI.Knowledge
                 bool factHasAllTags = true;
                 foreach (string objectTag in enumerable)
                 {
-                    if (!fact.ObjectTag.Contains(objectTag))
+                    if (!fact.ObjectTags.Contains(objectTag))
                     {
                         factHasAllTags = false; 
                         break;
