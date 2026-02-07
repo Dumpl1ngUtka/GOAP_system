@@ -47,4 +47,10 @@ public static class GlobalKeys
             public const string GameLoopWindow = nameof(GameLoopWindow);
         }
     }
+
+    public class Team
+    {
+        public const string Alpha = nameof(Alpha);
+        public const string Beta = nameof(Beta);
+    }
 }

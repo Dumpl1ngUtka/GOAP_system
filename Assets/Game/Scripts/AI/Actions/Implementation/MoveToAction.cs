@@ -1,8 +1,5 @@
-using AI.Goal;
 using AI.Knowledge;
 using Units.Mover;
-using UnityEngine;
-using UnityEngine.AI;
 
 namespace AI.Actions.Implementation
 {
@@ -11,28 +8,12 @@ namespace AI.Actions.Implementation
         private readonly AgentMover _mover;
         
         public MoveToAction(
-            Transform transform, 
-            AgentMover mover) : base(transform)
+            IObjectForAI target, 
+            AgentMover mover) : base(target)
         {
             _mover = mover;
-            ActionName = "Move To";
-            Cost = 1.0f;
         }
-
-        protected override void DefinePreconditionsAndEffects()
-        {
-            _preconditions.Clear();
-            _effects.Clear();
-
-            if (Target != null)
-            {
-                foreach (string tag in Target.GetTags())
-                {
-                    _effects.Add(new GoalCondition(GlobalKeys.ConditionTag.Nearby, tag, true, Target));
-                }
-            }
-        }
-
+        
         public override void OnStart()
         {
             if (Target is IWorldObjectForAI worldObject)

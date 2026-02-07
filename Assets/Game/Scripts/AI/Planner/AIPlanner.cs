@@ -9,147 +9,169 @@ namespace AI.Planner
 {
     public class AIPlanner
     {
-        private class PlanNode
-        {
-            public PlanNode Parent;
-            public ActionBase Action;
-            public IObjectForAI ActionTarget;
-            
-            public List<GoalCondition> RequiredState; 
-            
-            public float Cost;
-            
-            public PlanNode(PlanNode parent, ActionBase action, IObjectForAI target, List<GoalCondition> state, float cost)
-            {
-                Parent = parent;
-                Action = action;
-                ActionTarget = target;
-                RequiredState = state;
-                Cost = cost;
-            }
-        }
-        
         public Queue<ActionBase> Plan(
-            MonoBehaviour agent, 
-            List<ActionBase> availableActions, 
-            IEnumerable<Fact> worldKnowledge, 
+            List<ActionStrategy> availableStrategies, 
+            IEnumerable<Fact> worldState, 
             GoalBase goal)
         {
-            List<GoalCondition> goalConditions = goal.GetDesiredState().ToList();
-            List<Fact> currentWorldState = worldKnowledge.ToList();
+            List<Node> leaves = new List<Node>();
+            Node startNode = new Node(null, 0, new List<Fact>(worldState), null, null);
             
-            PlanNode startNode = new PlanNode(null, null, null, goalConditions, 0);
+            // We need to collect potential targets.
+            // Since Fact doesn't store the object reference, we rely on the Goal's SpecificObject 
+            // or assume strategies can work with null targets for now, 
+            // OR we assume the caller might provide a list of relevant objects (not in current signature).
             
-            List<PlanNode> openList = new List<PlanNode> { startNode };
-            
-            int iterations = 0;
-            int maxIterations = 100; 
+            // However, to make it work with the current structure:
+            // We can extract potential targets from the Goal conditions if they have SpecificObject set.
+            HashSet<IObjectForAI> potentialTargets = new HashSet<IObjectForAI>();
+            potentialTargets.Add(null); // Always consider 'no target' (self)
 
-            while (openList.Count > 0 && iterations < maxIterations)
+            foreach (var condition in goal.GetDesiredState())
             {
-                iterations++;
-                
-                openList.Sort((a, b) => (a.Cost + a.RequiredState.Count).CompareTo(b.Cost + b.RequiredState.Count));
-                PlanNode currentNode = openList[0];
-                openList.RemoveAt(0);
-                
-                if (AreConditionsMet(currentNode.RequiredState, currentWorldState))
+                if (condition.SpecificObject != null)
                 {
-                    return ReconstructPath(currentNode);
+                    potentialTargets.Add(condition.SpecificObject);
                 }
-                
-                foreach (var action in availableActions)
+            }
+
+            bool success = BuildGraph(startNode, leaves, availableStrategies, goal, potentialTargets);
+
+            if (!success)
+            {
+                return null;
+            }
+
+            Node cheapestNode = null;
+            foreach (Node leaf in leaves)
+            {
+                if (cheapestNode == null || leaf.Cost < cheapestNode.Cost)
                 {
-                    var satisfiableConditions = GetSatisfiableConditions(action, currentNode.RequiredState);
+                    cheapestNode = leaf;
+                }
+            }
 
-                    foreach (var condition in satisfiableConditions)
+            List<ActionBase> result = new List<ActionBase>();
+            Node n = cheapestNode;
+            while (n != null)
+            {
+                if (n.Strategy != null)
+                {
+                    result.Insert(0, n.Strategy.CreateAction(n.Target));
+                }
+                n = n.Parent;
+            }
+
+            Queue<ActionBase> queue = new Queue<ActionBase>();
+            foreach (var a in result)
+            {
+                queue.Enqueue(a);
+            }
+            return queue;
+        }
+
+        private bool BuildGraph(
+            Node parent, 
+            List<Node> leaves, 
+            List<ActionStrategy> strategies, 
+            GoalBase goal,
+            HashSet<IObjectForAI> potentialTargets)
+        {
+            bool found = false;
+
+            foreach (var strategy in strategies)
+            {
+                foreach (var target in potentialTargets)
+                {
+                    if (!CheckPreconditions(strategy, target, parent.State))
+                        continue;
+
+                    List<Fact> currentState = new List<Fact>(parent.State);
+                    ApplyEffects(strategy, target, currentState);
+
+                    Node node = new Node(parent, parent.Cost + strategy.GetCost(target), currentState, strategy, target);
+
+                    if (GoalAchieved(goal, currentState))
                     {
-                        IObjectForAI target = condition.SpecificObject;
-                        action.Setup(target); 
-                        List<GoalCondition> newRequiredState = new List<GoalCondition>(currentNode.RequiredState);
-                        
-                        newRequiredState.RemoveAll(c => c.ConditionTag == condition.ConditionTag && c.ObjectTag == condition.ObjectTag);
-
-                        foreach (var precond in action.Preconditions)
+                        leaves.Add(node);
+                        found = true;
+                    }
+                    else
+                    {
+                        // Simple depth limit or cycle check could be added here
+                        if (node.Cost < 100) // Arbitrary cost limit to prevent infinite loops
                         {
-                            if (!newRequiredState.Any(existing => 
-                                existing.ConditionTag == precond.ConditionTag && 
-                                existing.ObjectTag == precond.ObjectTag && 
-                                existing.SpecificObject == precond.SpecificObject))
-                            {
-                                newRequiredState.Add(precond);
-                            }
+                            if (BuildGraph(node, leaves, strategies, goal, potentialTargets))
+                                found = true;
                         }
-
-                        float newCost = currentNode.Cost + action.Cost;
-                        PlanNode neighbor = new PlanNode(currentNode, action, target, newRequiredState, newCost);
-                        
-                        openList.Add(neighbor);
                     }
                 }
             }
-            
-            return null;
+
+            return found;
         }
-        
-        private bool AreConditionsMet(List<GoalCondition> conditions, List<Fact> worldState)
+
+        private bool CheckPreconditions(ActionStrategy strategy, IObjectForAI target, List<Fact> state)
         {
-            foreach (var cond in conditions)
+            foreach (var condition in strategy.GetPreconditions(target))
             {
-                bool factExists = worldState.Any(f => 
-                    f.ConditionTag == cond.ConditionTag &&
-                    f.ObjectTags == cond.ObjectTag &&
-                    (cond.SpecificObject == null || f.Object == cond.SpecificObject)
+                // Check if the condition is satisfied by the current state (facts)
+                bool exists = state.Any(f => 
+                    f.ConditionTag == condition.ConditionTag && 
+                    (string.IsNullOrEmpty(condition.ObjectTag) || f.ObjectTags.Contains(condition.ObjectTag))
                 );
-                
-                if (factExists != cond.MustExist)
-                {
+
+                if (condition.MustExist && !exists)
                     return false;
-                }
+                
+                if (!condition.MustExist && exists)
+                    return false;
             }
             return true;
         }
-        
-        private List<GoalCondition> GetSatisfiableConditions(ActionBase action, List<GoalCondition> requiredState)
-        {
-            List<GoalCondition> result = new List<GoalCondition>();
 
-            foreach (var req in requiredState)
+        private void ApplyEffects(ActionStrategy strategy, IObjectForAI target, List<Fact> state)
+        {
+            foreach (var effect in strategy.GetEffects(target))
             {
-                if (req.SpecificObject != null)
+                if (effect.MustExist)
                 {
-                    action.Setup(req.SpecificObject);
-                }
-                
-                foreach (var effect in action.Effects)
-                {
-                    if (effect.ConditionTag == req.ConditionTag &&
-                        effect.ObjectTag == req.ObjectTag &&
-                        effect.MustExist == req.MustExist)
+                    bool exists = state.Any(f => 
+                        f.ConditionTag == effect.ConditionTag && 
+                        (string.IsNullOrEmpty(effect.ObjectTag) || f.ObjectTags.Contains(effect.ObjectTag))
+                    );
+                    
+                    if (!exists)
                     {
-                        result.Add(req);
-                        break; 
+                        state.Add(new Fact(effect.ConditionTag, effect.ObjectTag));
                     }
                 }
+                else
+                {
+                    state.RemoveAll(f => 
+                        f.ConditionTag == effect.ConditionTag && 
+                        (string.IsNullOrEmpty(effect.ObjectTag) || f.ObjectTags.Contains(effect.ObjectTag))
+                    );
+                }
             }
-            
-            return result;
         }
-        
-        private Queue<ActionBase> ReconstructPath(PlanNode node)
+
+        private bool GoalAchieved(GoalBase goal, List<Fact> state)
         {
-            List<ActionBase> path = new List<ActionBase>();
-            
-            PlanNode current = node;
-            while (current != null && current.Action != null)
+            foreach (var condition in goal.GetDesiredState())
             {
-                current.Action.Setup(current.ActionTarget);
+                bool exists = state.Any(f => 
+                    f.ConditionTag == condition.ConditionTag && 
+                    (string.IsNullOrEmpty(condition.ObjectTag) || f.ObjectTags.Contains(condition.ObjectTag))
+                );
+
+                if (condition.MustExist && !exists)
+                    return false;
                 
-                path.Add(current.Action);
-                current = current.Parent;
+                if (!condition.MustExist && exists)
+                    return false;
             }
-            
-            return new Queue<ActionBase>(path);
+            return true;
         }
     }
 }

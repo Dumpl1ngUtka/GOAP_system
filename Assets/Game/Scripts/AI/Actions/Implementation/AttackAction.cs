@@ -1,58 +1,27 @@
-using AI.Goal;
 using AI.Knowledge;
 using UnityEngine;
 
 namespace AI.Actions.Implementation
 {
    public class AttackAction : ActionBase
-    {
+   {
         private float _attackTimer;
-        private float _attackCooldown = 1.0f;
-        private int _damage = 10;
+        private readonly int _damage;
+
+        private readonly Transform _selfTransform;
+        private readonly float _attackCooldown;
 
         public AttackAction(
             Transform transform, 
-            float attackTimer, 
+            IObjectForAI target, 
             float attackCooldown, 
-            int damage) : base(transform)
+            int damage) : base(target)
         {
-            _attackTimer = attackTimer;
+            _selfTransform = transform;
             _attackCooldown = attackCooldown;
             _damage = damage;
-            
-            ActionName = "Attack Enemy";
-            Cost = 10.0f;
         }
-
-        protected override void DefinePreconditionsAndEffects()
-        {
-            _preconditions.Clear();
-            _effects.Clear();
-
-            if (Target != null)
-            {
-                _preconditions.Add(new GoalCondition(
-                    GlobalKeys.ConditionTag.Nearby, 
-                    "Enemy", 
-                    true, 
-                    Target
-                ));
-
-                _preconditions.Add(new GoalCondition(
-                    GlobalKeys.ConditionTag.Has,
-                    GlobalKeys.Tool.MeleeWeapon,
-                    true
-                ));
-
-                _effects.Add(new GoalCondition(
-                    GlobalKeys.ConditionTag.Nearby,
-                    "Enemy",
-                    false,
-                    Target
-                ));
-            }
-        }
-
+        
         public override void OnStart()
         {
             _attackTimer = 0;
@@ -62,10 +31,10 @@ namespace AI.Actions.Implementation
         {
             if (Target is IWorldObjectForAI t)
             {
-                Vector3 dir = t.GetWorldTransform().position - Transform.position;
+                Vector3 dir = t.GetWorldTransform().position - _selfTransform.position;
                 dir.y = 0;
                 if (dir != Vector3.zero)
-                    Transform.rotation = Quaternion.LookRotation(dir);
+                    _selfTransform.rotation = Quaternion.LookRotation(dir);
             }
 
             _attackTimer -= deltaTime;
@@ -86,7 +55,7 @@ namespace AI.Actions.Implementation
 
             return false;
         }
-        
+
         private bool CheckIfEnemyDead(IObjectForAI target)
         {
             return Random.value > 0.8f;

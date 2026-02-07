@@ -16,7 +16,7 @@ namespace Units
         {
             _parameters = new Parameters(unitConfig);
             _health = new AgentHealth(_unitConfig, _parameters);
-            _aiAgent.Constructor(_unitConfig, _health);
+            _aiAgent.Constructor(GlobalKeys.Team.Alpha, _unitConfig, _health);
         }
     }
 }

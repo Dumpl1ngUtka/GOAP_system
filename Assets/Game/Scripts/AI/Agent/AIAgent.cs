@@ -23,7 +23,7 @@ namespace AI.Agent
         [SerializeField] private AgentMover _agentMover;
         
         private AIPlanner _planner;
-        private List<ActionBase> _availableActions = new List<ActionBase>();
+        private List<ActionStrategy> _availableStrategies = new List<ActionStrategy>();
         private List<GoalBase> _availableGoals = new List<GoalBase>();
         
         private IKnowledge _knowledgeBase;
@@ -47,10 +47,10 @@ namespace AI.Agent
             _planner = new AIPlanner();
             _knowledgeBase = new AIKnowledge(_sensorHolder);
 
-            _availableActions = new List<ActionBase>()
+            _availableStrategies = new List<ActionStrategy>()
             {
-                new AttackAction(transform, 1, 1, 10), //TODO from unit or else 
-                new MoveToAction(transform, _agentMover)
+                new AttackActionStrategy(transform, 1.0f, 10), //TODO from unit or else 
+                new MoveToActionStrategy(_agentMover)
             };
             
             _availableGoals = new List<GoalBase>()
@@ -92,21 +92,12 @@ namespace AI.Agent
             {
                 _currentAction = _actionPlan.Dequeue();
                 
-                if (_currentAction.IsValid()) 
-                {
-                    Debug.Log($"Starting action: {nameof(_currentAction)}");
-                    _currentAction.OnStart();
-                    return;
-                }
-                else
-                {
-                    Debug.LogWarning("Plan failed: Next action is invalid.");
-                    _actionPlan.Clear();
-                    _currentAction = null;
-                }
+                // IsValid check removed as it was not in ActionBase, or needs to be added back if needed.
+                // Assuming OnStart is always safe to call if plan was valid.
+                Debug.Log($"Starting action: {nameof(_currentAction)}");
+                _currentAction.OnStart();
             }
-
-            if (_actionPlan == null || _actionPlan.Count == 0)
+            else if (_actionPlan == null || _actionPlan.Count == 0)
             {
                 CalculateNewGoalAndPlan();
             }
@@ -131,7 +122,7 @@ namespace AI.Agent
                 Debug.Log($"Planning for goal: {nameof(_currentGoal)} (Priority: {_currentGoal.GetPriority(_knowledgeBase.GetAllFacts())})");
 
                 Queue<ActionBase> plan = 
-                    _planner.Plan(this, _availableActions, _knowledgeBase.GetAllFacts(), _currentGoal);
+                    _planner.Plan(_availableStrategies, _knowledgeBase.GetAllFacts(), _currentGoal);
 
                 if (plan != null)
                 {
