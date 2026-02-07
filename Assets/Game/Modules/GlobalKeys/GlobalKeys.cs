@@ -28,6 +28,7 @@ public static class GlobalKeys
     {
         public const string Enemy = nameof(Enemy);
         public const string Ally = nameof(Ally);
+        public const string DroppedItem = nameof(DroppedItem);
     }
     
     public class UI
@@ -35,6 +36,7 @@ public static class GlobalKeys
         public class Popup
         {
             public const string SettingsPopup = nameof(SettingsPopup);
+            public const string PausePopup = nameof(PausePopup);
         }
 
         public class Widget
@@ -44,7 +46,7 @@ public static class GlobalKeys
         
         public class Window
         {
-            public const string GameLoopWindow = nameof(GameLoopWindow);
+            public const string HUD = nameof(HUD);
         }
     }
 

@@ -29,10 +29,10 @@ namespace Services.Spawner
             unit.Init(config);
         }
         
-        public void SpawnItem(Item item, Vector3 position, Quaternion rotation)
+        public void SpawnItem(ItemVariantConfig itemVariantConfig, Vector3 position, Quaternion rotation)
         {
             DroppedItem droppedItem = _itemSpawner.Spawn(_droppedItemPrefab, position, rotation);
-            droppedItem.Init(item);
+            droppedItem.Init(itemVariantConfig);
         }
     }
 }

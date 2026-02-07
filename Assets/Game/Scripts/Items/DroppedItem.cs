@@ -1,34 +1,31 @@
 using System.Collections.Generic;
 using System.Linq;
-using GOAP.Action;
-using GOAP.KnowledgeBase;
+using AI.Knowledge;
 using UnityEngine;
 
 namespace Items
 {
-    public class DroppedItem : MonoBehaviour, IWorldObjectForFact, IDroppable
+    public class DroppedItem : MonoBehaviour, IWorldObjectForAI, IDroppable
     {
         [SerializeField] private Transform _modelContainer;
-        private IEnumerable<ObjectForFactTag> _tagsForFact;
-        private int _id;
         
-        public void Init(Item item)
+        private List<string> _tagsForFact;
+        
+        public void Init(ItemVariantConfig itemVariantConfig)
         {
-            _tagsForFact = ((IObjectForFact)item).GetTags();
-            _tagsForFact = _tagsForFact.Append(ObjectForFactTag.DroppableItem);
+            _tagsForFact = itemVariantConfig.GetTags().ToList();
+            _tagsForFact.Add(GlobalKeys.WorldObject.DroppedItem);
         }
 
-        public int Id { get; }
-
-        public IEnumerable<ObjectForFactTag> GetTags()
+        public IEnumerable<string> GetTags()
             => _tagsForFact;
 
         public Transform GetWorldTransform() 
             => transform;
 
-        private void SpawnGameObject(GameObject @object)
+        private void SpawnMesh(GameObject mesh)
         {
-            var instantiate = Instantiate(@object, _modelContainer);
+            GameObject instantiate = Instantiate(mesh, _modelContainer);
             instantiate.transform.localPosition = Vector3.zero;
             instantiate.transform.localRotation = Quaternion.identity;
         }
@@ -36,11 +33,15 @@ namespace Items
         public void Drop(Vector3 position = default, Quaternion rotation = default)
         {
             Debug.Log("Dropped");
+            transform.position = position;
+            transform.rotation = rotation;
+            gameObject.SetActive(true);
         }
 
         public void Take()
         {
             Debug.Log("Taking");
+            gameObject.SetActive(false);
         }
     }
 }

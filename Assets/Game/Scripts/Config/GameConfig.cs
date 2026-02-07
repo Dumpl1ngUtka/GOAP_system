@@ -18,6 +18,9 @@ namespace Config
         [Header("Configs")]
         [field: SerializeField] public AudioConfig AudioConfig { get; private set; }
         [field: SerializeField] public SettingsConfig SettingsConfig { get; private set; }
+        [field: SerializeField] public ItemsConfig ItemsConfig { get; private set; }
+        [field: SerializeField] public SpellsConfig SpellsConfig { get; private set; }
+        [field: SerializeField] public ClassesConfig ClassesConfig { get; private set; }
 
         public PlayerData StartPlayerData => _startPlayerData.DeepClone();
         public SettingsData StartSettingsData => _startSettingsData.DeepClone();
