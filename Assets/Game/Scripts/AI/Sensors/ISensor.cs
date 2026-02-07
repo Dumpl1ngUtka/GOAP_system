@@ -8,5 +8,6 @@ namespace AI.Sensors
     {
         event Action Changed;
         IEnumerable<Fact> GetFacts();
+        void Update(float deltaTime);
     }
 }

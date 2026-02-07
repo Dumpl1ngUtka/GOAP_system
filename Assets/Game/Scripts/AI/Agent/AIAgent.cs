@@ -57,20 +57,37 @@ namespace AI.Agent
             {
                 new IdleGoal()
             };
+
+            if (isActiveAndEnabled)
+            {
+                _knowledgeBase.Changed += KnowledgeUpdated;
+                _sensorHolder.Start();
+            }
         }
 
         private void OnEnable()
         {
-            _knowledgeBase.Changed += KnowledgeUpdated;
+            if (_knowledgeBase != null)
+                _knowledgeBase.Changed += KnowledgeUpdated;
+            
+            if (_sensorHolder != null)
+                _sensorHolder.Start();
         }
 
         private void OnDisable()
         {
-            _knowledgeBase.Changed -= KnowledgeUpdated;
+            if (_knowledgeBase != null)
+                _knowledgeBase.Changed -= KnowledgeUpdated;
+            
+            if (_sensorHolder != null)
+                _sensorHolder.Stop();
         }
 
         private void Update()
         {
+            if (_sensorHolder != null)
+                _sensorHolder.Update(Time.deltaTime);
+
             if (_currentAction != null)
             {
                 bool isComplete = _currentAction.Perform(Time.deltaTime);

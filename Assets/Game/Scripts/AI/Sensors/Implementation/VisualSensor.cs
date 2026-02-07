@@ -15,6 +15,10 @@ namespace AI.Sensors
         private readonly string _selfTeamKey;
         private readonly AIConfig _aiConfig;
         
+        private const float UpdateInterval = 0.2f; // Update more frequently
+        private float _timeSinceLastUpdate;
+        private List<Fact> _cachedFacts = new();
+
         public VisualSensor(
             Transform selfTransform,
             string selfTeamKey,
@@ -25,9 +29,19 @@ namespace AI.Sensors
             _aiConfig = aiConfig;
         }
 
-        public IEnumerable<Fact> GetFacts()
+        public void Update(float deltaTime)
         {
-            List<Fact> facts = new();
+            _timeSinceLastUpdate += deltaTime;
+            if (_timeSinceLastUpdate >= UpdateInterval)
+            {
+                _timeSinceLastUpdate = 0;
+                UpdateFacts();
+            }
+        }
+
+        private void UpdateFacts()
+        {
+            List<Fact> newFacts = new();
             Collider[] colliders = Physics.OverlapSphere(_selfTransform.position, _aiConfig.InSightDistance);
 
             foreach (Collider collider in colliders)
@@ -63,11 +77,52 @@ namespace AI.Sensors
                         else
                             processedTags.Add(objectTag);
                     }
-                    facts.Add(new Fact(conditionTag, processedTags.ToArray()));
+                    newFacts.Add(new Fact(worldObject, conditionTag, processedTags.ToArray()));
                 }
             }
+            
+            if (!AreFactsEqual(_cachedFacts, newFacts))
+            {
+                _cachedFacts = newFacts;
+                Changed?.Invoke();
+            }
+        }
 
-            return facts;
+        public IEnumerable<Fact> GetFacts()
+        {
+            return _cachedFacts;
+        }
+
+        private bool AreFactsEqual(List<Fact> list1, List<Fact> list2)
+        {
+            if (list1.Count != list2.Count) return false;
+            if (list1.Count == 0) return true;
+
+            foreach (var f1 in list1)
+            {
+                bool matchFound = false;
+                foreach (var f2 in list2)
+                {
+                    if (FactsMatch(f1, f2))
+                    {
+                        matchFound = true;
+                        break;
+                    }
+                }
+                if (!matchFound) return false;
+            }
+            return true;
+        }
+
+        private bool FactsMatch(Fact f1, Fact f2)
+        {
+            if (f1.Target != f2.Target) return false;
+            if (f1.ConditionTag != f2.ConditionTag) return false;
+            
+            if (f1.ObjectTags.Length != f2.ObjectTags.Length) return false;
+            
+            var set1 = new HashSet<string>(f1.ObjectTags);
+            return set1.SetEquals(f2.ObjectTags);
         }
     }
 }

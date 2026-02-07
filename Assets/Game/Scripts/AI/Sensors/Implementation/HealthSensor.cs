@@ -9,24 +9,61 @@ namespace AI.Sensors
     {
         public event Action Changed;
         
-        private const float HealthThreshold = 0.5f; 
+        private const float HealthThreshold = 0.5f;
+        private const float UpdateInterval = 1.0f; // Update every 1 second
         
         private readonly IHealth _health;
+        private float _timeSinceLastUpdate;
+        private List<Fact> _cachedFacts = new();
         
         public HealthSensor(IHealth health)
         {
             _health = health;
         }
 
-        IEnumerable<Fact> ISensor.GetFacts()
+        public void Update(float deltaTime)
         {
-            List<Fact> facts = new();
+            _timeSinceLastUpdate += deltaTime;
+            if (_timeSinceLastUpdate >= UpdateInterval)
+            {
+                _timeSinceLastUpdate = 0;
+                UpdateFacts();
+            }
+        }
+
+        private void UpdateFacts()
+        {
+            List<Fact> newFacts = new();
             float health = _health.CurrentHealth * 1f / _health.MaxHealth;
             
             if (health < HealthThreshold) 
-                facts.Add(new Fact(GlobalKeys.ConditionTag.IsLow, GlobalKeys.Resources.Health));
+                newFacts.Add(new Fact(GlobalKeys.ConditionTag.IsLow, GlobalKeys.Resources.Health));
             
-            return facts;        
+            // Simple check if facts changed. For more complex scenarios, a better comparison is needed.
+            if (!AreFactsEqual(_cachedFacts, newFacts))
+            {
+                _cachedFacts = newFacts;
+                Changed?.Invoke();
+            }
+        }
+
+        IEnumerable<Fact> ISensor.GetFacts()
+        {
+            return _cachedFacts;
+        }
+
+        private bool AreFactsEqual(List<Fact> list1, List<Fact> list2)
+        {
+            if (list1.Count != list2.Count) return false;
+            // This is a very basic comparison. 
+            // Ideally Fact should implement Equals or we should have a more robust comparer.
+            // For now, assuming order might matter or just checking counts and content roughly.
+            for (int i = 0; i < list1.Count; i++)
+            {
+                if (list1[i].ConditionTag != list2[i].ConditionTag) return false;
+                // Deep check of tags if necessary
+            }
+            return true;
         }
     }
 }
