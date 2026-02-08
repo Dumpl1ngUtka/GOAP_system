@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Config
 {
-    [CreateAssetMenu(fileName = "Card Base Config", menuName = "Config/CardBaseConfig")]
+    [CreateAssetMenu(fileName = "Card Base Config", menuName = "Configs/CardBaseConfig")]
     public class CardBaseConfig : ScriptableObject
     {
         [SerializeField] private CardTypeWithIcon[] _typeIcons;

@@ -22,3 +22,7 @@ MonoBehaviour:
     SoundVolume: 0
   <AudioConfig>k__BackingField: {fileID: 11400000, guid: ee46060762ec34a4983d661dd4d43683, type: 2}
   <SettingsConfig>k__BackingField: {fileID: 11400000, guid: a2b12f0eb099bb144832d6b0b2442bbf, type: 2}
+  <ItemsConfig>k__BackingField: {fileID: 11400000, guid: e89806a0b1b03fb44809d6d43d74fbb6, type: 2}
+  <SpellsConfig>k__BackingField: {fileID: 11400000, guid: 497eee9459a61d842a23346aa892726b, type: 2}
+  <ClassesConfig>k__BackingField: {fileID: 11400000, guid: ee3d5f80fa4f32445bc4c456091aa5b3, type: 2}
+  <CardBaseConfig>k__BackingField: {fileID: 11400000, guid: c690eb833b853f54c918dcf05f753fff, type: 2}

@@ -47,6 +47,7 @@ public static class GlobalKeys
         public class Window
         {
             public const string HUD = nameof(HUD);
+            public const string MainMenuWindow = nameof(MainMenuWindow);
         }
     }
 
@@ -54,5 +55,12 @@ public static class GlobalKeys
     {
         public const string Alpha = nameof(Alpha);
         public const string Beta = nameof(Beta);
+    }
+
+    public class Scene
+    {
+        public const string GameScene = nameof(GameScene);
+        public const string MainMenuScene = nameof(MainMenuScene);
+        public const string BootstrapScene = nameof(BootstrapScene);
     }
 }

@@ -7,6 +7,6 @@ namespace Config
     [CreateAssetMenu(fileName = "SpellsConfig", menuName = "Configs/SpellsConfig")]
     public class SpellsConfig : ScriptableObject
     {
-        [field: SerializeField] public List<SpellVariantConfig> Spells { get; }
+        [field: SerializeField] public List<SpellVariantConfig> Spells { get; private set; }
     }
 }

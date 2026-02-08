@@ -7,6 +7,6 @@ namespace Config
     [CreateAssetMenu(fileName = "ClassesConfig", menuName = "Configs/ClassesConfig")]
     public class ClassesConfig : ScriptableObject
     {
-        [field: SerializeField] public List<UnitClassVariantConfig> Classes { get; }
+        [field: SerializeField] public List<UnitClassVariantConfig> Classes { get; private set; }
     }
 }

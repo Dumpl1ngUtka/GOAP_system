@@ -43,7 +43,7 @@ namespace Services.Audio
 
         public AudioService(
             SaveLoadService saveLoadService,
-            AudioConfig audioConfig)
+            GameConfig gameConfig)
         {
             GameObject audioRoot = new("[AudioService_Root]");
             UnityEngine.Object.DontDestroyOnLoad(audioRoot);
@@ -53,7 +53,7 @@ namespace Services.Audio
             _lowPassFilter = InitLowPassFilter(audioRoot);
             
             _saveLoadService = saveLoadService;
-            _audioConfig = audioConfig;
+            _audioConfig = gameConfig.AudioConfig;
         }
 
         public async UniTask LoadSettings()
@@ -139,8 +139,9 @@ namespace Services.Audio
                     targetVolume, TransitionDuration)
                 .SetUpdate(true);
         }
-
-        public void PlayBackgroundMusic() => Play(_musicSource, _audioConfig.DefaultBackgroundMusic, MusicVolume);
+        
+        public void PlayMainMenuMusic() => Play(_musicSource, _audioConfig.BattleBackgroundMusic, MusicVolume);
+        public void PlayBattleMusic() => Play(_musicSource, _audioConfig.BattleBackgroundMusic, MusicVolume);
         public void StopBackgroundMusic() => _musicSource.Stop();
 
         private void Play(AudioSource source, AudioClip clip, float volume)
@@ -176,7 +177,6 @@ namespace Services.Audio
             filter.cutoffFrequency = 22000;
             return filter;
         }
-
- 
+        
     }
 }

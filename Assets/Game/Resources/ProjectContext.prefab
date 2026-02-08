@@ -247,6 +247,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _unitPrefab: {fileID: -1404065750981162874, guid: b0dc496c296874845966cc5b755299fb, type: 3}
   _itemPrefab: {fileID: 1990100263044708291, guid: 16fbe8b175ad66945aa9e9f12d1ec988, type: 3}
+  _gameConfig: {fileID: 11400000, guid: 6200e942fdd4aa044989fcc0a9136600, type: 2}
 --- !u!1 &4794693864900375391
 GameObject:
   m_ObjectHideFlags: 0

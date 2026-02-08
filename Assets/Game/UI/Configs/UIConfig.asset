@@ -17,4 +17,8 @@ MonoBehaviour:
   - Id: SettingsPopup
     Prefab: {fileID: 9078668424165085427, guid: 21218de6a367486449fec59863421582, type: 3}
   _widgetDatas: []
-  _windowDatas: []
+  _windowDatas:
+  - Id: HUD
+    Prefab: {fileID: 8700519092303975187, guid: 523f6bef23f8d6f46b7a0e7e629d5fad, type: 3}
+  - Id: MainMenuWindow
+    Prefab: {fileID: 4083262858369020346, guid: f2bc0eb9bc1049a418152815adef8901, type: 3}
