@@ -1,25 +1,28 @@
+using Config;
 using Items;
 using UnityEngine;
 
 namespace Services.GameCard
 {
-    public class ItemCardPresenter : CardPresenter
+    public abstract class ItemCardPresenter : CardPresenter
     {
-        private readonly ItemVariantConfig _config;
+        public override string Name => Config.Name;
+        public override Sprite Icon => Config.Sprite;
+        public override Sprite TypeIcon => CardBaseConfig.GetIconByType(Config.Type);
+        
+        protected readonly ItemVariantConfig Config;
+        protected readonly CardBaseConfig CardBaseConfig;
 
-        public ItemCardPresenter(ItemVariantConfig config)
+        public ItemCardPresenter(
+            GameConfig gameConfig,
+            ItemVariantConfig config)
         {
-            _config = config;
+            CardBaseConfig = gameConfig.CardBaseConfig;
+            Config = config;
         }
 
-        public override void PutOnField(Vector3 position)
-        {
-            Debug.Log($"Item {_config.Name} put on field");
-        }
+        public abstract override void PutOnField(Vector3 position);
 
-        public override void PutOnCard(CardPresenter target)
-        {
-            Debug.Log($"Item {_config.Name} put on card {target}");
-        }
+        public abstract override void PutOnCard(CardPresenter target);
     }
 }

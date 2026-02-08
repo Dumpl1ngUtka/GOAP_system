@@ -5,8 +5,8 @@ namespace Player.Cards
     public interface ICard
     {
         int ID { get; }
+        string Name { get; }
         Sprite Sprite { get; }
-        string Title { get; }
         CardType Type { get; }
         string Description { get; }
     }
@@ -15,7 +15,8 @@ namespace Player.Cards
     {
         None = 0,  
         Duck,
-        Monster,
+        Weapon,
+        Armor,
         Spell,
     }
 }

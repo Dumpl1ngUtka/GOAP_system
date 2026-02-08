@@ -2,6 +2,7 @@ using Config;
 using Items;
 using Services.Audio;
 using Services.GameCard;
+using Services.GameControl;
 using Services.SaveLoad.Data;
 using Services.SaveLoad.Interfaces;
 using Services.SaveLoad.Repositories;
@@ -27,6 +28,7 @@ namespace Installers
             BindSpawnService();
             BindSaveLoad();
             BindGameCardService();
+            BindGameControlService();
         }
 
         private void BindSpawnService()
@@ -78,6 +80,13 @@ namespace Installers
                 .Bind<GameCardService>()
                 .AsSingle()
                 .WithArguments(_gameConfig);
+        }
+
+        private void BindGameControlService()
+        {
+            Container
+                .Bind<GameControlService>()
+                .AsSingle();
         }
     }
 }

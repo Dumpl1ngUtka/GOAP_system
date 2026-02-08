@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Services.GameCard;
 using UI.Presenters.Interfaces.HUD;
-using UI.Presenters.Interfaces.Settings;
+using UI.View.Widgets;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI.View.Windows
@@ -13,7 +13,12 @@ namespace UI.View.Windows
         [Header("Buttons")]
         [SerializeField] private Button _pauseButton;
         
+        [Header("Cards")]
+        [SerializeField] private Transform _cardsContainer;
+        [SerializeField] private CardWidget _cardPrefab;
+        
         private IHUDPresenter _presenter;
+        private List<CardWidget> _spawnedCards = new();
         
         public override void Show(Dictionary<string, object> extraData = null, Action endCallback = null)
         {
@@ -29,6 +34,8 @@ namespace UI.View.Windows
                 _presenter.Changed += HandleChanged; 
                 
                 _pauseButton.onClick.AddListener(_presenter.Pause);
+                
+                SpawnCards();
             }
         }
 
@@ -39,6 +46,8 @@ namespace UI.View.Windows
                 _presenter.Changed -= HandleChanged; 
                 
                 _pauseButton.onClick.RemoveListener(_presenter.Pause);
+                
+                ClearCards();
             });
             
             base.Hide(endCallback);
@@ -46,6 +55,28 @@ namespace UI.View.Windows
         
         private void HandleChanged()
         {
+        }
+
+        private void SpawnCards()
+        {
+            ClearCards();
+            
+            List<CardPresenter> cards = _presenter.GetCards();
+            foreach (CardPresenter cardData in cards)
+            {
+                CardWidget cardWidget = Instantiate(_cardPrefab, _cardsContainer);
+                cardWidget.Show(cardData);
+                _spawnedCards.Add(cardWidget);
+            }
+        }
+
+        private void ClearCards()
+        {
+            foreach (CardWidget card in _spawnedCards)
+            {
+                Destroy(card.gameObject);
+            }
+            _spawnedCards.Clear();
         }
     }
 }

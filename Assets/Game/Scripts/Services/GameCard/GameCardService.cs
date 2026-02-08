@@ -1,55 +1,75 @@
+using System;
 using System.Collections.Generic;
 using Config;
 using Items;
+using Player.Cards;
 using Spells.Configs;
 using Units.UnitClasses;
-using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace Services.GameCard
 {
     public class GameCardService
     {
         private readonly GameConfig _gameConfig;
-        private readonly DiContainer _container;
+        private readonly IInstantiator _instantiator;
 
-        public GameCardService(GameConfig gameConfig, DiContainer container)
+        private readonly List<WeaponVariantConfig> _weapons;
+        private readonly List<ArmorVariantConfig> _armors;
+        private readonly List<SpellVariantConfig> _spells;
+        private readonly List<UnitClassVariantConfig> _classes;
+
+        public GameCardService(GameConfig gameConfig, IInstantiator instantiator)
         {
             _gameConfig = gameConfig;
-            _container = container;
+            _instantiator = instantiator;
+
+            _weapons = _gameConfig.ItemsConfig.Weapons;
+            _armors = _gameConfig.ItemsConfig.Armors;
+            _spells = _gameConfig.SpellsConfig.Spells;
+            _classes = _gameConfig.ClassesConfig.Classes;
+        }
+        
+        public CardPresenter GetRandomCardByType(CardType currentCardType)
+        {
+            return currentCardType switch
+            {
+                CardType.Duck => GetRandomUnitCard(),
+                CardType.Weapon => GetRandomWeaponCard(),
+                CardType.Armor => GetRandomArmorCard(),
+                CardType.Spell => GetRandomSpellCard(),
+                _ => throw new ArgumentOutOfRangeException(nameof(currentCardType), currentCardType, null)
+            };
         }
 
-        public CardPresenter GetRandomWeaponCard()
+        private CardPresenter GetRandomWeaponCard()
         {
-            List<WeaponVariantConfig> weapons = _gameConfig.ItemsConfig.Weapons;
-            var config = GetRandomElement(weapons);
-            return CreateCard<ItemCardPresenter>(config);
+            WeaponVariantConfig config = GetRandomElement(_weapons);
+            return CreateCard<WeaponCardPresenter>(config);
         }
 
-        public CardPresenter GetRandomArmorCard()
+        private CardPresenter GetRandomArmorCard()
         {
-            List<ArmorVariantConfig> armors = _gameConfig.ItemsConfig.Armors;
-            var config = GetRandomElement(armors);
-            return CreateCard<ItemCardPresenter>(config);
+            ArmorVariantConfig config = GetRandomElement(_armors);
+            return CreateCard<ArmorCardPresenter>(config);
         }
 
-        public CardPresenter GetRandomSpellCard()
+        private CardPresenter GetRandomSpellCard()
         {
-            List<SpellVariantConfig> spells = _gameConfig.SpellsConfig.Spells;
-            var config = GetRandomElement(spells);
+            SpellVariantConfig config = GetRandomElement(_spells);
             return CreateCard<SpellCardPresenter>(config);
         }
 
-        public CardPresenter GetRandomUnitCard()
+        private CardPresenter GetRandomUnitCard()
         {
-            List<UnitClass> classes = _gameConfig.ClassesConfig.Classes;
-            var config = GetRandomElement(classes);
+            UnitClassVariantConfig config = GetRandomElement(_classes);
             return CreateCard<UnitCardPresenter>(config);
         }
 
         private TCard CreateCard<TCard>(object config) where TCard : CardPresenter
         {
-            return config == null ? null : _container.Instantiate<TCard>(new[] { config });
+            return config == null ? null : _instantiator.Instantiate<TCard>(new[] { config });
         }
 
         private T GetRandomElement<T>(List<T> list)
