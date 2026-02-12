@@ -29,11 +29,11 @@ namespace UI.View.Windows
         [Header("Drag Feedback")]
         [SerializeField] private GameObject _worldCursorPrefab;
         [SerializeField] private float _dragThresholdY = 200f;
+        [SerializeField] private RectTransform _containerRect;
         
         private IHUDPresenter _presenter;
         private List<CardWidget> _spawnedCards = new();
         
-        private RectTransform _containerRect;
         private Vector2 _shownPosition;
         private Vector2 _hiddenPosition;
         private bool _isInitialized;
@@ -101,10 +101,6 @@ namespace UI.View.Windows
         
         private void SetupContainerInteraction()
         {
-            _containerRect = _cardsContainer.GetComponent<RectTransform>();
-            
-            // Capture initial position as the "Shown" position
-            // We assume the prefab is set up in the "Shown" state
             if (!_isInitialized)
             {
                 _shownPosition = _containerRect.anchoredPosition;
@@ -113,11 +109,9 @@ namespace UI.View.Windows
             }
             else
             {
-                // Ensure we start at the correct position before animating
                 _containerRect.anchoredPosition = _shownPosition;
             }
 
-            // Ensure we have a raycast target for events
             Image img = _cardsContainer.GetComponent<Image>();
             if (img == null)
             {
