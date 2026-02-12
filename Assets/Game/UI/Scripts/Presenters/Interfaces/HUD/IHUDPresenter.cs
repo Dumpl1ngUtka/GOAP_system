@@ -12,5 +12,8 @@ namespace UI.Presenters.Interfaces.HUD
         int GetMaxCardsCount();
         Color CardsCountColor { get; }
         string CardsCountText { get; }
+        
+        void PutOnField(CardPresenter card, Vector3 position);
+        void PutOnCard(CardPresenter sourceCard, CardPresenter targetCard);
     }
 }

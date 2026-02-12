@@ -58,7 +58,19 @@ namespace UI.Presenters.Implementations.HUD
             : _gameConfig.CardBaseConfig.NormalTextColor;
 
         public string CardsCountText => $"{_cards.Count}/{GetMaxCardsCount()}";
-        
+
+        public void PutOnField(CardPresenter card, Vector3 position)
+        {
+            Debug.Log($"Put card {card.Name} on field at {position}");
+            // TODO: Implement logic
+        }
+
+        public void PutOnCard(CardPresenter sourceCard, CardPresenter targetCard)
+        {
+            Debug.Log($"Put card {sourceCard.Name} on card {targetCard.Name}");
+            // TODO: Implement logic
+        }
+
         private void OnCardSpawn()
         {
             if (_cards.Count >= GetMaxCardsCount())

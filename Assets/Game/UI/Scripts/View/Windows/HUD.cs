@@ -26,6 +26,10 @@ namespace UI.View.Windows
         [SerializeField] private float _hiddenOffsetY = 150f;
         [SerializeField] private float _moveDuration = 0.3f;
         
+        [Header("Drag Feedback")]
+        [SerializeField] private GameObject _worldCursorPrefab;
+        [SerializeField] private float _dragThresholdY = 200f;
+        
         private IHUDPresenter _presenter;
         private List<CardWidget> _spawnedCards = new();
         
@@ -33,6 +37,9 @@ namespace UI.View.Windows
         private Vector2 _shownPosition;
         private Vector2 _hiddenPosition;
         private bool _isInitialized;
+        
+        private GameObject _worldCursorInstance;
+        private CardWidget _currentDraggingCard;
         
         public override void Show(Dictionary<string, object> extraData = null, Action endCallback = null)
         {
@@ -44,6 +51,7 @@ namespace UI.View.Windows
                     presenterField: ref _presenter))
             {
                 SetupContainerInteraction();
+                SetupWorldCursor();
                 
                 HandleChanged();
                 
@@ -65,6 +73,12 @@ namespace UI.View.Windows
                 
                 ClearCards();
                 
+                if (_worldCursorInstance != null)
+                {
+                    Destroy(_worldCursorInstance);
+                    _worldCursorInstance = null;
+                }
+                
                 // Restore position for next show
                 if (_containerRect != null)
                 {
@@ -74,6 +88,15 @@ namespace UI.View.Windows
             });
             
             base.Hide(endCallback);
+        }
+        
+        private void SetupWorldCursor()
+        {
+            if (_worldCursorPrefab != null && _worldCursorInstance == null)
+            {
+                _worldCursorInstance = Instantiate(_worldCursorPrefab);
+                _worldCursorInstance.SetActive(false);
+            }
         }
         
         private void SetupContainerInteraction()
@@ -125,6 +148,9 @@ namespace UI.View.Windows
         {
             if (_containerRect == null) return;
             
+            // If dragging, don't hide
+            if (_currentDraggingCard != null) return;
+            
             _containerRect.DOKill();
             _containerRect.DOAnchorPos(show ? _shownPosition : _hiddenPosition, _moveDuration)
                 .SetEase(Ease.OutQuad);
@@ -155,6 +181,7 @@ namespace UI.View.Windows
                 CardWidget cardWidget = _spawnedCards[i];
                 if (!cards.Contains(cardWidget.Presenter))
                 {
+                    UnsubscribeCard(cardWidget);
                     _spawnedCards.RemoveAt(i);
                     Destroy(cardWidget.gameObject);
                 }
@@ -172,7 +199,83 @@ namespace UI.View.Windows
                 cardWidget.Show(cardData);
                 cardWidget.transform.localScale = Vector3.zero;
                 cardWidget.transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
+                
+                SubscribeCard(cardWidget);
+                
                 _spawnedCards.Add(cardWidget);
+            }
+        }
+        
+        private void SubscribeCard(CardWidget card)
+        {
+            card.OnPutOnField += _presenter.PutOnField;
+            card.OnPutOnCard += _presenter.PutOnCard;
+            card.OnDragStart += () => OnCardDragStart(card);
+            card.OnDragUpdate += OnCardDragUpdate;
+            card.OnDragEnd += OnCardDragEnd;
+        }
+        
+        private void UnsubscribeCard(CardWidget card)
+        {
+            card.OnPutOnField -= _presenter.PutOnField;
+            card.OnPutOnCard -= _presenter.PutOnCard;
+            // We can't easily unsubscribe anonymous delegates or method groups with parameters this way without storing them
+            // But since the object is being destroyed, it's less critical, though good practice.
+            // For simplicity in this context, we rely on the object destruction.
+            // A cleaner way would be to have methods in HUD that take the card as arg, but CardWidget events don't pass 'this' except for PutOn...
+            // Let's just leave it for now as the card is destroyed.
+        }
+
+        private void OnCardDragStart(CardWidget card)
+        {
+            _currentDraggingCard = card;
+            SetContainerState(true); // Ensure container stays up
+        }
+
+        private void OnCardDragUpdate(Vector2 screenPos)
+        {
+            if (_currentDraggingCard == null) return;
+
+            bool isAboveThreshold = screenPos.y > _dragThresholdY;
+            
+            _currentDraggingCard.SetGhostState(isAboveThreshold);
+            
+            if (isAboveThreshold)
+            {
+                if (_worldCursorInstance != null)
+                {
+                    _worldCursorInstance.SetActive(true);
+                    Ray ray = Camera.main.ScreenPointToRay(screenPos);
+                    if (Physics.Raycast(ray, out RaycastHit hit))
+                    {
+                        _worldCursorInstance.transform.position = hit.point;
+                    }
+                }
+            }
+            else
+            {
+                if (_worldCursorInstance != null)
+                {
+                    _worldCursorInstance.SetActive(false);
+                }
+            }
+        }
+
+        private void OnCardDragEnd()
+        {
+            _currentDraggingCard = null;
+            if (_worldCursorInstance != null)
+            {
+                _worldCursorInstance.SetActive(false);
+            }
+            
+            // Check if we should hide the container (if mouse is not over it)
+            // Simple check: if mouse is low enough? Or just rely on PointerExit which might have fired or not.
+            // Actually, if we dragged out, PointerExit might have fired but we forced it to stay open.
+            // Let's check if the mouse is currently over the container rect.
+            if (!RectTransformUtility.RectangleContainsScreenPoint(_containerRect, Input.mousePosition, null)) // null camera for Overlay
+            {
+                SetContainerState(false);
             }
         }
 
@@ -180,6 +283,7 @@ namespace UI.View.Windows
         {
             foreach (CardWidget card in _spawnedCards)
             {
+                UnsubscribeCard(card); // Best effort
                 Destroy(card.gameObject);
             }
             _spawnedCards.Clear();
