@@ -9,7 +9,8 @@ namespace Config
     public class CardBaseConfig : ScriptableObject
     {
         [SerializeField] private CardTypeWithIcon[] _typeIcons;
-
+        [field: SerializeField] public int MaxCardsInHand { get; private set; } = 5;
+        
         public Sprite GetIconByType(CardType type) => (
                 from typeWithIcon in _typeIcons 
                 where type == typeWithIcon.Type 

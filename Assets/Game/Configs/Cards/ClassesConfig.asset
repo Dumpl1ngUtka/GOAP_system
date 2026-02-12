@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad2204bc975b28b48a92d9a6fa9c71e8, type: 3}
   m_Name: ClassesConfig
   m_EditorClassIdentifier: 
+  <Classes>k__BackingField:
+  - {fileID: 11400000, guid: 62cbebfa44d3c984eb8f96472d2f2dbe, type: 2}
+  - {fileID: 11400000, guid: 3f30d30c123876346be76ec805ee194b, type: 2}

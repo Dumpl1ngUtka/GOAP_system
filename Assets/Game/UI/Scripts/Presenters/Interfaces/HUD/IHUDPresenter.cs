@@ -9,5 +9,6 @@ namespace UI.Presenters.Interfaces.HUD
     {
         void Pause();
         List<CardPresenter> GetCards();
+        int GetMaxCardsCount();
     }
 }

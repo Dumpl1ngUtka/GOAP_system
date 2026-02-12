@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3010f1866f90acd469fd439029c539fc, type: 3}
   m_Name: SpellsConfig
   m_EditorClassIdentifier: 
+  <Spells>k__BackingField:
+  - {fileID: 11400000, guid: 732e406c53bf2874abbb973202e4f7cd, type: 2}

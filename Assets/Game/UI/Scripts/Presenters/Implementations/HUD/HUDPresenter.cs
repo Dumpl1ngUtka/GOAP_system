@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Config;
 using Services.GameCard;
 using Services.GameControl;
 using UI.Presenters.Interfaces.HUD;
@@ -17,15 +18,18 @@ namespace UI.Presenters.Implementations.HUD
         private readonly GameCardService _gameCardService;
         private readonly GameControlService _gameControlService;
         private readonly UISystem _uiSystem;
+        private readonly GameConfig _gameConfig;
 
         public HUDPresenter(
             UISystem uiSystem,
             GameControlService gameControlService,
-            GameCardService gameCardService)
+            GameCardService gameCardService,
+            GameConfig gameConfig)
         {
             _uiSystem = uiSystem;
             _gameControlService = gameControlService;
             _gameCardService = gameCardService;
+            _gameConfig = gameConfig;
         }
 
         public void Start()
@@ -47,8 +51,13 @@ namespace UI.Presenters.Implementations.HUD
 
         public List<CardPresenter> GetCards() => _cards;
         
+        public int GetMaxCardsCount() => _gameConfig.CardBaseConfig.MaxCardsInHand;
+        
         private void OnCardSpawn()
         {
+            if (_cards.Count >= GetMaxCardsCount())
+                return;
+
             CardPresenter card = _gameCardService.GetRandomCardByType(_gameControlService.CurrentCardType);
             _cards.Add(card);
             Changed?.Invoke();

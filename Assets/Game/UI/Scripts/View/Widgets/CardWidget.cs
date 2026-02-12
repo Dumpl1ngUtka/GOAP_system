@@ -13,6 +13,8 @@ namespace UI.View.Widgets
         [SerializeField] private Button _button;
         
         private CardPresenter _presenter;
+
+        public CardPresenter Presenter => _presenter;
         
         public void Show(CardPresenter presenter)
         {
