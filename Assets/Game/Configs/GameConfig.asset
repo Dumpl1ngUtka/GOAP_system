@@ -26,3 +26,4 @@ MonoBehaviour:
   <SpellsConfig>k__BackingField: {fileID: 11400000, guid: 497eee9459a61d842a23346aa892726b, type: 2}
   <ClassesConfig>k__BackingField: {fileID: 11400000, guid: ee3d5f80fa4f32445bc4c456091aa5b3, type: 2}
   <CardBaseConfig>k__BackingField: {fileID: 11400000, guid: c690eb833b853f54c918dcf05f753fff, type: 2}
+  <UnitBaseConfig>k__BackingField: {fileID: 11400000, guid: aa69ba3877c4eeb498bc730fcdda0573, type: 2}

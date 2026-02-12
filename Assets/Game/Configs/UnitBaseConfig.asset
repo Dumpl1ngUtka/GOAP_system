@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c581dceefd504801bd42c213173cbdba, type: 3}
   m_Name: UnitBaseConfig
   m_EditorClassIdentifier: 
-  <HealthPerVitality>k__BackingField: 0
+  <HealthPerVitality>k__BackingField: 5
