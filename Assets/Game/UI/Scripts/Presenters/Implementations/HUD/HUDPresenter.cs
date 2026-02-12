@@ -31,10 +31,13 @@ namespace UI.Presenters.Implementations.HUD
         public void Start()
         {
             _gameControlService.SpawnCard += OnCardSpawn;
+
+            _cards = new List<CardPresenter>();
         }
         
         public void Stop()
         {
+            _gameControlService.SpawnCard -= OnCardSpawn;
         }
         
         public void Pause()
@@ -49,6 +52,7 @@ namespace UI.Presenters.Implementations.HUD
             CardPresenter card = _gameCardService.GetRandomCardByType(_gameControlService.CurrentCardType);
             _cards.Add(card);
             Changed?.Invoke();
+            Debug.Log("Spawn");
         }
     }
 }

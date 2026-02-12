@@ -1,4 +1,5 @@
 using System;
+using Services.GameStates;
 using UI.Presenters.Implementations.Settings;
 using UI.Presenters.Interfaces.MainMenu;
 using UI.Scripts.View.Popups;
@@ -11,11 +12,14 @@ namespace UI.Presenters.Implementations.MainMenu
         public event Action Changed;
         
         private readonly UISystem _uiSystem;
+        private readonly GameStateService _gameStateService;
 
         public MainMenuPresenter(
-            UISystem uiSystem)
+            UISystem uiSystem,
+            GameStateService gameStateService)
         {
             _uiSystem = uiSystem;
+            _gameStateService = gameStateService;
         }
         
         public void Start()
@@ -33,17 +37,16 @@ namespace UI.Presenters.Implementations.MainMenu
 
         public void StartGame()
         {
-            //_uiSystem.Start<SelectModePresenter, SelectModePopup>(GlobalKeys.UI.Popup.SelectModePopup);
+            _gameStateService.SetGameState();
         }
 
-        public void OpenShop()
+        public void ExitGame()
         {
-            //_uiSystem.Start<CustomizePresenter, CustomizePopup>(GlobalKeys.UI.Popup.CustomizePopup);
-        }
-
-        public void OpenStatistics()
-        {
-            //_uiSystem.Start<RunHistoryPresenter, RunHistoryPopup>(GlobalKeys.UI.Popup.RunHistoryPopup);
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }

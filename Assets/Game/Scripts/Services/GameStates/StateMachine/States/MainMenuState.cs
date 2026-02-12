@@ -9,16 +9,24 @@ namespace Services.GameStates.StateMachine
     {
         private readonly UISystem _uiSystem;
         private readonly AudioService _audioService;
+        private readonly SceneLoader.SceneLoader _sceneLoader;
         
         public MainMenuState(
             UISystem uiSystem, 
-            AudioService audioService)
+            AudioService audioService,
+            SceneLoader.SceneLoader sceneLoader)
         {
             _uiSystem = uiSystem;
             _audioService = audioService;
+            _sceneLoader = sceneLoader;
         }
         
         public void Enter()
+        {
+            _sceneLoader.Load(GlobalKeys.Scene.MainMenuScene, OnLoaded);
+        }
+
+        private void OnLoaded()
         {
             _audioService.PlayMainMenuMusic();
             _uiSystem.Start<MainMenuPresenter, MainMenuWindow>(GlobalKeys.UI.Window.MainMenuWindow);

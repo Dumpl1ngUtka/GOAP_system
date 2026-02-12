@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace UI.View.Windows
 {
-    public class HUD : WidgetBase
+    public class HUD : WindowBase
     {
         [Header("Buttons")]
         [SerializeField] private Button _pauseButton;
@@ -55,6 +55,7 @@ namespace UI.View.Windows
         
         private void HandleChanged()
         {
+            SpawnCards();
         }
 
         private void SpawnCards()

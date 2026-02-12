@@ -9,10 +9,9 @@ namespace UI.View.Windows
     public class MainMenuWindow : WindowBase
     {
         [Header("Buttons")]
-        [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _startButton;
-        [SerializeField] private Button _shopButton;
-        [SerializeField] private Button _statisticsButton;
+        [SerializeField] private Button _settingsButton;
+        [SerializeField] private Button _exitButton;
         
         private IMainMenuPresenter _presenter;
         
@@ -29,8 +28,7 @@ namespace UI.View.Windows
                 
                 _settingsButton.onClick.AddListener(_presenter.OpenSettings);
                 _startButton.onClick.AddListener(_presenter.StartGame);
-                _shopButton.onClick.AddListener(_presenter.OpenShop);
-                _statisticsButton.onClick.AddListener(_presenter.OpenStatistics);
+                _exitButton.onClick.AddListener(_presenter.ExitGame);
             }
         }
 
@@ -40,8 +38,7 @@ namespace UI.View.Windows
             {
                 _settingsButton.onClick.RemoveListener(_presenter.OpenSettings);
                 _startButton.onClick.RemoveListener(_presenter.StartGame);
-                _shopButton.onClick.RemoveListener(_presenter.OpenShop);
-                _statisticsButton.onClick.RemoveListener(_presenter.OpenStatistics);
+                _exitButton.onClick.RemoveListener(_presenter.ExitGame);
             });
             
             base.Hide(endCallback);

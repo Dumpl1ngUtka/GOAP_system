@@ -9,7 +9,7 @@ namespace Services.GameControl
     public class GameControlService : IDisposable
     {
         public event Action SpawnCard;
-        public CardType CurrentCardType { get; private set; } = CardType.None;
+        public CardType CurrentCardType { get; private set; } = CardType.Duck;
 
         private CancellationTokenSource _cts;
         private readonly float _spawnInterval = 2f;
@@ -36,6 +36,11 @@ namespace Services.GameControl
                 
                 SpawnCard?.Invoke();
                 CurrentCardType++;
+                
+                if (!Enum.IsDefined(typeof(CardType), CurrentCardType) || CurrentCardType == CardType.None)
+                {
+                    CurrentCardType = CardType.Duck;
+                }
             }
         }
 
