@@ -52,6 +52,12 @@ namespace UI.Presenters.Implementations.HUD
         public List<CardPresenter> GetCards() => _cards;
         
         public int GetMaxCardsCount() => _gameConfig.CardBaseConfig.MaxCardsInHand;
+
+        public Color CardsCountColor => _cards.Count >= GetMaxCardsCount() 
+            ? _gameConfig.CardBaseConfig.LimitReachedTextColor 
+            : _gameConfig.CardBaseConfig.NormalTextColor;
+
+        public string CardsCountText => $"{_cards.Count}/{GetMaxCardsCount()}";
         
         private void OnCardSpawn()
         {

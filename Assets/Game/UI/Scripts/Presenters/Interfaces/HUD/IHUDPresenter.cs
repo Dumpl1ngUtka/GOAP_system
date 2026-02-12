@@ -10,5 +10,7 @@ namespace UI.Presenters.Interfaces.HUD
         void Pause();
         List<CardPresenter> GetCards();
         int GetMaxCardsCount();
+        Color CardsCountColor { get; }
+        string CardsCountText { get; }
     }
 }

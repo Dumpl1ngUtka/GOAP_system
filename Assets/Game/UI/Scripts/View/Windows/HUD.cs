@@ -7,6 +7,7 @@ using TMPro;
 using UI.Presenters.Interfaces.HUD;
 using UI.View.Widgets;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace UI.View.Windows
@@ -21,8 +22,17 @@ namespace UI.View.Windows
         [SerializeField] private CardWidget _cardPrefab;
         [SerializeField] private TextMeshProUGUI _cardsCountText;
         
+        [Header("Animation")]
+        [SerializeField] private float _hiddenOffsetY = 150f;
+        [SerializeField] private float _moveDuration = 0.3f;
+        
         private IHUDPresenter _presenter;
         private List<CardWidget> _spawnedCards = new();
+        
+        private RectTransform _containerRect;
+        private Vector2 _shownPosition;
+        private Vector2 _hiddenPosition;
+        private bool _isInitialized;
         
         public override void Show(Dictionary<string, object> extraData = null, Action endCallback = null)
         {
@@ -33,6 +43,8 @@ namespace UI.View.Windows
                     subscribeAction: HandleChanged,
                     presenterField: ref _presenter))
             {
+                SetupContainerInteraction();
+                
                 HandleChanged();
                 
                 _presenter.Changed += HandleChanged; 
@@ -52,9 +64,70 @@ namespace UI.View.Windows
                 _pauseButton.onClick.RemoveListener(_presenter.Pause);
                 
                 ClearCards();
+                
+                // Restore position for next show
+                if (_containerRect != null)
+                {
+                    _containerRect.DOKill();
+                    _containerRect.anchoredPosition = _shownPosition;
+                }
             });
             
             base.Hide(endCallback);
+        }
+        
+        private void SetupContainerInteraction()
+        {
+            _containerRect = _cardsContainer.GetComponent<RectTransform>();
+            
+            // Capture initial position as the "Shown" position
+            // We assume the prefab is set up in the "Shown" state
+            if (!_isInitialized)
+            {
+                _shownPosition = _containerRect.anchoredPosition;
+                _hiddenPosition = _shownPosition - new Vector2(0, _hiddenOffsetY);
+                _isInitialized = true;
+            }
+            else
+            {
+                // Ensure we start at the correct position before animating
+                _containerRect.anchoredPosition = _shownPosition;
+            }
+
+            // Ensure we have a raycast target for events
+            Image img = _cardsContainer.GetComponent<Image>();
+            if (img == null)
+            {
+                img = _cardsContainer.gameObject.AddComponent<Image>();
+                img.color = new Color(0, 0, 0, 0); // Transparent
+            }
+            img.raycastTarget = true;
+
+            // Setup Events
+            EventTrigger trigger = _cardsContainer.GetComponent<EventTrigger>();
+            if (trigger == null) trigger = _cardsContainer.gameObject.AddComponent<EventTrigger>();
+            
+            trigger.triggers.Clear();
+
+            EventTrigger.Entry entryEnter = new EventTrigger.Entry { eventID = EventTriggerType.PointerEnter };
+            entryEnter.callback.AddListener((data) => SetContainerState(true));
+            trigger.triggers.Add(entryEnter);
+
+            EventTrigger.Entry entryExit = new EventTrigger.Entry { eventID = EventTriggerType.PointerExit };
+            entryExit.callback.AddListener((data) => SetContainerState(false));
+            trigger.triggers.Add(entryExit);
+            
+            // Start hidden
+            SetContainerState(false);
+        }
+
+        private void SetContainerState(bool show)
+        {
+            if (_containerRect == null) return;
+            
+            _containerRect.DOKill();
+            _containerRect.DOAnchorPos(show ? _shownPosition : _hiddenPosition, _moveDuration)
+                .SetEase(Ease.OutQuad);
         }
         
         private void HandleChanged()
@@ -67,7 +140,8 @@ namespace UI.View.Windows
         {
             if (_cardsCountText != null)
             {
-                _cardsCountText.text = $"{_presenter.GetCards().Count}/{_presenter.GetMaxCardsCount()}";
+                _cardsCountText.text = _presenter.CardsCountText;
+                _cardsCountText.color = _presenter.CardsCountColor;
             }
         }
 
