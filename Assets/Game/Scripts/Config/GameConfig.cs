@@ -1,4 +1,5 @@
 using Services.SaveLoad.Data;
+using Units.Config;
 using UnityEngine;
 
 namespace Config
@@ -22,6 +23,7 @@ namespace Config
         [field: SerializeField] public SpellsConfig SpellsConfig { get; private set; }
         [field: SerializeField] public ClassesConfig ClassesConfig { get; private set; }
         [field: SerializeField] public CardBaseConfig CardBaseConfig { get; private set; }
+        [field: SerializeField] public UnitBaseConfig UnitBaseConfig { get; private set; }
 
         public PlayerData StartPlayerData => _startPlayerData.DeepClone();
         public SettingsData StartSettingsData => _startSettingsData.DeepClone();

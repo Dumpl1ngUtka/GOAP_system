@@ -52,13 +52,18 @@ namespace Installers
 
         private void BindSpawnService()
         {
-            ObjectSpawner<Unit> unitSpawner = new();
-            ObjectSpawner<DroppedItem> itemsSpawner = new();
+            Container
+                .BindInterfacesAndSelfTo<ObjectSpawner<Unit>>()
+                .AsSingle();
+            
+            Container
+                .BindInterfacesAndSelfTo<ObjectSpawner<DroppedItem>>()
+                .AsSingle();
             
             Container
                 .Bind<SpawnService>()
                 .AsSingle()
-                .WithArguments(unitSpawner, itemsSpawner, _itemPrefab, _unitPrefab);      
+                .WithArguments(_itemPrefab, _unitPrefab);      
         }
         
         private void BindSaveLoad()

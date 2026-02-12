@@ -10,6 +10,10 @@ namespace Units.UnitClasses
         [field: SerializeField] public string Name { get; private set; }
         [field: SerializeField] public Sprite Sprite { get; private set; }
         [field: SerializeField] public string Description { get; private set; }
+        [field: SerializeField] public ushort Vitality { get; private set; }
+        [field: SerializeField] public ushort Dexterity { get; private set; }
+        [field: SerializeField] public ushort Strength { get; private set; }
+        [field: SerializeField] public ushort Intelligence { get; private set; }
         public CardType Type => CardType.Duck;
     }
 }

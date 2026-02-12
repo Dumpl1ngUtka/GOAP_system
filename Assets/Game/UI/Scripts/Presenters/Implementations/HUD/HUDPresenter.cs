@@ -61,14 +61,16 @@ namespace UI.Presenters.Implementations.HUD
 
         public void PutOnField(CardPresenter card, Vector3 position)
         {
-            Debug.Log($"Put card {card.Name} on field at {position}");
-            // TODO: Implement logic
+            card.PutOnField(position);
+            _cards.Remove(card);
+            Changed?.Invoke();
         }
 
         public void PutOnCard(CardPresenter sourceCard, CardPresenter targetCard)
         {
-            Debug.Log($"Put card {sourceCard.Name} on card {targetCard.Name}");
-            // TODO: Implement logic
+            sourceCard.PutOnCard(targetCard);
+            _cards.Remove(sourceCard);
+            Changed?.Invoke();
         }
 
         private void OnCardSpawn()

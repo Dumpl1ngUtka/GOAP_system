@@ -1,10 +1,19 @@
+using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 namespace Services.Spawner
 {
     public class ObjectSpawner<T> : ISpawner<T> where T : Component
     {
-        public virtual T Spawn(T prefab, Vector3 position, Quaternion rotation)
+        private readonly IInstantiator _instantiator;
+
+        public ObjectSpawner(IInstantiator instantiator)
+        {
+            _instantiator = instantiator;
+        }
+
+        public virtual T Spawn(T prefab, Vector3 position, Quaternion rotation, IEnumerable<object> extraArgs = null)
         {
             if (prefab == null)
             {
@@ -12,7 +21,19 @@ namespace Services.Spawner
                 return null;
             }
 
-            return Object.Instantiate(prefab, position, rotation);
+            if (extraArgs != null)
+                return _instantiator.InstantiatePrefabForComponent<T>(
+                    prefab,
+                    position,
+                    rotation,
+                    null,
+                    extraArgs);
+            
+            return _instantiator.InstantiatePrefabForComponent<T>(
+                prefab,
+                position,
+                rotation,
+                null);
         }
     }
 }

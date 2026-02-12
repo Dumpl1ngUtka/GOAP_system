@@ -263,10 +263,6 @@ namespace UI.View.Windows
                 _worldCursorInstance.SetActive(false);
             }
             
-            // Check if we should hide the container (if mouse is not over it)
-            // Simple check: if mouse is low enough? Or just rely on PointerExit which might have fired or not.
-            // Actually, if we dragged out, PointerExit might have fired but we forced it to stay open.
-            // Let's check if the mouse is currently over the container rect.
             if (!RectTransformUtility.RectangleContainsScreenPoint(_containerRect, Input.mousePosition, null)) // null camera for Overlay
             {
                 SetContainerState(false);

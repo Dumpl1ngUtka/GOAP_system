@@ -1,4 +1,5 @@
 using Units.Config;
+using Units.UnitClasses;
 
 namespace Units
 {
@@ -9,7 +10,7 @@ namespace Units
         public ushort Strength;
         public ushort Intelligence;
 
-        public Parameters(UnitConfig config)
+        public Parameters(UnitClassVariantConfig config)
         {
             Vitality = config.Vitality;
             Dexterity = config.Dexterity;

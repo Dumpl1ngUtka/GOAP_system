@@ -1,10 +1,11 @@
 using Items;
 using Units.Config;
+using Units.UnitClasses;
 using UnityEngine;
 
 namespace Services.Spawner
 {
-    public class SpawnService : MonoBehaviour
+    public class SpawnService
     {
         private readonly Units.Unit _unitPrefab;
         private readonly DroppedItem _droppedItemPrefab;
@@ -23,16 +24,14 @@ namespace Services.Spawner
             _itemSpawner = itemSpawner;
         }
 
-        public void SpawnAgent(UnitConfig config, Vector3 position, Quaternion rotation)
+        public void SpawnAgent(UnitClassVariantConfig config, Vector3 position, Quaternion rotation)
         {
-            Units.Unit unit = _unitSpawner.Spawn(_unitPrefab, position, rotation);
-            unit.Init(config);
+            _unitSpawner.Spawn(_unitPrefab, position, rotation, new []{config});
         }
         
         public void SpawnItem(ItemVariantConfig itemVariantConfig, Vector3 position, Quaternion rotation)
         {
-            DroppedItem droppedItem = _itemSpawner.Spawn(_droppedItemPrefab, position, rotation);
-            droppedItem.Init(itemVariantConfig);
+            _itemSpawner.Spawn(_droppedItemPrefab, position, rotation, new []{itemVariantConfig});
         }
     }
 }

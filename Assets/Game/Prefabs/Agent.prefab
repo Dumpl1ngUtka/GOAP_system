@@ -156,8 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 896f3b878df24e43a21257d81f703759, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitConfig: {fileID: 0}
-  _aiAgent: {fileID: 0}
+  _aiAgent: {fileID: 1675800695717909037}
 --- !u!114 &1675800695717909037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,9 +169,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef378a1e4f524a4e9b50541f5e4b84d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentGoalName: TEST
-  _currentActionName: testAction
-  _agent: {fileID: 0}
+  _config: {fileID: 0}
+  _agentMover: {fileID: 0}
 --- !u!114 &3842442357470618231
 MonoBehaviour:
   m_ObjectHideFlags: 0

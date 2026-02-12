@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AI.Knowledge;
 using UnityEngine;
+using Zenject;
 
 namespace Items
 {
@@ -11,7 +12,8 @@ namespace Items
         
         private List<string> _tagsForFact;
         
-        public void Init(ItemVariantConfig itemVariantConfig)
+        [Inject]
+        public void Construct(ItemVariantConfig itemVariantConfig)
         {
             _tagsForFact = itemVariantConfig.GetTags().ToList();
             _tagsForFact.Add(GlobalKeys.WorldObject.DroppedItem);

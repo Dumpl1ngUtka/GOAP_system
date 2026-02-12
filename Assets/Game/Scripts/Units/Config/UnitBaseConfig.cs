@@ -4,7 +4,7 @@ namespace Units.Config
 {
     [CreateAssetMenu(
         fileName = "UnitBaseConfig",
-        menuName = "Unit/Configs/UnitBaseConfig"
+        menuName = "Configs/UnitBaseConfig"
     )]
     public class UnitBaseConfig : ScriptableObject
     {
