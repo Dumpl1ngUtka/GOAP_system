@@ -1,5 +1,7 @@
 using System;
 using Config;
+using Controllers;
+using Controllers.Camera;
 using Items;
 using Services.Audio;
 using Services.GameCard;
@@ -25,6 +27,7 @@ namespace Installers
         [SerializeField] private DroppedItem _itemPrefab;
         [Header("Configs")]
         [SerializeField] private GameConfig _gameConfig;
+        [SerializeField] private CameraConfig _cameraConfig;
 
         public void Awake()
         {
@@ -41,6 +44,8 @@ namespace Installers
             BindGameStateService();
             BindSceneLoader();
             BindGameConfig();
+            BindCamera();
+            BindPlayerInput();
         }
 
         private void BindSceneLoader()
@@ -127,6 +132,21 @@ namespace Installers
             Container
                 .Bind<GameConfig>()
                 .FromInstance(_gameConfig)
+                .AsSingle();
+        }
+
+        private void BindCamera()
+        {
+            Container
+                .Bind<CameraConfig>()
+                .FromInstance(_cameraConfig)
+                .AsSingle();
+        }
+
+        private void BindPlayerInput()
+        {
+            Container
+                .BindInterfacesAndSelfTo<PlayerInput>()
                 .AsSingle();
         }
     }
