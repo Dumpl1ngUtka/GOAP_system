@@ -16,11 +16,14 @@ public static class GlobalKeys
     {
         public const string Health = nameof(Health);
         public const string Mana = nameof(Mana);
+        public const string Wood = nameof(Wood);
+        public const string Gold = nameof(Gold);
     }
     
     public class Tool
     {
         public const string Woodcutter = nameof(Woodcutter);
+        public const string Pickaxe = nameof(Pickaxe);
         public const string MeleeWeapon = nameof(MeleeWeapon);
     }
 
@@ -29,6 +32,8 @@ public static class GlobalKeys
         public const string Enemy = nameof(Enemy);
         public const string Ally = nameof(Ally);
         public const string DroppedItem = nameof(DroppedItem);
+        public const string Tree = nameof(Tree);
+        public const string GoldOre = nameof(GoldOre);
     }
     
     public class UI

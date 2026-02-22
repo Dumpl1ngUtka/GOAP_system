@@ -26,7 +26,12 @@ namespace AI.Actions.Implementation
 
         public override IEnumerable<GoalCondition> GetEffects(IObjectForAI target)
         {
-            return new List<GoalCondition>();
+            List<GoalCondition> effects = new();
+            foreach (string tag in target.GetTags())
+            {
+                effects.Add(new GoalCondition(GlobalKeys.ConditionTag.Nearby, tag, true, target));
+            }
+            return effects;
         }
 
         public override ActionBase CreateAction(IObjectForAI target)

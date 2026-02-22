@@ -283,6 +283,9 @@ MonoBehaviour:
   _button: {fileID: 957996277741666355}
   _hoverScale: 1.2
   _scaleDuration: 0.2
+  _dissolveMaterial: {fileID: 2100000, guid: 06bab190d474bc64e8eae40b454d2fb6, type: 2}
+  _dissolveDuration: 0.5
+  _softness: 20
 --- !u!225 &7230630027709662780
 CanvasGroup:
   m_ObjectHideFlags: 0

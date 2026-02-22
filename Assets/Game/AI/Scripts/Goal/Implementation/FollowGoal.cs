@@ -1,17 +1,17 @@
 using System.Collections.Generic;
-using System.Linq;
 using AI.Knowledge;
-using AI.Sensors;
 
 namespace AI.Goal.Implementation
 {
-    public class KillEnemyGoal : GoalBase
+    public class FollowGoal : GoalBase
     {
-        private readonly IObjectForAI _currentTarget;
-        
-        public KillEnemyGoal(IObjectForAI currentTarget = null)
+        private readonly IObjectForAI _target;
+        private readonly string _targetTag;
+
+        public FollowGoal(IObjectForAI target, string targetTag)
         {
-            _currentTarget = currentTarget;
+            _target = target;
+            _targetTag = targetTag;
         }
 
         public override IEnumerable<GoalCondition> GetDesiredState()
@@ -20,15 +20,15 @@ namespace AI.Goal.Implementation
             {
                 new GoalCondition(
                     GlobalKeys.ConditionTag.Nearby,
-                    GlobalKeys.WorldObject.Enemy,
-                    mustExist: false,
-                    specificObject: _currentTarget)
+                    _targetTag,
+                    mustExist: true,
+                    specificObject: _target)
             };
         }
 
         public override float GetPriority(IEnumerable<Fact> knowledgeBase)
         {
-            return 100;
+            return 50f;
         }
     }
 }

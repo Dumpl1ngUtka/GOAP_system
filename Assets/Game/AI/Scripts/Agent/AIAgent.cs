@@ -55,7 +55,11 @@ namespace AI.Agent
             
             _availableGoals = new List<GoalBase>()
             {
-                new IdleGoal()
+                new IdleGoal(),
+                new SurviveGoal(),
+                new PickUpItemGoal(),
+                new HealAllyGoal(),
+                new KillEnemyGoal(),
             };
 
             if (isActiveAndEnabled)
