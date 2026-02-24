@@ -81,7 +81,6 @@ namespace UI.Presenters.Implementations.HUD
             CardPresenter card = _gameCardService.GetRandomCardByType(_gameControlService.CurrentCardType);
             _cards.Add(card);
             Changed?.Invoke();
-            Debug.Log("Spawn");
         }
     }
 }

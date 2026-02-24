@@ -28,7 +28,7 @@ namespace AI.Goal.Implementation
 
         public override float GetPriority(IEnumerable<Fact> knowledgeBase)
         {
-            return 50f;
+            return _target == null ? 0f : 50f;
         }
     }
 }

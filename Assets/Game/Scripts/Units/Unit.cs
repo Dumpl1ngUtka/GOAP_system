@@ -1,5 +1,6 @@
 using AI.Agent;
 using Config;
+using Services.Spawner;
 using Units.Config;
 using Units.UnitClasses;
 using UnityEngine;
@@ -10,19 +11,20 @@ namespace Units
 {
     public class Unit : MonoBehaviour
     { 
-        [SerializeField] private AIAgent _aiAgent;
-        
-        private Parameters _parameters;
-        private IHealth _health;
+        public UnitInventory Inventory { get; private set; }
+        public Parameters Parameters { get; private set; }
+        public IHealth Health { get; private set; }
+
 
         [Inject]
         public void Construct(
             GameConfig gameConfig,
-            UnitClassVariantConfig unitConfig)
+            UnitClassVariantConfig unitConfig,
+            SpawnService spawnService)
         {
-            _parameters = new Parameters(unitConfig);
-            _health = new AgentHealth(gameConfig.UnitBaseConfig, _parameters);
-            _aiAgent.Constructor(GlobalKeys.Team.Alpha, gameConfig.UnitBaseConfig, _health);
+            Parameters = new Parameters(unitConfig);
+            Health = new AgentHealth(gameConfig.UnitBaseConfig, Parameters);
+            Inventory = new UnitInventory(spawnService, transform);
         }
     }
 }

@@ -35,13 +35,12 @@ namespace AI.Agent
 
         public void Constructor(
             string teamKey,
-            UnitBaseConfig unitConfig,
-            IHealth health
-            )
+            Unit unit)
         {
             _sensorHolder = new SensorHolder(
-                new HealthSensor(health),
-                new VisualSensor(transform, teamKey, _config)
+                new HealthSensor(unit.Health),
+                new VisualSensor(transform, teamKey, _config),
+                new InventorySensor(unit.Inventory)
                 );
             
             _planner = new AIPlanner();
@@ -115,7 +114,7 @@ namespace AI.Agent
                 
                 // IsValid check removed as it was not in ActionBase, or needs to be added back if needed.
                 // Assuming OnStart is always safe to call if plan was valid.
-                Debug.Log($"Starting action: {nameof(_currentAction)}");
+                Debug.Log($"Starting action: {_currentAction}");
                 _currentAction.OnStart();
             }
             else if (_actionPlan == null || _actionPlan.Count == 0)
@@ -131,41 +130,48 @@ namespace AI.Agent
 
         private void CalculateNewGoalAndPlan()
         {
-            GoalBase bestGoal = GetBestGoal();
-            if (bestGoal == null) 
-                return;
-
-            if (_currentGoal != bestGoal || _actionPlan == null)
+            List<GoalBase> noValidGoals = new();
+            for (int i = 0; i < _availableGoals.Count; i++)
             {
-                _currentGoal = bestGoal;
-                _currentGoal.OnGoalActivated();
+                GoalBase bestGoal = GetBestGoal(_availableGoals, noValidGoals);
+                if (bestGoal == null) 
+                    return;
 
-                Debug.Log($"Planning for goal: {nameof(_currentGoal)} (Priority: {_currentGoal.GetPriority(_knowledgeBase.GetAllFacts())})");
-
-                Queue<ActionBase> plan = 
-                    _planner.Plan(_availableStrategies, _knowledgeBase.GetAllFacts(), _currentGoal);
-
-                if (plan != null)
+                if (_currentGoal != bestGoal || _actionPlan == null)
                 {
-                    _actionPlan = plan;
-                    Debug.Log($"<color=cyan>Plan found with {_actionPlan.Count} steps.</color>");
-                }
-                else
-                {
-                    Debug.LogWarning($"<color=red>No plan found for goal: {nameof(_currentGoal)}</color>");
+                    _currentGoal = bestGoal;
+                    _currentGoal.OnGoalActivated();
+
+                    Debug.Log($"Planning for goal: {_currentGoal} (Priority: {_currentGoal.GetPriority(_knowledgeBase.GetAllFacts())})");
+
+                    Queue<ActionBase> plan = 
+                        _planner.Plan(_availableStrategies, _knowledgeBase.GetAllFacts(), _currentGoal);
+
+                    if (plan != null)
+                    {
+                        _actionPlan = plan;
+                        Debug.Log($"<color=cyan>Plan found with {_actionPlan.Count} steps.</color>");
+                        return;
+                    }
+
+                    Debug.LogWarning($"<color=red>No plan found for goal: {_currentGoal}</color>");
                     _currentGoal.OnGoalDeactivated();
                     _currentGoal = null;
+                    noValidGoals.Add(bestGoal);
                 }
             }
         }
 
-        private GoalBase GetBestGoal()
+        private GoalBase GetBestGoal(List<GoalBase> availableGoals, List<GoalBase> noValidGoals)
         {
             GoalBase bestGoal = null;
             float highestPriority = -1;
             
-            foreach (GoalBase goal in _availableGoals)
+            foreach (GoalBase goal in availableGoals)
             {
+                if (noValidGoals.Contains(goal))
+                    continue;
+                
                 float priority = goal.GetPriority(_knowledgeBase.GetAllFacts());
                 if (priority > highestPriority)
                 {

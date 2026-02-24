@@ -15,7 +15,7 @@ namespace AI.Sensors
         private readonly string _selfTeamKey;
         private readonly AIConfig _aiConfig;
         
-        private const float UpdateInterval = 0.2f; // Update more frequently
+        private const float UpdateInterval = 0.2f;
         private float _timeSinceLastUpdate;
         private List<Fact> _cachedFacts = new();
 
@@ -29,6 +29,10 @@ namespace AI.Sensors
             _aiConfig = aiConfig;
         }
 
+        public void Start()
+        {
+        }
+
         public void Update(float deltaTime)
         {
             _timeSinceLastUpdate += deltaTime;
@@ -37,6 +41,10 @@ namespace AI.Sensors
                 _timeSinceLastUpdate = 0;
                 UpdateFacts();
             }
+        }
+
+        public void Stop()
+        {
         }
 
         private void UpdateFacts()

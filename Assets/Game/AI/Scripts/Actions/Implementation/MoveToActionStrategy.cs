@@ -26,6 +26,9 @@ namespace AI.Actions.Implementation
 
         public override IEnumerable<GoalCondition> GetEffects(IObjectForAI target)
         {
+            if (target == null)
+                return new List<GoalCondition>();
+            
             List<GoalCondition> effects = new();
             foreach (string tag in target.GetTags())
             {

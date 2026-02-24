@@ -1,5 +1,6 @@
 using AI.Knowledge;
 using Units.Mover;
+using UnityEngine;
 
 namespace AI.Actions.Implementation
 {
@@ -16,6 +17,7 @@ namespace AI.Actions.Implementation
         
         public override void OnStart()
         {
+            Debug.Log("Start Move with target " + Target);
             if (Target is IWorldObjectForAI worldObject)
             {
                 _mover.SetTargetPosition(worldObject.GetWorldTransform().position);
