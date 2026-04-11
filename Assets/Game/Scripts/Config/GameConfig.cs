@@ -24,6 +24,7 @@ namespace Config
         [field: SerializeField] public ClassesConfig ClassesConfig { get; private set; }
         [field: SerializeField] public CardBaseConfig CardBaseConfig { get; private set; }
         [field: SerializeField] public UnitBaseConfig UnitBaseConfig { get; private set; }
+        [field: SerializeField] public CameraConfig CameraConfig { get; private set; }
 
         public PlayerData StartPlayerData => _startPlayerData.DeepClone();
         public SettingsData StartSettingsData => _startSettingsData.DeepClone();

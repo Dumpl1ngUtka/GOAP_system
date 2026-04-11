@@ -20,26 +20,25 @@ namespace Controllers.Camera
         private CameraMode _currentMode = CameraMode.Free;
 
         private Vector3 _targetPosition;
-        private float _targetZoom;
         private Vector3 _currentVelocity;
-        private float _zoomVelocity;
 
         private Vector3 _observerTarget;
         private Vector3 _observerOffset;
 
         [Inject]
-        public void Construct(CameraConfig config, PlayerInput playerInput)
+        public void Construct(
+            GameConfig config, 
+            PlayerInput playerInput)
         {
-            _config = config;
+            _config = config.CameraConfig;
             _playerInput = playerInput;
+            Debug.Log("CameraController constructed");
         }
 
         private void Awake()
         {
             _cam = GetComponent<UnityEngine.Camera>();
             _targetPosition = transform.position;
-
-            _targetZoom = _cam.orthographic ? _cam.orthographicSize : _cam.fieldOfView;
         }
 
         private void Start()
@@ -90,32 +89,50 @@ namespace Controllers.Camera
         {
             if (_currentMode != CameraMode.Free) return;
             if (_config == null) return;
-
-            Vector3 move = new Vector3(input.x, 0, input.y);
-            // Adjust movement to be relative to camera rotation (yaw only)
-            move = Quaternion.Euler(0, transform.eulerAngles.y, 0) * move;
             
-            _targetPosition += move * (_config.MoveSpeed * Time.deltaTime);
+            float zoomPercent = Mathf.InverseLerp(_config.MinZoom, _config.MaxZoom, _targetPosition.y);
+            
+            float minSpeedMultiplier = 0.3f; 
+            float currentSpeed = _config.MoveSpeed * Mathf.Lerp(minSpeedMultiplier, 1f, zoomPercent);
+            
+            Vector3 move = new Vector3(input.x, 0, input.y);
+            move = Quaternion.Euler(0, transform.eulerAngles.y, 0) * move;
+    
+            _targetPosition += move * (currentSpeed * Time.deltaTime);
         }
-
+        
         private void HandleCameraZoom(float scroll)
         {
             if (_currentMode != CameraMode.Free) return;
             if (_config == null) return;
 
-            _targetZoom -= scroll * _config.ZoomSpeed;
-            _targetZoom = Mathf.Clamp(_targetZoom, _config.MinZoom, _config.MaxZoom);
+            Vector3 zoomStep = transform.forward * (scroll * _config.ZoomSpeed);
+            Vector3 expectedPosition = _targetPosition + zoomStep;
+
+            if (expectedPosition.y >= _config.MinZoom && expectedPosition.y <= _config.MaxZoom)
+            {
+                _targetPosition = expectedPosition;
+            }
+            else
+            {
+                float targetY = expectedPosition.y < _config.MinZoom ? _config.MinZoom : _config.MaxZoom;
+                float differenceY = targetY - _targetPosition.y;
+                
+                if (Mathf.Abs(transform.forward.y) > 0.001f) 
+                {
+                    float distanceToLimit = differenceY / transform.forward.y;
+                    _targetPosition += transform.forward * distanceToLimit;
+                }
+            }
         }
 
         private void HandleObserverBehavior()
         {
             if (_config == null) return;
 
-            // Rotate around the target
             transform.position = _observerTarget + _observerOffset;
             transform.LookAt(_observerTarget);
             
-            // Rotate the offset around the target
             _observerOffset = Quaternion.AngleAxis(_config.ObserverRotationSpeed * Time.deltaTime, Vector3.up) * _observerOffset;
         }
 
@@ -123,16 +140,12 @@ namespace Controllers.Camera
         {
             if (_config == null) return;
 
-            transform.position = Vector3.SmoothDamp(transform.position, _targetPosition, ref _currentVelocity, _config.SmoothTime);
-
-            if (_cam.orthographic)
-            {
-                _cam.orthographicSize = Mathf.SmoothDamp(_cam.orthographicSize, _targetZoom, ref _zoomVelocity, _config.SmoothTime);
-            }
-            else
-            {
-                _cam.fieldOfView = Mathf.SmoothDamp(_cam.fieldOfView, _targetZoom, ref _zoomVelocity, _config.SmoothTime);
-            }
+            transform.position = Vector3.SmoothDamp(
+                transform.position, 
+                _targetPosition, 
+                ref _currentVelocity, 
+                _config.SmoothTime
+            );
         }
     }
 }

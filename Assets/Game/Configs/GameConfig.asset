@@ -27,3 +27,4 @@ MonoBehaviour:
   <ClassesConfig>k__BackingField: {fileID: 11400000, guid: ee3d5f80fa4f32445bc4c456091aa5b3, type: 2}
   <CardBaseConfig>k__BackingField: {fileID: 11400000, guid: c690eb833b853f54c918dcf05f753fff, type: 2}
   <UnitBaseConfig>k__BackingField: {fileID: 11400000, guid: aa69ba3877c4eeb498bc730fcdda0573, type: 2}
+  <CameraConfig>k__BackingField: {fileID: 11400000, guid: 92b7f20d76e2ec0409c5456ff01294d1, type: 2}

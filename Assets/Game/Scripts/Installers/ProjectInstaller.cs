@@ -27,7 +27,6 @@ namespace Installers
         [SerializeField] private DroppedItem _itemPrefab;
         [Header("Configs")]
         [SerializeField] private GameConfig _gameConfig;
-        [SerializeField] private CameraConfig _cameraConfig;
 
         public void Awake()
         {
@@ -44,7 +43,6 @@ namespace Installers
             BindGameStateService();
             BindSceneLoader();
             BindGameConfig();
-            BindCamera();
             BindPlayerInput();
         }
 
@@ -132,14 +130,6 @@ namespace Installers
             Container
                 .Bind<GameConfig>()
                 .FromInstance(_gameConfig)
-                .AsSingle();
-        }
-
-        private void BindCamera()
-        {
-            Container
-                .Bind<CameraConfig>()
-                .FromInstance(_cameraConfig)
                 .AsSingle();
         }
 
