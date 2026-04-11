@@ -14,19 +14,7 @@ namespace AI.Planner
             IEnumerable<Fact> worldState, 
             GoalBase goal)
         {
-            List<Node> leaves = new List<Node>();
-            Node startNode = new Node(null, 0, new List<Fact>(worldState), null, null);
-            
-            // We need to collect potential targets.
-            // Since Fact doesn't store the object reference, we rely on the Goal's SpecificObject 
-            // or assume strategies can work with null targets for now, 
-            // OR we assume the caller might provide a list of relevant objects (not in current signature).
-            
-            // However, to make it work with the current structure:
-            // We can extract potential targets from the Goal conditions if they have SpecificObject set.
-            HashSet<IObjectForAI> potentialTargets = new HashSet<IObjectForAI>();
-            potentialTargets.Add(null); // Always consider 'no target' (self)
-
+            HashSet<IObjectForAI> potentialTargets = new HashSet<IObjectForAI> { null };
             foreach (var condition in goal.GetDesiredState())
             {
                 if (condition.SpecificObject != null)
@@ -35,24 +23,80 @@ namespace AI.Planner
                 }
             }
 
-            bool success = BuildGraph(startNode, leaves, availableStrategies, goal, potentialTargets);
+            List<Fact> startState = new List<Fact>(worldState);
+            float initialHeuristic = CalculateHeuristic(startState, goal);
+            Node startNode = new Node(null, 0, initialHeuristic, startState, null, null);
 
-            if (!success)
-            {
-                return null;
-            }
+            List<Node> openList = new List<Node> { startNode };
+            
+            int maxIterations = 1000; 
+            int iterations = 0;
 
-            Node cheapestNode = null;
-            foreach (Node leaf in leaves)
+            while (openList.Count > 0 && iterations < maxIterations)
             {
-                if (cheapestNode == null || leaf.Cost < cheapestNode.Cost)
+                iterations++;
+                
+                openList = openList.OrderBy(n => n.TotalCost).ToList();
+                Node current = openList[0];
+                openList.RemoveAt(0);
+
+                if (GoalAchieved(goal, current.State))
                 {
-                    cheapestNode = leaf;
+                    return ConstructPlan(current);
+                }
+
+                foreach (ActionStrategy strategy in availableStrategies)
+                {
+                    foreach (IObjectForAI target in potentialTargets)
+                    {
+                        if (!CheckPreconditions(strategy, target, current.State))
+                            continue;
+
+                        List<Fact> nextState = new List<Fact>(current.State);
+                        ApplyEffects(strategy, target, nextState);
+
+                        float newCost = current.Cost + strategy.GetCost(target);
+                        float newHeuristic = CalculateHeuristic(nextState, goal);
+
+                        Node neighbor = new Node(current, newCost, newHeuristic, nextState, strategy, target);
+                        openList.Add(neighbor);
+                    }
                 }
             }
 
+            if (iterations >= maxIterations)
+            {
+                Debug.LogWarning("AI Planner: Превышен лимит итераций A* (возможно, цель недостижима).");
+            }
+
+            return null;
+        }
+        
+        private float CalculateHeuristic(List<Fact> state, GoalBase goal)
+        {
+            float unmatchedConditions = 0;
+
+            foreach (var condition in goal.GetDesiredState())
+            {
+                bool exists = state.Any(f => 
+                    f.ConditionTag == condition.ConditionTag && 
+                    (string.IsNullOrEmpty(condition.ObjectTag) || f.ObjectTags.Contains(condition.ObjectTag))
+                );
+
+                if (condition.MustExist && !exists)
+                    unmatchedConditions++;
+                else if (!condition.MustExist && exists)
+                    unmatchedConditions++;
+            }
+
+            return unmatchedConditions; 
+        }
+
+        private Queue<ActionBase> ConstructPlan(Node goalNode)
+        {
             List<ActionBase> result = new List<ActionBase>();
-            Node n = cheapestNode;
+            Node n = goalNode;
+
             while (n != null)
             {
                 if (n.Strategy != null)
@@ -62,77 +106,27 @@ namespace AI.Planner
                 n = n.Parent;
             }
 
-            Queue<ActionBase> queue = new Queue<ActionBase>();
-            foreach (var a in result)
-            {
-                queue.Enqueue(a);
-            }
-            return queue;
-        }
-
-        private bool BuildGraph(
-            Node parent, 
-            List<Node> leaves, 
-            List<ActionStrategy> strategies, 
-            GoalBase goal,
-            HashSet<IObjectForAI> potentialTargets)
-        {
-            bool found = false;
-
-            foreach (var strategy in strategies)
-            {
-                foreach (var target in potentialTargets)
-                {
-                    if (!CheckPreconditions(strategy, target, parent.State))
-                        continue;
-
-                    List<Fact> currentState = new List<Fact>(parent.State);
-                    ApplyEffects(strategy, target, currentState);
-
-                    Node node = new Node(parent, parent.Cost + strategy.GetCost(target), currentState, strategy, target);
-
-                    if (GoalAchieved(goal, currentState))
-                    {
-                        leaves.Add(node);
-                        found = true;
-                    }
-                    else
-                    {
-                        // Simple depth limit or cycle check could be added here
-                        if (node.Cost < 100) // Arbitrary cost limit to prevent infinite loops
-                        {
-                            if (BuildGraph(node, leaves, strategies, goal, potentialTargets))
-                                found = true;
-                        }
-                    }
-                }
-            }
-
-            return found;
+            return new Queue<ActionBase>(result);
         }
 
         private bool CheckPreconditions(ActionStrategy strategy, IObjectForAI target, List<Fact> state)
         {
-            foreach (var condition in strategy.GetPreconditions(target))
+            foreach (GoalCondition condition in strategy.GetPreconditions(target))
             {
-                // Check if the condition is satisfied by the current state (facts)
                 bool exists = state.Any(f => 
                     f.ConditionTag == condition.ConditionTag && 
                     (string.IsNullOrEmpty(condition.ObjectTag) || f.ObjectTags.Contains(condition.ObjectTag))
                 );
 
-                if (condition.MustExist && !exists)
-                    return false;
-                
-                if (!condition.MustExist && exists)
-                    return false;
+                if (condition.MustExist && !exists) return false;
+                if (!condition.MustExist && exists) return false;
             }
             return true;
         }
 
         private void ApplyEffects(ActionStrategy strategy, IObjectForAI target, List<Fact> state)
         {
-            foreach (var effect in strategy.GetEffects(target))
+            foreach (GoalCondition effect in strategy.GetEffects(target))
             {
                 if (effect.MustExist)
                 {
@@ -158,20 +152,7 @@ namespace AI.Planner
 
         private bool GoalAchieved(GoalBase goal, List<Fact> state)
         {
-            foreach (var condition in goal.GetDesiredState())
-            {
-                bool exists = state.Any(f => 
-                    f.ConditionTag == condition.ConditionTag && 
-                    (string.IsNullOrEmpty(condition.ObjectTag) || f.ObjectTags.Contains(condition.ObjectTag))
-                );
-
-                if (condition.MustExist && !exists)
-                    return false;
-                
-                if (!condition.MustExist && exists)
-                    return false;
-            }
-            return true;
+            return CalculateHeuristic(state, goal) == 0;
         }
     }
 }
