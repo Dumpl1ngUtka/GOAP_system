@@ -16,5 +16,5 @@ MonoBehaviour:
   <SmoothTime>k__BackingField: 0.1
   <ZoomSpeed>k__BackingField: 15
   <MinZoom>k__BackingField: 10
-  <MaxZoom>k__BackingField: 30
+  <MaxZoom>k__BackingField: 80
   <ObserverRotationSpeed>k__BackingField: 10

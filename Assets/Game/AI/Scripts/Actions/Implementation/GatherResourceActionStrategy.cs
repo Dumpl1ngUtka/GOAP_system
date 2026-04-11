@@ -23,8 +23,11 @@ namespace AI.Actions.Implementation
 
         public override IEnumerable<GoalCondition> GetPreconditions(IObjectForAI target)
         {
-            var preconditions = new List<GoalCondition>();
-            foreach (var tag in target.GetTags())
+            if (target == null)
+                return new List<GoalCondition>();
+            
+            List<GoalCondition> preconditions = new();
+            foreach (string tag in target.GetTags())
             {
                 preconditions.Add(new GoalCondition(GlobalKeys.ConditionTag.Nearby, tag, true, target));
                 
@@ -48,8 +51,11 @@ namespace AI.Actions.Implementation
 
         public override IEnumerable<GoalCondition> GetEffects(IObjectForAI target)
         {
-            var effects = new List<GoalCondition>();
-            foreach (var tag in target.GetTags())
+            if (target == null)
+                return new List<GoalCondition>();
+            
+            List<GoalCondition> effects = new();
+            foreach (string tag in target.GetTags())
             {
                 string resourceType = null;
                 if (tag == GlobalKeys.WorldObject.Tree)

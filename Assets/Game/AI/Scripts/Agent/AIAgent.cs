@@ -48,8 +48,11 @@ namespace AI.Agent
 
             _availableStrategies = new List<ActionStrategy>()
             {
+                new IdleActionStrategy(), 
+                new GatherResourceActionStrategy(transform, 0.1f), //TODO from unit or else 
                 new AttackActionStrategy(transform, 1.0f, 10), //TODO from unit or else 
-                new MoveToActionStrategy(_agentMover)
+                new MoveToActionStrategy(_agentMover),
+                new PatrolActionStrategy(_agentMover, transform, 10f) 
             };
             
             _availableGoals = new List<GoalBase>()
@@ -59,6 +62,7 @@ namespace AI.Agent
                 new PickUpItemGoal(),
                 new HealAllyGoal(),
                 new KillEnemyGoal(),
+                new PatrolGoal() 
             };
 
             if (isActiveAndEnabled)
@@ -97,7 +101,7 @@ namespace AI.Agent
 
                 if (isComplete)
                 {
-                    Debug.Log($"<color=green>Action completed: {nameof(_currentAction)}</color>");
+                    Debug.Log($"<color=green>Action completed: {_currentAction}</color>");
                     _currentAction.OnStop();
                     
                     _currentAction = null;

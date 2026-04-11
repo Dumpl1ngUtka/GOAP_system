@@ -10,6 +10,8 @@ public static class GlobalKeys
         
         public const string IsLow = nameof(IsLow);
         public const string IsHigh = nameof(IsHigh);
+        public const string DoNothing = nameof(DoNothing);
+        public const string IsPatrolling = nameof(IsPatrolling);
     }
     
     public class Resources
