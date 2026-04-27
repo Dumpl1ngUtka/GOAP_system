@@ -11,6 +11,7 @@ namespace Units
 {
     public class Unit : MonoBehaviour
     { 
+        public UnitClassVariantConfig Config { get; private set; }
         public UnitInventory Inventory { get; private set; }
         public Parameters Parameters { get; private set; }
         public IHealth Health { get; private set; }

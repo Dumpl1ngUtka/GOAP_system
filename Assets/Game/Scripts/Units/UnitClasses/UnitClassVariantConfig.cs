@@ -14,6 +14,15 @@ namespace Units.UnitClasses
         [field: SerializeField] public ushort Dexterity { get; private set; }
         [field: SerializeField] public ushort Strength { get; private set; }
         [field: SerializeField] public ushort Intelligence { get; private set; }
+        [field: SerializeField] public UnitRole Role{ get; private set; }
         public CardType Type => CardType.Duck;
+    }
+    
+    public enum UnitRole
+    {
+        Worker,
+        MeleeCombat,
+        RangedCombat,
+        Support
     }
 }

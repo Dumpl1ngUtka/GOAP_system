@@ -12,6 +12,7 @@ using AI.Sensors;
 using Units;
 using Units.Config;
 using Units.Mover;
+using Units.UnitClasses;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -19,6 +20,8 @@ namespace AI.Agent
 {
     public class AIAgent : MonoBehaviour
     {
+        public UnitRole Role => _unitRole;
+        
         [SerializeField] private AIConfig _config;
         [SerializeField] private AgentMover _agentMover;
         
@@ -30,6 +33,8 @@ namespace AI.Agent
         private GoalBase _currentGoal;
         private Queue<ActionBase> _actionPlan;
         private ActionBase _currentAction;
+        private GoalBase _assignedOrder; 
+        private UnitRole _unitRole;
 
         private SensorHolder _sensorHolder;
 
@@ -42,7 +47,8 @@ namespace AI.Agent
                 new VisualSensor(transform, teamKey, _config),
                 new InventorySensor(unit.Inventory)
                 );
-            
+
+            _unitRole = unit.Config.Role;
             _planner = new AIPlanner();
             _knowledgeBase = new AIKnowledge(_sensorHolder);
 
@@ -71,6 +77,32 @@ namespace AI.Agent
                 _sensorHolder.Start();
             }
         }
+        
+        public void AssignOrder(GoalBase newOrder)
+        {
+            if (_assignedOrder == newOrder) return;
+
+            _assignedOrder = newOrder;
+            Debug.Log($"<color=yellow>Agent {gameObject.name} received new order: {newOrder}</color>");
+            
+            // Сбрасываем текущий план, чтобы юнит немедленно переосмыслил свои цели
+            if (_currentAction != null)
+            {
+                _currentAction.OnStop();
+                _currentAction = null;
+            }
+            _actionPlan?.Clear();
+            _currentGoal?.OnGoalDeactivated();
+            _currentGoal = null;
+            
+            CalculateNewGoalAndPlan();
+        }
+
+        public void ClearOrder()
+        {
+            _assignedOrder = null;
+        }
+
 
         private void OnEnable()
         {

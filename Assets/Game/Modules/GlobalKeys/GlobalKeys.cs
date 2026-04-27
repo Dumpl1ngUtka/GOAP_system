@@ -12,6 +12,7 @@ public static class GlobalKeys
         public const string IsHigh = nameof(IsHigh);
         public const string DoNothing = nameof(DoNothing);
         public const string IsPatrolling = nameof(IsPatrolling);
+        public const string IsMined  = nameof(IsMined);
     }
     
     public class Resources
@@ -36,6 +37,7 @@ public static class GlobalKeys
         public const string DroppedItem = nameof(DroppedItem);
         public const string Tree = nameof(Tree);
         public const string GoldOre = nameof(GoldOre);
+        public const string OreNode  = nameof(OreNode);
     }
     
     public class UI
