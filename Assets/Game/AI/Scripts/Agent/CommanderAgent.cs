@@ -28,11 +28,11 @@ namespace AI.Agent
         private List<Squad> _activeSquads = new List<Squad>();
 
         // Трекинг наших зданий
-        private int _aliveTowersCount = 3; 
-        
+        private int _aliveTowersCount = 3;
+
         private float _evaluationTimer = 0f;
         private const float EVALUATION_INTERVAL = 2f; // Оцениваем карту раз в 2 секунды
-        
+
         private void Awake()
         {
             // Сенсоры командира "видят" глобальную карту (ресурсы, захваченные точки, базы врагов)
@@ -67,6 +67,15 @@ namespace AI.Agent
                 EvaluateGlobalStrategy();
                 _evaluationTimer = 0f;
             }
+
+            for (int i = _activeSquads.Count - 1; i >= 0; i--)
+            {
+                Squad squad = _activeSquads[i];
+                if (squad.CurrentOrder == null || squad.CurrentOrder.IsOrderCompleted(_globalKnowledge))
+                {
+                    DisbandSquad(squad);
+                }
+            }
         }
 
         public void UnregisterAgent(AIAgent agent)
@@ -81,7 +90,7 @@ namespace AI.Agent
             UpdateFriendlyStructuresState();
 
             // ПРИОРИТЕТ 1: ЗАЩИТА (Defense)
-            if (CheckAndProcessDefense()) 
+            if (CheckAndProcessDefense())
                 return; // Если база в опасности, бросаем все силы на защиту, атака подождет
 
             // ПРИОРИТЕТ 2: ДОБЫЧА РУДЫ (Economy)
@@ -91,7 +100,7 @@ namespace AI.Agent
             ProcessAssaultStrategy();
         }
 
-private void UpdateFriendlyStructuresState()
+        private void UpdateFriendlyStructuresState()
         {
             // Считаем сколько башен осталось
             int destroyedTowers = _globalKnowledge.GetAllFactsByTag("StructureDestroyed", "FriendlyTower").Count();
@@ -119,12 +128,14 @@ private void UpdateFriendlyStructuresState()
             }
 
             // 2. Проверяем Трон. УСЛОВИЕ: защищаем, только если уничтожена хотя бы 1 башня!
-            if (_aliveTowersCount < 3) 
+            if (_aliveTowersCount < 3)
             {
-                var attackedThrone = _globalKnowledge.GetAllFactsByTag("UnderAttack", "FriendlyThrone").FirstOrDefault();
+                var attackedThrone =
+                    _globalKnowledge.GetAllFactsByTag("UnderAttack", "FriendlyThrone").FirstOrDefault();
                 if (attackedThrone != null && !IsTargetAlreadyAssigned(attackedThrone.Target))
                 {
-                    Squad defenseSquad = FormSquad(neededMelee: 5, neededRanged: 5, neededSupport: 2); // Стягиваем всю армию!
+                    Squad defenseSquad =
+                        FormSquad(neededMelee: 5, neededRanged: 5, neededSupport: 2); // Стягиваем всю армию!
                     if (defenseSquad != null)
                     {
                         defenseSquad.AssignOrder(new DefendOrder(attackedThrone.Target, 150f)); // Приоритет выше всего
@@ -140,7 +151,7 @@ private void UpdateFriendlyStructuresState()
         private void ProcessMiningEconomy()
         {
             var detectedOres = _globalKnowledge.GetAllFactsByTag("OreSpotted").ToList();
-            
+
             foreach (var oreFact in detectedOres)
             {
                 if (!IsTargetAlreadyAssigned(oreFact.Target))
@@ -198,6 +209,18 @@ private void UpdateFriendlyStructuresState()
             // (Логика из предыдущего ответа) ...
             // Убеждаемся что хватает _unassignedAgents нужных ролей, создаем GameObject с Squad.cs, перекидываем туда агентов.
             return null; // Заглушка
+        }
+        private void DisbandSquad(Squad squad)
+        {
+            // Возвращаем всех юнитов отряда обратно в резерв
+            foreach (var agent in squad.Members)
+            {
+                agent.ClearOrder(); // Снимаем приказ
+                _unassignedAgents.Add(agent); // Возвращаем в пул
+            }
+
+            _activeSquads.Remove(squad);
+            Destroy(squad.gameObject); // Удаляем ГО отряда
         }
     }
 }

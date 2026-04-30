@@ -10,11 +10,9 @@ using AI.Knowledge;
 using AI.Planner;
 using AI.Sensors;
 using Units;
-using Units.Config;
 using Units.Mover;
 using Units.UnitClasses;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace AI.Agent
 {

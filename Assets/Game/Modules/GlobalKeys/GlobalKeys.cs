@@ -13,6 +13,8 @@ public static class GlobalKeys
         public const string DoNothing = nameof(DoNothing);
         public const string IsPatrolling = nameof(IsPatrolling);
         public const string IsMined  = nameof(IsMined);
+        public const string UnderAttack = nameof(UnderAttack);
+        public const string StructureDestroyed = nameof(StructureDestroyed);
     }
     
     public class Resources
@@ -38,6 +40,8 @@ public static class GlobalKeys
         public const string Tree = nameof(Tree);
         public const string GoldOre = nameof(GoldOre);
         public const string OreNode  = nameof(OreNode);
+        public const string FriendlyTower = nameof(FriendlyTower);
+        public const string FriendlyThrone = nameof(FriendlyThrone);
     }
     
     public class UI

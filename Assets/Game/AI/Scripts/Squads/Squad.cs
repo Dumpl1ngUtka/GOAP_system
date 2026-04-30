@@ -16,6 +16,7 @@ namespace AI.Squads
         
         public int MemberCount => _members.Count;
         public SquadOrder CurrentOrder => _currentOrder;
+        public List<AIAgent> Members => new List<AIAgent>();
 
         public void Initialize(IKnowledge squadKnowledge)
         {
