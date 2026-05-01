@@ -35,7 +35,7 @@ namespace AI.Goal.Implementation
             if (isHighHealth)
                 return 0f;
 
-            return 50f;
+            return 10f;
         }
     }
 }

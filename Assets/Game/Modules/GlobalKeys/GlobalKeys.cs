@@ -40,8 +40,10 @@ public static class GlobalKeys
         public const string Tree = nameof(Tree);
         public const string GoldOre = nameof(GoldOre);
         public const string OreNode  = nameof(OreNode);
+        public const string Resource  = nameof(Resource);
         public const string FriendlyTower = nameof(FriendlyTower);
         public const string FriendlyThrone = nameof(FriendlyThrone);
+        public const string Structure = nameof(Structure);
     }
     
     public class UI
@@ -66,8 +68,8 @@ public static class GlobalKeys
 
     public class Team
     {
-        public const string Alpha = nameof(Alpha);
-        public const string Beta = nameof(Beta);
+        public const string TeamA = nameof(TeamA);
+        public const string TeamB = nameof(TeamB);
     }
 
     public class Scene

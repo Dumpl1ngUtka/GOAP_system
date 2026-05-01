@@ -1,4 +1,5 @@
 using System;
+using AI.Global;
 using Config;
 using Controllers;
 using Controllers.Camera;
@@ -44,6 +45,12 @@ namespace Installers
             BindSceneLoader();
             BindGameConfig();
             BindPlayerInput();
+            BindCommanderRegistry();
+        }
+
+        private void BindCommanderRegistry()
+        {
+            Container.Bind<CommanderRegistry>().AsSingle().NonLazy();
         }
 
         private void BindSceneLoader()

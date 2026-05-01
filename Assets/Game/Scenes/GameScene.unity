@@ -128,6 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 76900990}
+  - component: {fileID: 76900991}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Untagged
@@ -151,6 +152,67 @@ Transform:
   - {fileID: 1353456545}
   m_Father: {fileID: 477405862}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &76900991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 76900989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87435f11d9d84321b7e090d07e4dc714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _teamKey: TeamA
+  _structureType: 0
+  _health: 500
+--- !u!1 &212849648
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 212849650}
+  - component: {fileID: 212849649}
+  m_Layer: 0
+  m_Name: 'CommanderAgent '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &212849649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212849648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea961dd5e583445599696a213499081d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TeamKey: TeamB
+  _squadPrefab: {fileID: 6464826403179417912, guid: 2d347acd05b74334b98834105bd1e6c6, type: 3}
+--- !u!4 &212849650
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 212849648}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -17.747097, y: 48.804565, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &224169490
 GameObject:
   m_ObjectHideFlags: 0
@@ -160,6 +222,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 224169491}
+  - component: {fileID: 224169492}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Untagged
@@ -183,6 +246,21 @@ Transform:
   - {fileID: 582344380}
   m_Father: {fileID: 477405862}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &224169492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 224169490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87435f11d9d84321b7e090d07e4dc714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _teamKey: TeamA
+  _structureType: 0
+  _health: 500
 --- !u!1 &231508332
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,6 +520,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 272164384}
+  - component: {fileID: 272164385}
   m_Layer: 0
   m_Name: Throne
   m_TagString: Untagged
@@ -467,6 +546,21 @@ Transform:
   - {fileID: 684569289}
   m_Father: {fileID: 477405862}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &272164385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 272164383}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87435f11d9d84321b7e090d07e4dc714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _teamKey: TeamA
+  _structureType: 1
+  _health: 500
 --- !u!1 &309638734
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,6 +570,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 309638735}
+  - component: {fileID: 309638736}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Untagged
@@ -499,6 +594,21 @@ Transform:
   - {fileID: 1978399382}
   m_Father: {fileID: 477405862}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &309638736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 309638734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87435f11d9d84321b7e090d07e4dc714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _teamKey: TeamA
+  _structureType: 0
+  _health: 500
 --- !u!1 &355359452
 GameObject:
   m_ObjectHideFlags: 0
@@ -1547,6 +1657,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1243737310}
+  - component: {fileID: 1243737311}
   m_Layer: 0
   m_Name: Tower
   m_TagString: Untagged
@@ -1570,6 +1681,21 @@ Transform:
   - {fileID: 477869076}
   m_Father: {fileID: 355359453}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1243737311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1243737309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87435f11d9d84321b7e090d07e4dc714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _teamKey: TeamB
+  _structureType: 0
+  _health: 500
 --- !u!1 &1353456544
 GameObject:
   m_ObjectHideFlags: 0
@@ -1704,6 +1830,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1421125494}
+  - component: {fileID: 1421125495}
   m_Layer: 0
   m_Name: Throne
   m_TagString: Untagged
@@ -1727,6 +1854,21 @@ Transform:
   - {fileID: 266041039}
   m_Father: {fileID: 355359453}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1421125495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1421125493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87435f11d9d84321b7e090d07e4dc714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _teamKey: TeamB
+  _structureType: 1
+  _health: 500
 --- !u!1 &1886565662
 GameObject:
   m_ObjectHideFlags: 0
@@ -1852,6 +1994,52 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1886565662}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1914814145
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1914814147}
+  - component: {fileID: 1914814146}
+  m_Layer: 0
+  m_Name: CommanderAgent  (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1914814146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1914814145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea961dd5e583445599696a213499081d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TeamKey: TeamA
+  _squadPrefab: {fileID: 6464826403179417912, guid: 2d347acd05b74334b98834105bd1e6c6, type: 3}
+--- !u!4 &1914814147
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1914814145}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -17.747097, y: 48.804565, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1964364852
 GameObject:
   m_ObjectHideFlags: 0
@@ -1861,6 +2049,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1964364853}
+  - component: {fileID: 1964364854}
   m_Layer: 0
   m_Name: Tower (1)
   m_TagString: Untagged
@@ -1884,6 +2073,21 @@ Transform:
   - {fileID: 647783532}
   m_Father: {fileID: 355359453}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1964364854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964364852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87435f11d9d84321b7e090d07e4dc714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _teamKey: TeamB
+  _structureType: 0
+  _health: 500
 --- !u!1 &1974761222
 GameObject:
   m_ObjectHideFlags: 0
@@ -1893,6 +2097,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1974761223}
+  - component: {fileID: 1974761224}
   m_Layer: 0
   m_Name: Tower (2)
   m_TagString: Untagged
@@ -1916,6 +2121,21 @@ Transform:
   - {fileID: 231508333}
   m_Father: {fileID: 355359453}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1974761224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974761222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87435f11d9d84321b7e090d07e4dc714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _teamKey: TeamB
+  _structureType: 0
+  _health: 500
 --- !u!1 &1978399381
 GameObject:
   m_ObjectHideFlags: 0
@@ -2049,3 +2269,5 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 1005597133}
   - {fileID: 405368435}
+  - {fileID: 212849650}
+  - {fileID: 1914814147}

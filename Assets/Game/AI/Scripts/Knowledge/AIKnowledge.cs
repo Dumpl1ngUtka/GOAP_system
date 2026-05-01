@@ -34,6 +34,12 @@ namespace AI.Knowledge
         {
             return _facts;
         }
+        
+        public void RemoveFactsByTarget(IObjectForAI target)
+        {
+            _facts.RemoveAll(f => f.Target == target);
+            Changed?.Invoke();
+        }
 
         bool IKnowledge.ContainsFact(string conditionTag, params string[] objectTags) => 
             ContainsFact(conditionTag, objectTags);
@@ -104,6 +110,11 @@ namespace AI.Knowledge
         {
             _facts = _sensorHolder.GetFactsFromAllSensors().ToList();
             Changed?.Invoke();
+        }
+
+        public void AddFact(Fact fact)
+        {
+            _facts.Add(fact);
         }
     }
 }

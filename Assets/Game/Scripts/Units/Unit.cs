@@ -23,6 +23,7 @@ namespace Units
             UnitClassVariantConfig unitConfig,
             SpawnService spawnService)
         {
+            Config = unitConfig;
             Parameters = new Parameters(unitConfig);
             Health = new AgentHealth(gameConfig.UnitBaseConfig, Parameters);
             Inventory = new UnitInventory(spawnService, transform);

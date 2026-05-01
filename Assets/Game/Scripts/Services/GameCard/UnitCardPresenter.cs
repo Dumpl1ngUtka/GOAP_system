@@ -31,7 +31,7 @@ namespace Services.GameCard
 
         public override void PutOnField(Vector3 position)
         {
-            _spawnService.SpawnAgent(_config, position, Quaternion.identity, GlobalKeys.Team.Alpha);
+            _spawnService.SpawnAgent(_config, position, Quaternion.identity, GlobalKeys.Team.TeamA);
             Debug.Log($"Unit {_config.Name} spawned at {position}");
         }
 

@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
+using AI.Global;
+using AI.GlobalRegistry;
 using AI.Knowledge;
 using AI.Sensors;
 using AI.Squads;
 using AI.Squads.Orders;
 using Units.UnitClasses;
 using UnityEngine;
+using Zenject;
 
 namespace AI.Agent
 {
@@ -33,6 +36,14 @@ namespace AI.Agent
         private float _evaluationTimer = 0f;
         private const float EVALUATION_INTERVAL = 2f; // Оцениваем карту раз в 2 секунды
 
+        private CommanderRegistry _commanderRegistry;
+
+        [Inject]
+        public void Construct(CommanderRegistry commanderRegistry)
+        {
+            _commanderRegistry = commanderRegistry;
+        }
+        
         private void Awake()
         {
             // Сенсоры командира "видят" глобальную карту (ресурсы, захваченные точки, базы врагов)
@@ -45,12 +56,32 @@ namespace AI.Agent
 
         private void OnEnable()
         {
-            _globalSensors?.Start();
+            if (_commanderRegistry != null)
+            {
+                _commanderRegistry.RegisterCommander(TeamKey, this);
+            }
+            // Подписываемся на события мира
+            AIGlobalRegistry.OnOreSpawned += HandleOreSpawned;
+            AIGlobalRegistry.OnOreDepleted += HandleOreDepleted;
+            
+            AIGlobalRegistry.OnStructureSpawned += HandleStructureSpawned;
+            AIGlobalRegistry.OnStructureAttacked += HandleStructureAttacked;
+            AIGlobalRegistry.OnStructureDestroyed += HandleStructureDestroyed;
         }
 
         private void OnDisable()
         {
-            _globalSensors?.Stop();
+            if (_commanderRegistry != null)
+            {
+                _commanderRegistry.UnregisterCommander(TeamKey);
+            }
+            // Отписываемся, чтобы не было утечек памяти
+            AIGlobalRegistry.OnOreSpawned -= HandleOreSpawned;
+            AIGlobalRegistry.OnOreDepleted -= HandleOreDepleted;
+            
+            AIGlobalRegistry.OnStructureSpawned -= HandleStructureSpawned;
+            AIGlobalRegistry.OnStructureAttacked -= HandleStructureAttacked;
+            AIGlobalRegistry.OnStructureDestroyed -= HandleStructureDestroyed;
         }
 
         public void RegisterAgent(AIAgent agent)
@@ -221,6 +252,54 @@ namespace AI.Agent
 
             _activeSquads.Remove(squad);
             Destroy(squad.gameObject); // Удаляем ГО отряда
+        }
+        
+                private void HandleOreSpawned(IObjectForAI ore)
+        {
+            // Добавляем факт в глобальную базу знаний
+            ((AIKnowledge)_globalKnowledge).AddFact(new Fact(ore, "OreSpotted", "OreNode"));
+        }
+
+        private void HandleOreDepleted(IObjectForAI ore)
+        {
+            // Удаляем факт о руде (сработает IsOrderCompleted у MineResourceOrder)
+            ((AIKnowledge)_globalKnowledge).RemoveFactsByTarget(ore);
+        }
+
+        private void HandleStructureSpawned(IObjectForAI structure, string team)
+        {
+            string structureType = string.Join("", structure.GetTags()); // В реальном коде можно извлечь Tower/Throne лучше
+            
+            if (team == TeamKey) // Это наше здание
+            {
+                ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, "StructureSpotted", "Friendly" + structureType));
+            }
+            else // Здание врага
+            {
+                ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, "EnemyStructureSpotted", "Enemy" + structureType));
+            }
+        }
+
+        private void HandleStructureAttacked(IObjectForAI structure, string team)
+        {
+            if (team == TeamKey) // Бьют наше здание!
+            {
+                // Добавляем факт атаки
+                string structureType = string.Join("", structure.GetTags());
+                ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, "UnderAttack", "Friendly" + structureType));
+                
+                // Важно: Факт атаки должен со временем "остывать", иначе отряд будет защищать здание вечно.
+                // Можно добавить корутину, которая удалит этот факт через 5 секунд, если урон перестал поступать.
+            }
+        }
+
+        private void HandleStructureDestroyed(IObjectForAI structure, string team)
+        {
+            // Здание уничтожено. Удаляем все факты, связанные с ним.
+            ((AIKnowledge)_globalKnowledge).RemoveFactsByTarget(structure);
+            
+            // И добавляем новый факт, чтобы отменить приказы на защиту/атаку
+            ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, "StructureDestroyed", "Structure"));
         }
     }
 }
