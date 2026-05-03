@@ -32,7 +32,10 @@ namespace AI.Goal.Implementation
             if (_targetNode == null) return 0f;
 
             // Если инвентарь полон, приоритет падает в 0, чтобы сработала цель "Отнести на базу"
-            bool inventoryFull = knowledgeBase.Any(f => f.ConditionTag == GlobalKeys.ConditionTag.IsHigh && f.ObjectTags.Contains("Inventory"));
+            bool inventoryFull = knowledgeBase.Any(f => 
+                f.ConditionTag == GlobalKeys.ConditionTag.IsHigh && 
+                f.ObjectTags.Contains(GlobalKeys.Resources.Inventory));        
+            
             if (inventoryFull) return 0f;
 
             return _assignedPriority;

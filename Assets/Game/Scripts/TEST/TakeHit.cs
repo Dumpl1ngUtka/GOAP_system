@@ -1,3 +1,4 @@
+using AI.Agent;
 using GOAP.Agent;
 using OwnSystems.DamageSystem;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace TEST
     {
         [SerializeField] private float _damage = 10; 
         [SerializeField] private bool _take;
-        [SerializeField] private GoapAgent _damageableAgent;
+        [SerializeField] private AIAgent _damageableAgent;
     
         private void OnValidate()
         {

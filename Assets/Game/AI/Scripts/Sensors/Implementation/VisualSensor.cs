@@ -1,3 +1,5 @@
+// --- START OF FILE VisualSensor.cs ---
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,9 +31,7 @@ namespace AI.Sensors
             _aiConfig = aiConfig;
         }
 
-        public void Start()
-        {
-        }
+        public void Start() { }
 
         public void Update(float deltaTime)
         {
@@ -43,13 +43,12 @@ namespace AI.Sensors
             }
         }
 
-        public void Stop()
-        {
-        }
+        public void Stop() { }
 
         private void UpdateFacts()
         {
             List<Fact> newFacts = new();
+            // ВАЖНО: Убедитесь, что здания находятся на слоях, которые пробиваются этой сферой
             Collider[] colliders = Physics.OverlapSphere(_selfTransform.position, _aiConfig.InSightDistance);
 
             foreach (Collider collider in colliders)
@@ -78,13 +77,37 @@ namespace AI.Sensors
                 if (conditionTag != null)
                 {
                     HashSet<string> processedTags = new();
+                    
+                    // Обрабатываем базовые теги
                     foreach (string objectTag in worldObject.GetTags())
                     {
-                        if (_aiConfig.TeamKeys.Contains(objectTag))
-                            processedTags.Add(objectTag == _selfTeamKey ? "Ally" : "Enemy");
+                        if (_aiConfig.TeamKeys != null && _aiConfig.TeamKeys.Contains(objectTag))
+                        {
+                            // ИСПОЛЬЗУЕМ GLOBAL KEYS вместо захардкоженных "Ally" / "Enemy"
+                            processedTags.Add(objectTag == _selfTeamKey ? GlobalKeys.WorldObject.Ally : GlobalKeys.WorldObject.Enemy);
+                        }
                         else
+                        {
                             processedTags.Add(objectTag);
+                        }
                     }
+
+                    // --- СПЕЦИАЛЬНАЯ ЛОГИКА ДЛЯ ЗДАНИЙ ---
+                    // Если это вражеское здание, принудительно делаем его Врагом (чтобы KillEnemyGoal сработал)
+                    if (processedTags.Contains(GlobalKeys.WorldObject.EnemyTower) || 
+                        processedTags.Contains(GlobalKeys.WorldObject.EnemyThrone))
+                    {
+                        processedTags.Add(GlobalKeys.WorldObject.Enemy);
+                        processedTags.Add(GlobalKeys.WorldObject.Structure);
+                    }
+                    // Если союзное
+                    else if (processedTags.Contains(GlobalKeys.WorldObject.FriendlyTower) || 
+                             processedTags.Contains(GlobalKeys.WorldObject.FriendlyThrone))
+                    {
+                        processedTags.Add(GlobalKeys.WorldObject.Ally);
+                        processedTags.Add(GlobalKeys.WorldObject.Structure);
+                    }
+
                     newFacts.Add(new Fact(worldObject, conditionTag, processedTags.ToArray()));
                 }
             }
@@ -96,10 +119,7 @@ namespace AI.Sensors
             }
         }
 
-        public IEnumerable<Fact> GetFacts()
-        {
-            return _cachedFacts;
-        }
+        public IEnumerable<Fact> GetFacts() => _cachedFacts;
 
         private bool AreFactsEqual(List<Fact> list1, List<Fact> list2)
         {
@@ -126,7 +146,6 @@ namespace AI.Sensors
         {
             if (f1.Target != f2.Target) return false;
             if (f1.ConditionTag != f2.ConditionTag) return false;
-            
             if (f1.ObjectTags.Length != f2.ObjectTags.Length) return false;
             
             var set1 = new HashSet<string>(f1.ObjectTags);

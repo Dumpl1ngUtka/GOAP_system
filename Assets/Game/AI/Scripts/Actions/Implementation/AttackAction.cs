@@ -1,4 +1,5 @@
 using AI.Knowledge;
+using OwnSystems.DamageSystem;
 using UnityEngine;
 
 namespace AI.Actions.Implementation
@@ -29,28 +30,24 @@ namespace AI.Actions.Implementation
 
         public override bool Perform(float deltaTime)
         {
-            if (Target is IWorldObjectForAI t)
-            {
-                Vector3 dir = t.GetWorldTransform().position - _selfTransform.position;
-                dir.y = 0;
-                if (dir != Vector3.zero)
-                    _selfTransform.rotation = Quaternion.LookRotation(dir);
-            }
+            if (Target is not IWorldObjectForAI)
+                return true;
+            
+            IWorldObjectForAI worldTarget = (IWorldObjectForAI)Target;
+            
+            Vector3 dir = worldTarget.GetWorldTransform().position - _selfTransform.position;
+            dir.y = 0;
+            if (dir != Vector3.zero)
+                _selfTransform.rotation = Quaternion.LookRotation(dir);
 
             _attackTimer -= deltaTime;
             if (_attackTimer <= 0)
             {
                 Debug.Log($"Attacking {Target}!");
-                // ApplyDamage(_target); 
+                if (worldTarget.GetWorldTransform().TryGetComponent(out IDamageable damageable))
+                    damageable.ApplyDamage(_damage);
                 
                 _attackTimer = _attackCooldown;
-                
-                bool enemyIsDead = CheckIfEnemyDead(Target); 
-                
-                if (enemyIsDead)
-                {
-                    return true;
-                }
             }
 
             return false;

@@ -35,7 +35,7 @@ namespace AI.Squads.Orders
         public override bool IsOrderCompleted(IKnowledge squadKnowledge)
         {
             // Считаем выполненным, если руда истощена (факт NodeDepleted)
-            return squadKnowledge.ContainsFact("NodeDepleted", Target.GetTags());
+            return squadKnowledge.ContainsFact(GlobalKeys.ConditionTag.Depleted, GlobalKeys.WorldObject.OreNode);
         }
     }
 }

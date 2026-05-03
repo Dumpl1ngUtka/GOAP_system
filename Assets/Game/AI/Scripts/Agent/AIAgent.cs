@@ -9,6 +9,7 @@ using AI.Goal.Implementation;
 using AI.Knowledge;
 using AI.Planner;
 using AI.Sensors;
+using OwnSystems.DamageSystem;
 using Units;
 using Units.Mover;
 using Units.UnitClasses;
@@ -16,10 +17,9 @@ using UnityEngine;
 
 namespace AI.Agent
 {
-    public class AIAgent : MonoBehaviour
+    public class AIAgent : MonoBehaviour, IDamageable
     {
         public UnitRole Role => _unitRole;
-        
         [SerializeField] private AIConfig _config;
         [SerializeField] private AgentMover _agentMover;
         
@@ -33,6 +33,7 @@ namespace AI.Agent
         private ActionBase _currentAction;
         private GoalBase _assignedOrder; 
         private UnitRole _unitRole;
+        private Unit _unit;
 
         private SensorHolder _sensorHolder;
 
@@ -46,6 +47,7 @@ namespace AI.Agent
                 new InventorySensor(unit.Inventory)
                 );
 
+            _unit = unit;
             _unitRole = unit.Config.Role;
             _planner = new AIPlanner();
             _knowledgeBase = new AIKnowledge(_sensorHolder);
@@ -66,7 +68,7 @@ namespace AI.Agent
                 new PickUpItemGoal(),
                 new HealAllyGoal(),
                 new KillEnemyGoal(),
-                new PatrolGoal() 
+                //new PatrolGoal() 
             };
 
             if (isActiveAndEnabled)
@@ -165,18 +167,32 @@ namespace AI.Agent
         private void CalculateNewGoalAndPlan()
         {
             List<GoalBase> noValidGoals = new();
-            for (int i = 0; i < _availableGoals.Count; i++)
+    
+            // 1. Создаем ОБЩИЙ список целей: базовые цели юнита + приказ от Командира
+            List<GoalBase> goalsToEvaluate = new List<GoalBase>(_availableGoals);
+    
+            if (_assignedOrder != null && !goalsToEvaluate.Contains(_assignedOrder))
             {
-                GoalBase bestGoal = GetBestGoal(_availableGoals, noValidGoals);
+                goalsToEvaluate.Add(_assignedOrder); // Добавляем приказ в мозговой процесс юнита
+            }
+
+            // 2. Ограничиваем цикл количеством всех доступных целей
+            int maxAttempts = goalsToEvaluate.Count;
+            for (int i = 0; i < maxAttempts; i++)
+            {
+                // ВАЖНО: передаем именно goalsToEvaluate, а не старый _availableGoals!
+                GoalBase bestGoal = GetBestGoal(goalsToEvaluate, noValidGoals); 
+        
                 if (bestGoal == null) 
-                    return;
+                    return; // Больше нет целей для проверки
 
                 if (_currentGoal != bestGoal || _actionPlan == null)
                 {
                     _currentGoal = bestGoal;
                     _currentGoal.OnGoalActivated();
 
-                    Debug.Log($"Planning for goal: {_currentGoal} (Priority: {_currentGoal.GetPriority(_knowledgeBase.GetAllFacts())})");
+                    // Пишем в консоль, какую цель мы сейчас пытаемся спланировать
+                    Debug.Log($"Planning for goal: {_currentGoal.GetType().Name} (Priority: {_currentGoal.GetPriority(_knowledgeBase.GetAllFacts())})");
 
                     Queue<ActionBase> plan = 
                         _planner.Plan(_availableStrategies, _knowledgeBase.GetAllFacts(), _currentGoal);
@@ -184,18 +200,20 @@ namespace AI.Agent
                     if (plan != null)
                     {
                         _actionPlan = plan;
-                        Debug.Log($"<color=cyan>Plan found with {_actionPlan.Count} steps.</color>");
+                        Debug.Log($"<color=cyan>Plan found for {_currentGoal.GetType().Name} with {_actionPlan.Count} steps.</color>");
                         return;
                     }
 
-                    Debug.LogWarning($"<color=red>No plan found for goal: {_currentGoal}</color>");
+                    Debug.LogWarning($"<color=red>No plan found for goal: {_currentGoal.GetType().Name}</color>");
                     _currentGoal.OnGoalDeactivated();
                     _currentGoal = null;
+            
+                    // Заносим цель в черный список, чтобы на следующей итерации цикла выбрать цель с приоритетом пониже
                     noValidGoals.Add(bestGoal);
                 }
             }
         }
-
+        
         private GoalBase GetBestGoal(List<GoalBase> availableGoals, List<GoalBase> noValidGoals)
         {
             GoalBase bestGoal = null;
@@ -215,6 +233,11 @@ namespace AI.Agent
             }
             
             return bestGoal;
+        }
+
+        public void ApplyDamage(float damage)
+        {
+            _unit.Health.ApplyDamage((ushort)damage);
         }
     }
 }

@@ -22,8 +22,7 @@ namespace AI.Squads.Orders
             {
                 if (agent.Role == UnitRole.MeleeCombat || agent.Role == UnitRole.RangedCombat)
                 {
-                    // Используем вашу существующую цель KillEnemyGoal для уничтожения здания!
-                    agent.AssignOrder(new KillEnemyGoal(Target));
+                    agent.AssignOrder(new KillEnemyGoal(Target, _priority)); 
                 }
                 else if (agent.Role == UnitRole.Support)
                 {

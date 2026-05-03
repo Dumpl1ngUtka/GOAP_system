@@ -41,6 +41,8 @@ namespace Services.Spawner
             {
                 agent.Constructor(team, unit);
                 
+                
+                Debug.Log($"SpawnService: Agent {unit.gameObject.name} spawned");
                 if (_commanderRegistry.TryGetCommander(team, out CommanderAgent commander))
                 {
                     commander.RegisterAgent(agent);

@@ -29,7 +29,7 @@ namespace AI.Planner
 
             List<Node> openList = new List<Node> { startNode };
             
-            int maxIterations = 1000; 
+            int maxIterations = 50; 
             int iterations = 0;
 
             while (openList.Count > 0 && iterations < maxIterations)

@@ -10,14 +10,8 @@ namespace AI.Global
 
         public void RegisterCommander(string team, CommanderAgent commander)
         {
-            if (!_commandersByTeam.ContainsKey(team))
-            {
-                _commandersByTeam.Add(team, commander);
-            }
-            else
-            {
-                _commandersByTeam[team] = commander; // Перезаписываем, если загрузили новый уровень
-            }
+            // Перезаписываем, если загрузили новый уровень
+            _commandersByTeam[team] = commander;
         }
 
         public void UnregisterCommander(string team)

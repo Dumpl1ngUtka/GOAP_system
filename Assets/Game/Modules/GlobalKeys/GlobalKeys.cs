@@ -15,6 +15,9 @@ public static class GlobalKeys
         public const string IsMined  = nameof(IsMined);
         public const string UnderAttack = nameof(UnderAttack);
         public const string StructureDestroyed = nameof(StructureDestroyed);
+        
+        public const string Spotted = nameof(Spotted); 
+        public const string Depleted = nameof(Depleted); 
     }
     
     public class Resources
@@ -23,6 +26,7 @@ public static class GlobalKeys
         public const string Mana = nameof(Mana);
         public const string Wood = nameof(Wood);
         public const string Gold = nameof(Gold);
+        public const string Inventory = nameof(Inventory);
     }
     
     public class Tool
@@ -44,6 +48,8 @@ public static class GlobalKeys
         public const string FriendlyTower = nameof(FriendlyTower);
         public const string FriendlyThrone = nameof(FriendlyThrone);
         public const string Structure = nameof(Structure);
+        public const string EnemyTower = nameof(EnemyTower); 
+        public const string EnemyThrone = nameof(EnemyThrone); 
     }
     
     public class UI

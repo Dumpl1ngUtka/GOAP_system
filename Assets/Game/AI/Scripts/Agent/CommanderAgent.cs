@@ -6,6 +6,7 @@ using AI.Knowledge;
 using AI.Sensors;
 using AI.Squads;
 using AI.Squads.Orders;
+using Environment;
 using Units.UnitClasses;
 using UnityEngine;
 using Zenject;
@@ -56,6 +57,7 @@ namespace AI.Agent
 
         private void OnEnable()
         {
+            Debug.Log(_commanderRegistry);
             if (_commanderRegistry != null)
             {
                 _commanderRegistry.RegisterCommander(TeamKey, this);
@@ -117,18 +119,58 @@ namespace AI.Agent
 
         private void EvaluateGlobalStrategy()
         {
-            // Обновляем инфу о наших башнях (предположим, сенсоры добавляют факты "TowerDestroyed")
             UpdateFriendlyStructuresState();
 
-            // ПРИОРИТЕТ 1: ЗАЩИТА (Defense)
+            // Дебаг: смотрим, сколько вообще фактов знает командир
+            // Debug.Log($"Commander evaluating. Total global facts: {_globalKnowledge.GetAllFacts().Count()}");
+
             if (CheckAndProcessDefense())
-                return; // Если база в опасности, бросаем все силы на защиту, атака подождет
+            {
+                Debug.Log("Commander: Defending base!");
+                return;
+            }
 
-            // ПРИОРИТЕТ 2: ДОБЫЧА РУДЫ (Economy)
             ProcessMiningEconomy();
-
-            // ПРИОРИТЕТ 3: АТАКА (Offense)
             ProcessAssaultStrategy();
+        }
+
+        private void ProcessAssaultStrategy()
+        {
+            var enemyTowers = _globalKnowledge.GetAllFactsByTag(GlobalKeys.ConditionTag.Spotted, GlobalKeys.WorldObject.EnemyTower).ToList();
+    
+            // Если башен нет - атакуем трон
+            IObjectForAI targetToAttack = null;
+            if (enemyTowers.Any())
+            {
+                targetToAttack = enemyTowers.First().Target;
+            }
+            else
+            {
+                var enemyThrone = _globalKnowledge.GetAllFactsByTag(GlobalKeys.ConditionTag.Spotted, GlobalKeys.WorldObject.EnemyThrone).FirstOrDefault();
+                if (enemyThrone != null) targetToAttack = enemyThrone.Target;
+            }
+
+            if (targetToAttack != null)
+            {
+                if (!IsTargetAlreadyAssigned(targetToAttack))
+                {
+                    Squad assaultSquad = FormSquad(neededMelee: 4, neededRanged: 3, neededSupport: 1);
+                    if (assaultSquad != null)
+                    {
+                        assaultSquad.AssignOrder(new AssaultOrder(targetToAttack, 90f));
+                        _activeSquads.Add(assaultSquad);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Commander: Want to attack, but couldn't form squad (no suitable units).");
+                    }
+                }
+            }
+            else
+            {
+                // Командир не видит врагов
+                // Debug.Log("Commander: No enemies spotted to assault."); 
+            }
         }
 
         private void UpdateFriendlyStructuresState()
@@ -181,7 +223,7 @@ namespace AI.Agent
 
         private void ProcessMiningEconomy()
         {
-            var detectedOres = _globalKnowledge.GetAllFactsByTag("OreSpotted").ToList();
+            var detectedOres = _globalKnowledge.GetAllFactsByTag(GlobalKeys.ConditionTag.Spotted, GlobalKeys.WorldObject.OreNode).ToList();
 
             foreach (var oreFact in detectedOres)
             {
@@ -198,35 +240,6 @@ namespace AI.Agent
             }
         }
 
-        private void ProcessAssaultStrategy()
-        {
-            // Логика атаки: Сначала башни, потом трон.
-            var enemyTowers = _globalKnowledge.GetAllFactsByTag("EnemyTowerSpotted").ToList();
-            IObjectForAI targetToAttack = null;
-
-            if (enemyTowers.Any())
-            {
-                targetToAttack = enemyTowers.First().Target; // Выбираем первую попавшуюся башню
-            }
-            else
-            {
-                var enemyThrone = _globalKnowledge.GetAllFactsByTag("EnemyThroneSpotted").FirstOrDefault();
-                if (enemyThrone != null)
-                    targetToAttack = enemyThrone.Target;
-            }
-
-            if (targetToAttack != null && !IsTargetAlreadyAssigned(targetToAttack))
-            {
-                // Формируем ударную группу
-                Squad assaultSquad = FormSquad(neededMelee: 4, neededRanged: 3, neededSupport: 1);
-                if (assaultSquad != null)
-                {
-                    assaultSquad.AssignOrder(new AssaultOrder(targetToAttack, 90f));
-                    _activeSquads.Add(assaultSquad);
-                }
-            }
-        }
-
         // Вспомогательный метод: проверяет, не отправляли ли мы уже отряд к этому объекту
         private bool IsTargetAlreadyAssigned(IObjectForAI target)
         {
@@ -237,10 +250,30 @@ namespace AI.Agent
 
         private Squad FormSquad(int neededWorkers = 0, int neededMelee = 0, int neededRanged = 0, int neededSupport = 0)
         {
-            // (Логика из предыдущего ответа) ...
-            // Убеждаемся что хватает _unassignedAgents нужных ролей, создаем GameObject с Squad.cs, перекидываем туда агентов.
-            return null; // Заглушка
+            // Упрощенная логика: просто берем любых свободных агентов (для начала, чтобы система заработала)
+            int totalNeeded = neededWorkers + neededMelee + neededRanged + neededSupport;
+    
+            if (_unassignedAgents.Count < totalNeeded || totalNeeded == 0)
+                return null; // Не хватает людей для приказа
+
+            // Создаем объект отряда
+            GameObject squadObj = Instantiate(_squadPrefab);
+            Squad newSquad = squadObj.GetComponent<Squad>();
+            newSquad.Initialize(_globalKnowledge);
+
+            // Переводим агентов из резерва в отряд
+            for (int i = 0; i < totalNeeded; i++)
+            {
+                AIAgent agent = _unassignedAgents[0];
+                _unassignedAgents.RemoveAt(0);
+        
+                _subordinateAgents.Add(agent);
+                newSquad.AddMember(agent);
+            }
+
+            return newSquad;
         }
+        
         private void DisbandSquad(Squad squad)
         {
             // Возвращаем всех юнитов отряда обратно в резерв
@@ -256,41 +289,52 @@ namespace AI.Agent
         
                 private void HandleOreSpawned(IObjectForAI ore)
         {
-            // Добавляем факт в глобальную базу знаний
-            ((AIKnowledge)_globalKnowledge).AddFact(new Fact(ore, "OreSpotted", "OreNode"));
+            ((AIKnowledge)_globalKnowledge).AddFact(new Fact(ore, GlobalKeys.ConditionTag.Spotted, GlobalKeys.WorldObject.OreNode));
         }
 
         private void HandleOreDepleted(IObjectForAI ore)
         {
             // Удаляем факт о руде (сработает IsOrderCompleted у MineResourceOrder)
             ((AIKnowledge)_globalKnowledge).RemoveFactsByTarget(ore);
+            ((AIKnowledge)_globalKnowledge).AddFact(new Fact(ore, GlobalKeys.ConditionTag.Depleted, GlobalKeys.WorldObject.OreNode));
         }
 
         private void HandleStructureSpawned(IObjectForAI structure, string team)
         {
-            string structureType = string.Join("", structure.GetTags()); // В реальном коде можно извлечь Tower/Throne лучше
-            
-            if (team == TeamKey) // Это наше здание
+            // Убираем string structureType = string.Join("", structure.GetTags());
+            // Вместо этого считываем теги из объекта и используем GlobalKeys напрямую:
+            bool isTower = structure.GetTags().Contains(GlobalKeys.WorldObject.Structure); // Зависит от того, как у вас определяются башни, предположим вы найдете способ различить их.
+    
+            // Пример логики с ключами:
+            if (team == TeamKey) 
             {
-                ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, "StructureSpotted", "Friendly" + structureType));
+                ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, GlobalKeys.ConditionTag.Spotted, GlobalKeys.WorldObject.FriendlyTower));
             }
-            else // Здание врага
+            else 
             {
-                ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, "EnemyStructureSpotted", "Enemy" + structureType));
+                ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, GlobalKeys.ConditionTag.Spotted, GlobalKeys.WorldObject.EnemyTower));
             }
         }
 
         private void HandleStructureAttacked(IObjectForAI structure, string team)
         {
-            if (team == TeamKey) // Бьют наше здание!
+            string factTag = "";
+            foreach (string tag in structure.GetTags())
             {
-                // Добавляем факт атаки
-                string structureType = string.Join("", structure.GetTags());
-                ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, "UnderAttack", "Friendly" + structureType));
-                
-                // Важно: Факт атаки должен со временем "остывать", иначе отряд будет защищать здание вечно.
-                // Можно добавить корутину, которая удалит этот факт через 5 секунд, если урон перестал поступать.
+                if (tag == nameof(StructureType.Tower))
+                {
+                    factTag = team == TeamKey? GlobalKeys.WorldObject.FriendlyTower : GlobalKeys.WorldObject.EnemyTower;
+                    break;
+                }
+
+                if (tag == nameof(StructureType.Throne))
+                {
+                    factTag = team == TeamKey? GlobalKeys.WorldObject.FriendlyThrone : GlobalKeys.WorldObject.EnemyTower;
+                    break;
+                }
             }
+            ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, GlobalKeys.ConditionTag.UnderAttack, factTag));
+
         }
 
         private void HandleStructureDestroyed(IObjectForAI structure, string team)
@@ -299,7 +343,7 @@ namespace AI.Agent
             ((AIKnowledge)_globalKnowledge).RemoveFactsByTarget(structure);
             
             // И добавляем новый факт, чтобы отменить приказы на защиту/атаку
-            ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, "StructureDestroyed", "Structure"));
+            ((AIKnowledge)_globalKnowledge).AddFact(new Fact(structure, GlobalKeys.ConditionTag.StructureDestroyed, "Structure"));
         }
     }
 }

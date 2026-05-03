@@ -7,10 +7,12 @@ namespace AI.Goal.Implementation
     public class KillEnemyGoal : GoalBase
     {
         private readonly IObjectForAI _forcedTarget;
-
-        public KillEnemyGoal(IObjectForAI targetEnemy = null)
+        private readonly float _assignedPriority;
+        
+        public KillEnemyGoal(IObjectForAI targetEnemy = null, float priority = 0f)
         {
             _forcedTarget = targetEnemy;
+            _assignedPriority = priority;
         }
 
         public override IEnumerable<GoalCondition> GetDesiredState()
@@ -32,9 +34,11 @@ namespace AI.Goal.Implementation
 
         public override float GetPriority(IEnumerable<Fact> knowledgeBase)
         {
+            if (_forcedTarget != null && _assignedPriority > 0f)
+                return _assignedPriority;
+            
             var currentTarget = _forcedTarget ?? FindTarget(knowledgeBase);
-
-            if (currentTarget == null)
+            if (currentTarget == null) 
                 return 0f;
 
             bool isLowHealth = knowledgeBase.Any(f => 

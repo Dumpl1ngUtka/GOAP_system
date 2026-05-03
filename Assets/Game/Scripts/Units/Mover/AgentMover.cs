@@ -20,8 +20,7 @@ namespace Units.Mover
         private bool _hasTargetPosition;
         private bool _hasTargetRotation;
 
-        public bool IsMoving =>
-            _hasTargetPosition && Vector3.Distance(transform.position, _targetPosition) > _stoppingDistance;
+        public bool IsMoving => _hasTargetPosition;
 
         public bool IsRotating =>
             _hasTargetRotation && Quaternion.Angle(transform.rotation, _targetRotation) > _stoppingAngle;
@@ -81,7 +80,19 @@ namespace Units.Mover
         private void HandleMovement()
         {
             if (!_hasTargetPosition) return;
-            
+    
+            // Создаем проекции позиций на плоскость (игнорируем ось Y для расчета дистанции)
+            Vector3 currentFlatPos = new Vector3(transform.position.x, 0f, transform.position.z);
+            Vector3 targetFlatPos = new Vector3(_targetPosition.x, 0f, _targetPosition.z);
+
+            // Если достигли точки - сбрасываем флаг и выходим
+            if (Vector3.Distance(currentFlatPos, targetFlatPos) <= _stoppingDistance)
+            {
+                _hasTargetPosition = false;
+                _rigidbody.linearVelocity = Vector3.zero; // Гасим остаточную инерцию
+                return;
+            }
+
             Vector3 nextPosition = Vector3.MoveTowards(
                 transform.position,
                 _targetPosition,

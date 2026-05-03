@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AI.Base;
 using AI.Sensors;
+using UnityEngine;
 
 namespace AI.Knowledge
 {
@@ -32,6 +33,13 @@ namespace AI.Knowledge
 
         public IEnumerable<Fact> GetAllFacts()
         {
+            string a = "";
+            foreach (var fact in _facts)
+            {
+                a += fact.ConditionTag;
+            }
+
+            Debug.Log(a);
             return _facts;
         }
         

@@ -27,8 +27,6 @@ namespace AI.Actions.Implementation
             Vector2 randomCircle = Random.insideUnitCircle * _radius;
             
             Vector3 randomPos = _center.position + new Vector3(randomCircle.x, 0, randomCircle.y);
-
-            Debug.Log($"[RandomPatrol] Выбрана случайная точка: {randomPos}");
             
             _mover.SetTargetPosition(randomPos);
         }
