@@ -1,10 +1,15 @@
+using System;
+using AI.Configs;
 using UnityEngine;
+using Zenject;
 
 namespace Units.Mover
 {
     [RequireComponent(typeof(Rigidbody))]
     public class AgentMover : MonoBehaviour, IAgentMover
     {
+        public event Action OnStuck;
+
         [SerializeField] private float _moveSpeed = 5f;
         [SerializeField] private float _accelerationFactor = 50f;
         [SerializeField] private float _maxVelocity = 10f;
@@ -20,6 +25,10 @@ namespace Units.Mover
         private bool _hasTargetPosition;
         private bool _hasTargetRotation;
 
+        private AIConfig _config;
+        private Vector3 _lastCheckedPos;
+        private float _stuckTimer;
+
         public bool IsMoving => _hasTargetPosition;
 
         public bool IsRotating =>
@@ -27,6 +36,12 @@ namespace Units.Mover
 
         public Vector3 CurrentTargetPosition => _targetPosition;
         public Quaternion CurrentTargetRotation => _targetRotation;
+
+        [Inject]
+        public void Construct(AIConfig config)
+        {
+            _config = config;
+        }
 
         private void Awake()
         {
@@ -49,6 +64,8 @@ namespace Units.Mover
         {
             _targetPosition = targetPosition;
             _hasTargetPosition = true;
+            _stuckTimer = 0;
+            _lastCheckedPos = transform.position;
         }
 
         public void SetTargetRotation(Quaternion targetRotation)
@@ -75,6 +92,7 @@ namespace Units.Mover
         {
             HandleMovement();
             HandleRotation();
+            CheckStuck();
         }
 
         private void HandleMovement()
@@ -101,6 +119,25 @@ namespace Units.Mover
 
             // Move using Rigidbody
             _rigidbody.MovePosition(nextPosition);
+        }
+
+        private void CheckStuck()
+        {
+            if (!_hasTargetPosition || _config == null) return;
+
+            _stuckTimer += Time.fixedDeltaTime;
+            if (_stuckTimer >= _config.StuckCheckInterval)
+            {
+                float distSqr = (transform.position - _lastCheckedPos).sqrMagnitude;
+                if (distSqr < _config.StuckDistanceThresholdSqr)
+                {
+                    OnStuck?.Invoke();
+                    _hasTargetPosition = false; // Прекращаем движение, если застряли
+                }
+
+                _lastCheckedPos = transform.position;
+                _stuckTimer = 0;
+            }
         }
 
         private void HandleRotation()

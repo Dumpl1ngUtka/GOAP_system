@@ -26,7 +26,7 @@ namespace AI.Actions.Implementation
 
         public override bool Perform(float deltaTime)
         {
-            return _mover.IsMoving;
+            return !_mover.IsMoving;
         }
 
         public override void OnStop()

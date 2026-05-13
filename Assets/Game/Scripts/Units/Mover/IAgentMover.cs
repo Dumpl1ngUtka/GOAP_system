@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
 
 namespace Units.Mover
 {
     public interface IAgentMover
     {
+        event Action OnStuck;
+        
         Transform GetSelfTransform();
         void SetTargetPosition(Vector3 targetPosition);
         
