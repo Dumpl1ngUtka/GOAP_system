@@ -22,11 +22,13 @@ namespace AI.Knowledge
         
         public void Start()
         {
+            _sensorHolder.Start();
             _sensorHolder.FactsChanged += OnSensorsChanged;
         }
 
         public void Stop()
         {
+            _sensorHolder.Stop();
             _sensorHolder.FactsChanged -= OnSensorsChanged;
         }
 

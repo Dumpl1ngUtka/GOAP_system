@@ -59,8 +59,10 @@ namespace AI.Sensors
         {
             List<Fact> facts = new();
             
-            foreach (ISensor sensor in _sensors) 
+            foreach (ISensor sensor in _sensors)
+            {
                 facts.AddRange(sensor.GetFacts());
+            }
 
             return facts;
         }

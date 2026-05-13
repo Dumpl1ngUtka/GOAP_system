@@ -17,7 +17,7 @@ using UnityEngine;
 
 namespace AI.Agent
 {
-    public class AIAgent : MonoBehaviour, IDamageable
+    public class AIAgent : MonoBehaviour, IDamageable, IWorldObjectForAI
     {
         public UnitRole Role => _unitRole;
         [SerializeField] private AIConfig _config;
@@ -34,6 +34,7 @@ namespace AI.Agent
         private GoalBase _assignedOrder; 
         private UnitRole _unitRole;
         private Unit _unit;
+        private string _teamKey;
 
         private SensorHolder _sensorHolder;
 
@@ -48,6 +49,7 @@ namespace AI.Agent
                 );
 
             _unit = unit;
+            _teamKey = teamKey;
             _unitRole = unit.Config.Role;
             _planner = new AIPlanner();
             _knowledgeBase = new AIKnowledge(_sensorHolder);
@@ -68,13 +70,14 @@ namespace AI.Agent
                 new PickUpItemGoal(),
                 new HealAllyGoal(),
                 new KillEnemyGoal(),
-                //new PatrolGoal() 
+                new PatrolGoal() 
             };
 
             if (isActiveAndEnabled)
             {
+                Debug.Log("IS ACTIVE AND ENABLED");
                 _knowledgeBase.Changed += KnowledgeUpdated;
-                _sensorHolder.Start();
+                _knowledgeBase.Start();
             }
         }
         
@@ -107,19 +110,19 @@ namespace AI.Agent
         private void OnEnable()
         {
             if (_knowledgeBase != null)
+            {
                 _knowledgeBase.Changed += KnowledgeUpdated;
-            
-            if (_sensorHolder != null)
-                _sensorHolder.Start();
+                _knowledgeBase.Start();
+            }
         }
 
         private void OnDisable()
         {
             if (_knowledgeBase != null)
+            {
                 _knowledgeBase.Changed -= KnowledgeUpdated;
-            
-            if (_sensorHolder != null)
-                _sensorHolder.Stop();
+                _knowledgeBase.Stop();
+            }
         }
 
         private void Update()
@@ -238,6 +241,18 @@ namespace AI.Agent
         public void ApplyDamage(float damage)
         {
             _unit.Health.ApplyDamage((ushort)damage);
+        }
+
+        public IEnumerable<string> GetTags()
+        {
+            List<string> keys = new List<string>();
+            keys.Add(_teamKey);
+            return keys;
+        }
+
+        public Transform GetWorldTransform()
+        {
+            return transform;
         }
     }
 }

@@ -48,22 +48,21 @@ namespace AI.Sensors
         private void UpdateFacts()
         {
             List<Fact> newFacts = new();
-            // ВАЖНО: Убедитесь, что здания находятся на слоях, которые пробиваются этой сферой
             Collider[] colliders = Physics.OverlapSphere(_selfTransform.position, _aiConfig.InSightDistance);
 
             foreach (Collider collider in colliders)
             {
                 if (collider.gameObject == _selfTransform.gameObject) 
                     continue;
-
+                
                 IWorldObjectForAI worldObject = collider.GetComponent<IWorldObjectForAI>();
                 if (worldObject == null) 
                     continue;
-
+                
                 Transform objTransform = worldObject.GetWorldTransform();
                 if (objTransform == null) 
                     continue;
-
+                
                 float distance = Vector3.Distance(_selfTransform.position, objTransform.position);
 
                 string conditionTag = null;
@@ -73,11 +72,12 @@ namespace AI.Sensors
                     conditionTag = GlobalKeys.ConditionTag.Around;
                 else if (distance <= _aiConfig.InSightDistance)
                     conditionTag = GlobalKeys.ConditionTag.InSight;
-
+                
                 if (conditionTag != null)
                 {
                     HashSet<string> processedTags = new();
                     
+
                     // Обрабатываем базовые теги
                     foreach (string objectTag in worldObject.GetTags())
                     {

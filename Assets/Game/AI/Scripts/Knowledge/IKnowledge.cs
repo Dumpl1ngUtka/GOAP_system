@@ -13,6 +13,8 @@ namespace AI.Knowledge
         IEnumerable<Fact> GetAllFactsByTag(string conditionTag, params string[] objectTags);
         IEnumerable<Fact> GetAllFactsByTag(string conditionTag,IEnumerable<string> objectTags);
         void RemoveAllFacts();
+        void Start();
+        void Stop();
         void AddFact(Fact fact);
     }
 }
