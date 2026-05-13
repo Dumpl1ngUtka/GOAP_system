@@ -1,0 +1,213 @@
+{
+  "version": "1.0.1",
+  "engine": "unity",
+  "engineMcpKey": "UnityMCP",
+  "rulesRegistry": "https://raw.githubusercontent.com/NintendaDev/unikit-ai-rules/main",
+  "mcp": {
+    "servers": [
+      "context7",
+      "unity-mcp-coplay"
+    ]
+  },
+  "agents": [
+    {
+      "id": "gemini",
+      "skillsDir": ".gemini/skills",
+      "subagentsDir": ".gemini/agents",
+      "installedSkills": [
+        "unikit",
+        "unikit-architecture",
+        "unikit-commit",
+        "unikit-devcontext",
+        "unikit-docs",
+        "unikit-evolve",
+        "unikit-explore",
+        "unikit-fix",
+        "unikit-implement",
+        "unikit-improve",
+        "unikit-memory",
+        "unikit-plan",
+        "unikit-review",
+        "unikit-roadmap",
+        "unikit-rules",
+        "unikit-rules-registry",
+        "unikit-skills-context",
+        "unikit-todo",
+        "unikit-verify"
+      ],
+      "installedSubagents": [],
+      "managedSkills": {
+        "unikit": {
+          "sourceHash": "d3d93da42102adc00a8dd058e4b8c6cc0d8be96a0d89118bc8f64e6966a2b060",
+          "installedHash": "c8fb7680b0f6d1ead6f1fd2b606ef351cf53e2c27dde62cbd861535558bbd5c5"
+        },
+        "unikit-architecture": {
+          "sourceHash": "66541521d6cf879ac7c04523cf5fcee069f223b647ce3c761ecd6442e41e815e",
+          "installedHash": "cd73d682273ecc83767830ccdf8b9453757331054639f023d8671c3bf13d7ec3"
+        },
+        "unikit-commit": {
+          "sourceHash": "3c52f62a2cd834dc2e2d4f6c6b34a662677129b888b724bb5730771eec055a64",
+          "installedHash": "e08d29973f87e9519ad5641c13064f2dc70b575f7ab4079bbca8c779fc97c725"
+        },
+        "unikit-devcontext": {
+          "sourceHash": "0c931ba7cf9bdc798ccb632dcf41f2600b6a5b59db4b8defdfcb448a38338225",
+          "installedHash": "3a52fb6f38b8dfb82f8d4cf9a186a3aad3ad72183c07e7fc475988dff8c0306c"
+        },
+        "unikit-docs": {
+          "sourceHash": "4b2d97f5c3a29607ad55eedafe77049c3eaf045885a93b19c0e11c7202ac171d",
+          "installedHash": "71707aa842a837a7207b203e3666f93a44a3669184036497035c8d1badbe7642"
+        },
+        "unikit-evolve": {
+          "sourceHash": "ddcf8713181b623b6ea868634585d8b4455994003da3bea3c739c1cab4374dd4",
+          "installedHash": "4d34a7c87ea773e777acbd29fd82b18e23774ca6297b499086f4ab9e7f7ecebf"
+        },
+        "unikit-explore": {
+          "sourceHash": "86e6fbf616d831dffddf95feec41195a5b231866b846a3de11c7784884c6a477",
+          "installedHash": "ec0685c9b07f20d4a8c4a92e0a16bac85d8394c29b093a2519837fd7d328d5ac"
+        },
+        "unikit-fix": {
+          "sourceHash": "892d70bd817c32e080c3ac492e4fd6d594fd6a6127cd282c64baf61c5582d950",
+          "installedHash": "b1f72c312bce8551b4aee27c7ed72d0d0903459514a06a3d16b3db8156b738e7"
+        },
+        "unikit-implement": {
+          "sourceHash": "447cc3fee52f7375efc367d7357cca20f359d1b106ad48357b413f8126fa5557",
+          "installedHash": "99c9604ed0d1fd6d1ca1f5c0a9cc92404fce8c44e4791d74c2b5c70909e06db8"
+        },
+        "unikit-improve": {
+          "sourceHash": "e15e60e4101fb1f70adcb9485fa7508e5a1a9a60e47cf9020154885a2d978339",
+          "installedHash": "4f715d21c04039879c21b2c961fe581e2083962e3c89724604b82bdd8e07ae5a"
+        },
+        "unikit-memory": {
+          "sourceHash": "d239257edaaed2bfe132ea204a193cb453d233ba331a3dff89a6b3c0b7953a02",
+          "installedHash": "57cf44870b1b441a80759bed94c18124a52988a4600cdb6a30f7019f62435c83"
+        },
+        "unikit-plan": {
+          "sourceHash": "db3ffb7f87e14e79bdb9dc1e088cbb3b99e44e4ebc457ae5b2f7a87787637b01",
+          "installedHash": "921fd983a131fb22c9249fa1d3521bd54a63fe9b6afd783b0810207289e7cc4b"
+        },
+        "unikit-review": {
+          "sourceHash": "b6c571a3f60e5d7a98411ac80c544c3c549bf4e336405d0e9ffa2d117289ab1e",
+          "installedHash": "9771c59a7bc3be1f35a1259bd496adb795819bfa2715b66fc7a9af31c8907acc"
+        },
+        "unikit-roadmap": {
+          "sourceHash": "4568ea7650dddea9e5c0238ac48de7e500af34756b02e0378f520a41cfc3019a",
+          "installedHash": "4ec0800dab33db1f924c307f06ac10835a6d9795fbec8fea8e4365e2b94f47f1"
+        },
+        "unikit-rules": {
+          "sourceHash": "773ce8db8edcf40f68e95695ebc8d63040509dfb83e880fc58f3098a5e24ca7a",
+          "installedHash": "0e7d05f0d1e47a805e9d4a8b3e0d0974ca55ad274678688d7dcfb1d4a87b1567"
+        },
+        "unikit-rules-registry": {
+          "sourceHash": "0e042b15318966b11a6f74ce475585606cc61c10d28176771502617f3ce92527",
+          "installedHash": "9424d0793493a7f65d1ad3b844d30ecc1b80a19a938385ba88814d7877d1a753"
+        },
+        "unikit-skills-context": {
+          "sourceHash": "039560d81adf10f421921ed235ce4d0d655606b2200f0845383fd70f726467c8",
+          "installedHash": "1ae372458f3e24c8ae4f377a9e4a1611309f6fd40435168893c8ccaf805d575a"
+        },
+        "unikit-todo": {
+          "sourceHash": "eeaf38cec8e4f27293f560c9c66a3ac4e89671af0e634325af00e3b88af883fa",
+          "installedHash": "2a675c7f89bf0606c8a500129d943caeaa2569ea3a2c7251cc897f6d07bde054"
+        },
+        "unikit-verify": {
+          "sourceHash": "5393ff86cb6a070a422de00f3043c6595ab1a6c5a13f6acd579cc6f8b29e3bc0",
+          "installedHash": "dda5a761c77d0cad0bb4de029542354363ee54cb2b5f23321b921d77e48dd843"
+        }
+      },
+      "managedSubagents": {}
+    }
+  ],
+  "extensions": [],
+  "rules": {
+    "installed": {
+      "version": "1.0.1",
+      "core": [
+        {
+          "name": "code-style",
+          "source": "registry",
+          "origin": "official",
+          "version": "1.0.0",
+          "installed_hash": "59c65a5a760bd2a8026591374ac4f901b0592c37f9a7d67444c1f02428fcf3cf"
+        },
+        {
+          "name": "design-principles",
+          "source": "registry",
+          "origin": "official",
+          "version": "1.0.0",
+          "installed_hash": "b97e0f99a6f6942c23a40832c4a6fe4f60b0f528b770a8a6bef3842e5d6ab28a"
+        },
+        {
+          "name": "folders-structure",
+          "source": "registry",
+          "origin": "official",
+          "version": "1.0.0",
+          "installed_hash": "6da89ee9f2a2d9410faa464e9d446ebdcbc4f27da7ddc6893646725e914f8bf8"
+        },
+        {
+          "name": "performance",
+          "source": "registry",
+          "origin": "official",
+          "version": "1.0.0",
+          "installed_hash": "ccc187ac44b4a0113f48d10ec88aa38d16a90bc97737be517cb817ef15fcd1ef"
+        },
+        {
+          "name": "testing",
+          "source": "registry",
+          "origin": "official",
+          "version": "1.0.0",
+          "installed_hash": "6231dd04b23493973ea4911c9963f25bc61421bd1e962338c191d27818a7e663"
+        }
+      ],
+      "stack": [
+        {
+          "name": "zenject",
+          "source": "registry",
+          "origin": "official",
+          "version": "1.0.0",
+          "installed_hash": "5a6fb39b01627f192028734dc672ee72454f9936176c3b32e5a97bf5183b305e"
+        },
+        {
+          "name": "unitask",
+          "source": "registry",
+          "origin": "official",
+          "version": "1.0.0",
+          "installed_hash": "7ba65dc81e79aab829fb7697a1c4f5cb3e5dc74bbb81f9b078555e10a11acb64"
+        },
+        {
+          "name": "dotween",
+          "source": "registry",
+          "origin": "official",
+          "version": "1.0.0",
+          "installed_hash": "58fa72dbfb39eeee4cc845988955d175d223aa469f55bbd6a2603cc70adad56f"
+        },
+        {
+          "name": "input-system",
+          "source": "registry",
+          "origin": "official",
+          "version": "1.0.0",
+          "installed_hash": "99f3bfe135e1bbaa8412a0202c3b7c1cfdf9b9b1ddf8e24b579256a0781ba0f5"
+        },
+        {
+          "name": "urp",
+          "source": "local",
+          "installed_hash": "a94ac9af77b5662dc18e518d503554c5a786d1a3d91de2e65848b9d06323c1c4"
+        },
+        {
+          "name": "unity-ai-navigation",
+          "source": "local",
+          "installed_hash": "3a33d3aee878990aa5a5c9c90ae9a26c366d349790bfe3a90d689f77ec0e6836"
+        },
+        {
+          "name": "aspid-mvvm",
+          "source": "local",
+          "installed_hash": "b4cbdfb8fd0fc64a232034aa73d5fef845c7555b5557eb2018ce3018c9a0450e"
+        },
+        {
+          "name": "unity-mcp",
+          "source": "local",
+          "installed_hash": "2c066f3f5d67425afbbe6e6605cea56c7e88e2afad1621d582edbdc08adf19c6"
+        }
+      ]
+    }
+  }
+}
