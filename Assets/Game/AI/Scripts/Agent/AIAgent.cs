@@ -37,11 +37,14 @@ namespace AI.Agent
         private string _teamKey;
 
         private SensorHolder _sensorHolder;
+        private bool _needsReevaluation;
 
         public void Constructor(
             string teamKey,
             Unit unit)
         {
+            _agentMover.OnStuck += HandleStuck;
+
             _sensorHolder = new SensorHolder(
                 new HealthSensor(unit.Health),
                 new VisualSensor(transform, teamKey, _config),
@@ -81,14 +84,15 @@ namespace AI.Agent
             }
         }
         
-        public void AssignOrder(GoalBase newOrder)
+        private void HandleStuck()
         {
-            if (_assignedOrder == newOrder) return;
+            Debug.LogWarning($"<color=red>Agent {gameObject.name} is STUCK. Clearing plan.</color>");
+            ClearCurrentPlan();
+            CalculateNewGoalAndPlan();
+        }
 
-            _assignedOrder = newOrder;
-            Debug.Log($"<color=yellow>Agent {gameObject.name} received new order: {newOrder}</color>");
-            
-            // Сбрасываем текущий план, чтобы юнит немедленно переосмыслил свои цели
+        private void ClearCurrentPlan()
+        {
             if (_currentAction != null)
             {
                 _currentAction.OnStop();
@@ -97,6 +101,17 @@ namespace AI.Agent
             _actionPlan?.Clear();
             _currentGoal?.OnGoalDeactivated();
             _currentGoal = null;
+        }
+
+        public void AssignOrder(GoalBase newOrder)
+        {
+            if (_assignedOrder == newOrder) return;
+
+            _assignedOrder = newOrder;
+            Debug.Log($"<color=yellow>Agent {gameObject.name} received new order: {newOrder}</color>");
+            
+            // Сбрасываем текущий план, чтобы юнит немедленно переосмыслил свои цели
+            ClearCurrentPlan();
             
             CalculateNewGoalAndPlan();
         }
@@ -129,6 +144,12 @@ namespace AI.Agent
         {
             if (_sensorHolder != null)
                 _sensorHolder.Update(Time.deltaTime);
+
+            if (_needsReevaluation)
+            {
+                _needsReevaluation = false;
+                ReevaluatePlan();
+            }
 
             if (_currentAction != null)
             {
@@ -164,7 +185,33 @@ namespace AI.Agent
 
         private void KnowledgeUpdated()
         {
-            
+            _needsReevaluation = true;
+        }
+
+        private void ReevaluatePlan()
+        {
+            List<GoalBase> goalsToEvaluate = new List<GoalBase>(_availableGoals);
+            if (_assignedOrder != null && !goalsToEvaluate.Contains(_assignedOrder))
+            {
+                goalsToEvaluate.Add(_assignedOrder);
+            }
+
+            GoalBase bestGoal = GetBestGoal(goalsToEvaluate, new List<GoalBase>());
+            if (bestGoal == null) return;
+
+            // Если текущая цель изменилась ИЛИ у новой цели приоритет значительно выше
+            if (_currentGoal != bestGoal)
+            {
+                float currentPriority = _currentGoal != null ? _currentGoal.GetPriority(_knowledgeBase.GetAllFacts()) : 0;
+                float newPriority = bestGoal.GetPriority(_knowledgeBase.GetAllFacts());
+
+                if (newPriority > currentPriority)
+                {
+                    Debug.Log($"<color=orange>Re-evaluating plan: {(_currentGoal?.GetType().Name ?? "None")} -> {bestGoal.GetType().Name}</color>");
+                    ClearCurrentPlan();
+                    CalculateNewGoalAndPlan();
+                }
+            }
         }
 
         private void CalculateNewGoalAndPlan()
