@@ -17,7 +17,7 @@ namespace AI.Goal.Implementation
 
         public override IEnumerable<GoalCondition> GetDesiredState()
         {
-            var target = _forcedTarget ?? _forcedTarget;
+            var target = _forcedTarget ?? _currentTarget;
             
             if (target == null)
                 return Enumerable.Empty<GoalCondition>();
@@ -37,12 +37,12 @@ namespace AI.Goal.Implementation
             if (_forcedTarget != null && _assignedPriority > 0f)
                 return _assignedPriority;
             
-            var currentTarget = _forcedTarget ?? FindTarget(knowledgeBase);
-            if (currentTarget == null) 
+            _currentTarget = _forcedTarget ?? FindTarget(knowledgeBase);
+            if (_currentTarget == null) 
                 return 0f;
 
             bool isLowHealth = knowledgeBase.Any(f => 
-                f.Target == currentTarget && 
+                f.Target == _currentTarget && 
                 f.ConditionTag == GlobalKeys.ConditionTag.IsLow && 
                 f.ObjectTags.Contains(GlobalKeys.Resources.Health));
 
@@ -50,7 +50,7 @@ namespace AI.Goal.Implementation
                 return 100f;
 
             var distanceFact = knowledgeBase.FirstOrDefault(f => 
-                f.Target == currentTarget && 
+                f.Target == _currentTarget && 
                 (f.ConditionTag == GlobalKeys.ConditionTag.Nearby || 
                  f.ConditionTag == GlobalKeys.ConditionTag.Around || 
                  f.ConditionTag == GlobalKeys.ConditionTag.InSight));

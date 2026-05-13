@@ -15,11 +15,22 @@ namespace AI.Planner
             GoalBase goal)
         {
             HashSet<IObjectForAI> potentialTargets = new HashSet<IObjectForAI> { null };
+            
+            // Собираем цели из желаемого состояния
             foreach (var condition in goal.GetDesiredState())
             {
                 if (condition.SpecificObject != null)
                 {
                     potentialTargets.Add(condition.SpecificObject);
+                }
+            }
+            
+            // РАСШИРЕНИЕ: Собираем все объекты из базы знаний как потенциальные цели для действий
+            foreach (var fact in worldState)
+            {
+                if (fact.Target != null)
+                {
+                    potentialTargets.Add(fact.Target);
                 }
             }
 
